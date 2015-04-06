@@ -1,0 +1,18 @@
+DEFINITION MODULE MMV;
+
+        (****************************************************************)
+        (*                                                              *)
+        (*                  Major Major version number                  *)
+        (*                                                              *)
+        (*    Started:        01 January 2004                           *)
+        (*    Last edited:    20 September 2014                         *)
+        (*    Status:         OK                                        *)
+        (*                                                              *)
+        (****************************************************************)
+
+
+CONST
+    version = "2.0";
+
+END MMV.
+

@@ -1,0 +1,41 @@
+DEFINITION MODULE Dialp3;
+
+        (************************************************************)
+        (*                                                          *)
+        (*              Admin program for MajorMajor                *)
+        (*              Page 3 of the admin notebook                *)
+        (*                                                          *)
+        (*    Started:        5 September 2000                      *)
+        (*    Last edited:    8 February 2009                       *)
+        (*    Status:         OK                                    *)
+        (*                                                          *)
+        (************************************************************)
+
+
+IMPORT CommonSettings, Languages;
+
+FROM OS2 IMPORT HWND;
+
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+
+    (* Sets the INI file name and mode. *)
+
+PROCEDURE Create (owner: HWND): HWND;
+
+    (* Creates this page and adds it to the notebook. *)
+
+PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
+
+    (* Sets the font of the text on this page. *)
+
+PROCEDURE SetLanguage (lang: Languages.LangHandle);
+
+    (* Relabels this page in the new language. *)
+
+PROCEDURE StoreData (hwnd: HWND);
+
+    (* Saves the list data back to the INI file.  The hwnd parameter    *)
+    (* identifies the frame of this page.                               *)
+
+END Dialp3.
+

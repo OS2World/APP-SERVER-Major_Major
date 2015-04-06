@@ -1,0 +1,3 @@
+   Om de afzender te beantwoorden, e-mail naar %S
+   AOL-gebruikers klikken <a href="mailto:%S">hier</a> op.
+

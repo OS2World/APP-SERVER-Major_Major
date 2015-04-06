@@ -1,0 +1,179 @@
+# Expreciones espa¤les para Major Major Admin
+#Si estas hablando espa¤ol maternal, pro favor correcta esta archivo.
+#Mi espa¤ol tiene muchos errores, pero es mejor que nada.
+#Fritz Schori fritz@os2force.ch
+
+#======================================================================
+# Opening dialogue and remote setup dialogue
+#======================================================================
+
+Opening.title "Major Major admin"
+Opening.local "Por aqu¡"
+Opening.remote "lejos"
+Opening.setup "Setup"
+Opening.go "Va"
+Opening.exit "Salida"
+Opening.status.loading "cargar, espera por favor"
+
+Remote.title "Lejos servidor detailles"
+Remote.HostLabel "Nombre del ordenador"
+Remote.PortLabel "INIServe port"
+Remote.PassLabel "INIServe clave de acceso"
+Remote.DirLabel "%a directorio"
+
+Remote.nosocket "No pude crear socket"
+Remote.lookingup "Looking up name"
+Remote.unknownhost "Host desconocido"
+Remote.trying "Intento a conectar"
+Remote.failed "No pude conectar"
+Remote.serverrejected "Servidor rechazanos"
+Remote.invaliddir "No v lido directorio lejos"
+Remote.badpassword "Clave de acceso rechazado"
+Remote.connected "Conectado"
+
+#======================================================================
+# Messages for the main notebook.
+#======================================================================
+
+Main.local "Major Major Admin aqu¡"
+Main.remote "Major Major Admin lejos"
+Main.cantopen "No puedo abrir archivo INI lejos"
+
+Page1.tab "Com£n"
+Page1.mailserver "Mail servidor"
+Page1.Weaselhere "Weasel an este ordenador"
+Page1.otherserver "Otro mail servidor"
+Page1.domain "Nombre de Mail domain"
+Page1.BatchLimit "Batch size limit"
+Page1.Weaseldir "Weasel directorio"
+Page1.SMTPserver "SMTP servidor para mail salida"
+Page1.hostname "Hostname"
+Page1.port "Port"
+Page1.useauthent "Usa SMTP identificaci¢n"
+Page1.POPserver "POP3 servidor para mail entrada"
+
+Files.tab "Ficheros"
+Files.enablelogging "Permite logging"
+Files.translogto "Escribe log de trafico a"
+Files.disk "Disk"
+Files.screen "Pantalla"
+Files.logfilename "Fichero de Log"
+Files.archivedir "Directorio de archivo"
+
+AdminPage.tab "Admin"
+AdminPage.account "e-mail cuenta para recibe list manager comandos"
+AdminPage.username "Nombre del usario"
+AdminPage.loginname "Nombre del Login"
+AdminPage.password "Clave de acceso"
+AdminPage.errorresponse "Repuesta a entrada falsa"
+AdminPage.timebetween "Timepo entre comprobar para mail nuevo"
+AdminPage.hours "Horas"
+AdminPage.minutes "Minutos"
+AdminPage.seconds "Segondos"
+AdminPage.AdminLang "Idioma del Admin"
+AdminPage.DefaultLang "Idioma predeterminada"
+AdminPage.MIMEcharset "MIME character set"
+
+Messages.tab "Mensajes"
+Messages.title "Ficheros de mensaje"
+Messages.nonsub "Mensaje si un no registrado intenta a post"
+Messages.help "Repuesta a comando HELP"
+Messages.notplaintext "Mensaje si comandos no son en formato texto puro"
+
+Lists.tab "Listas"
+Lists.title "LISTAS MAILING"
+Lists.AddButton "A¤ade"
+Lists.EditButton "Revisa"
+Lists.RenameButton "Renombra"
+Lists.DeleteButton "Cancela"
+Lists.EnterName "Teclea un nombre para la lista mailing"
+Lists.NewName "Nombre nuevo para la lista mailing"
+
+About.tab "Sobre"
+About.1 "MajorMajor, es un ejecutivo para lista mailing"
+About.2 "Versi¢n %a"
+About.3 "Elaborado de"
+About.4 "Para otro OS/2 software, mira"
+
+#======================================================================
+# Messages for the list notebook.
+#======================================================================
+
+EditList.title "Lista Mailing '%a'"
+
+ELpage1.LoginName "POP3 nombre login"
+ELpage1.password "POP3 clave de acceso"
+ELpage1.abbrev "Nombre lista abreviado para linea Subject"
+ELpage1.checkinterval "Revisa para mail nuevo cada"
+ELpage1.errormess "Mensajes Error"
+ELpage1.discard "Desecha"
+ELpage1.mailto "Mail a"
+ELpage1.filter "Filtro (optionale)"
+ELpage1.language "Idioma"
+
+PSDialogue.title "Identificaci¢n Mail salido"
+PSDialogue.AuthMethod "M‚todo identificaci¢n"
+PSDialogue.none "Nung£n"
+PSDialogue.SMTPAUTH "SMTP AUTH"
+PSDialogue.POPbeforeSMTP "POP antes SMTP"
+PSDialogue.username "Nombre Usario"
+PSDialogue.password "Clave de acceso"
+PSDialogue.portlabel1 "Port"
+PSDialogue.portlabel2 "(normal 110 para POP3)"
+PSDialogue.hostname "Nombre del Host"
+
+ELpage2.tab "Opciones 1"
+ELpage2.KillAttachments "Saca anexos"
+ELpage2.IsModerated "Lista es moderada"
+ELpage2.SuppressFrom "Hace invisible la direcci¢n remitente"
+ELpage2.DMARCcompatible "DMARC compatible"
+ELpage2.EnableControlled "Permite comandos controlados"
+ELpage2.EnableSubscribe "te registra"
+ELpage2.EnableLongSubscribe "Te registra, forma larga"
+ELpage2.EnableLongUnsubscribe "Tacha tu registraci¢n, forma larga"
+ELpage2.EnableWho "quien"
+ELpage2.charset "Character set Predestinado para archivos"
+ELpage2.RFC2919ID "RFC 2919 List ID (opcional)"
+ELpage2.Add2369Headers "A¤ade RFC 2369 headers"
+
+ELopt2.tab "Opciones 2"
+ELopt2.confbox "Confirmaciones para registrar/deregistrar"
+ELopt2.RequireConfirmation "Require confirmaci¢n para esta lista"
+ELopt2.ConfTime "Usario tiene que contestar en el plazo de"
+ELopt2.ConfHours "horas"
+ELopt2.OwnersMayConfUnsub "Propietarios pude confirmar 'deregistrar'"
+ELopt2.nonsub "Mail de no registrados"
+ELopt2.ignore "Ignora"
+ELopt2.accept "Acepta"
+ELopt2.reject "Desecha"
+ELopt2.saverefused "Asegura mail desechado al directorio"
+
+ELpage4.tab "Miembros"
+ELpage4.title "DIRECCIONES E-MAIL DE REGISTRADOS A ESTA LISTA"
+ELpage4.ReviseButton "Rechaza"
+ELpage4.total "Total %1"
+ELpage4.EnterName "Teclea una direcci¢n e-mail"
+ELpage4.NewName "Revisa direcci¢n e-mail"
+
+ELpage5.tab "Propietario"
+ELpage5.title "PROPIETARIOS LISTA(S)"
+ELpage5.note1 "Una lista moderado tiene que tener al menos un proprietario."
+ELpage5.note2 "De otra manera esta lista es opcional."
+
+ELMessage.tab1 "Mensages 1"
+ELMessage.tab2 "Mensages 2"
+ELMessage.title "OPTCONAL MENSAGE ARCHIVOS"
+ELMessage.NotifyOwner "Mensage a propietarios despues 'registrar'"
+ELMessage.NotifyOwner2 "Mensage a propietarios despues 'deregistrar'"
+ELMessage.confreq "Confirmaci¢n para mensaje pedido"
+ELMessage.welcome "Mensaje bienvenida"
+ELMessage.departure "Mensaje despedida"
+ELMessage.leader "Fichero entrega"
+ELMessage.footer "Fichero al pie"
+
+ELpage6.tab "Archivo"
+ELpage6.ArcEnabled "Crea archivo para esta lista"
+ELpage6.NewArchive "Nuevo archivo cada"
+ELpage6.days " dias"
+ELpage6.months " meses"
+

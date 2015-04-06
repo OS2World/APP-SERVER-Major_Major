@@ -1,0 +1,97 @@
+DEFINITION MODULE Commands;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*         Handler for list administrator commands      *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            5 July 2000                     *)
+        (*  Last edited:        22 May 2012                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM MailFetcher IMPORT
+    (* type *)  MailUser;
+
+FROM LogLevel IMPORT
+    (* type *)  LogLevelType;
+
+FROM AddressLists IMPORT
+    (* type *)  EmailAddress;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+
+TYPE
+    Requester;           (* is private *)
+
+
+PROCEDURE SetOurName (username: EmailAddress;  lang, default: LangHandle;
+                                      LogDetail: LogLevelType;
+                                        acceptinvalid: BOOLEAN): MailUser;
+
+    (* The caller specifies to us the e-mail username for the list      *)
+    (* administrator, i.e. the robot that actually receives the         *)
+    (* commands to subscribe, etc.; the language to be used for         *)
+    (* administrator functions such as logging; and the language to be  *)
+    (* used when no language is specified. The LogDetail parameter      *)
+    (* specifies how much detail we want in the transaction log, and    *)
+    (* acceptinvalid is FALSE iff we want to ignore messages with no    *)
+    (* valid commands.                                                  *)
+
+PROCEDURE SetHelpFileName (VAR (*IN*) helpname, plaintextname: ARRAY OF CHAR);
+
+    (* The caller specifies to us the name of two help files.  The      *)
+    (* first is the one to use in response to the HELP command.  The    *)
+    (* second is for when someone tries to send commands embedded in    *)
+    (* a message type that is not plain text.                           *)
+
+PROCEDURE CreateRequester (VAR (*IN*) address: EmailAddress): Requester;
+
+    (* Creates a new Requester record. *)
+
+PROCEDURE CloseRequester (VAR (*INOUT*) R: Requester;
+                                       LogID: TransactionLogID): BOOLEAN;
+
+    (* The "end of session" operation on a Requester record.  Returns   *)
+    (* TRUE if we sent a reply, FALSE if we ignored the mail.           *)
+
+(*
+PROCEDURE ContinueWithBadMessage (R: Requester): BOOLEAN;
+
+    (* Returns TRUE if we're willing to accept invalid commands.        *)
+    (* Otherwise, marks this requester session as "do not reply" and    *)
+    (* returns FALSE.                                                   *)
+*)
+
+PROCEDURE DoCommand (R: Requester;  command: ARRAY OF CHAR;
+                                            ErrOption: CARDINAL): BOOLEAN;
+
+    (* Parses and executes the command.  The value of ErrOption         *)
+    (* controls how we handle invalid commands:                         *)
+    (*                                                                  *)
+    (*      0    execute the command if valid, ignore it if not,        *)
+    (*           return TRUE iff the command was syntactically valid.   *)
+    (*                                                                  *)
+    (*      1    execute the command if valid, no error message if not, *)
+    (*           return TRUE if the command was the last command to be  *)
+    (*           processed (as in case 2) or if the command was not     *)
+    (*           syntactically valid.                                   *)
+    (*                                                                  *)
+    (*      2    execute the command if valid, give an error message    *)
+    (*           if not, return TRUE iff this means we should process   *)
+    (*           no more commands (i.e. we found an 'end' command).     *)
+
+PROCEDURE PlainTextNeeded (U: Requester;  VAR (*IN*) contenttype: ARRAY OF CHAR);
+
+    (* Sends a reply saying that the message should have been of type text/plain. *)
+
+END Commands.
+

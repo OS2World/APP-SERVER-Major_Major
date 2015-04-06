@@ -1,0 +1,13 @@
+Commands to this mailing list processor must be sent as plain
+text.  This program will do its best to find the text part of
+your message, if any, but if it turns out that the commands
+are embedded inside an HTML web page document, they might not
+be processed properly.
+
+Many people do not realise that what they are sending is not
+plain text, because they are using mail software that comes
+preconfigured to use a less desirable format.  Solutions to this
+problem, for some of the more popular mail programs, are
+explained on the web page
+        http://pyropus.ca/personal/writings/nomime.html
+

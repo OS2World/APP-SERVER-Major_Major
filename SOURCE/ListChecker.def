@@ -1,0 +1,180 @@
+DEFINITION MODULE ListChecker;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*         Module to handle mail coming in for          *)
+        (*               the individual lists                   *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            23 May 2000                     *)
+        (*  Last edited:        22 May 2012                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM MailFetcher IMPORT
+    (* type *)  MailUser;
+
+FROM LogLevel IMPORT
+    (* type *)  LogLevelType;
+
+FROM AddressLists IMPORT
+    (* type *)  ListNameType, EmailAddress, OptionSet;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle, LangName;
+
+FROM FileOps IMPORT
+    (* type *)  ChanId;
+
+FROM TransLog IMPORT
+    (* type *)  LogContext;
+
+
+TYPE MailingList;       (* is private *)
+     ConfirmationCode = ARRAY [0..31] OF CHAR;
+
+VAR MMctx: LogContext;
+
+PROCEDURE SetININame (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+
+    (* The caller specifies the INI file name and mode.  *)
+
+PROCEDURE SetOurDomainName (domain: EmailAddress;
+                             DetailOfLogging: LogLevelType);
+
+    (* The caller specifies to us what our e-mail domain is, and  *)
+    (* notifies us how detailed the logging should be.            *)
+
+PROCEDURE SetAdministratorAddress (admin: EmailAddress;
+                                   lang, default: LangHandle);
+
+    (* The caller specifies to us the e-mail address of the             *)
+    (* administrator account for this copy of Major Major, the language *)
+    (* to be used for administrator mail, and the language to be used   *)
+    (* when no language is specified.                                   *)
+
+PROCEDURE MainLanguage (name: EmailAddress;
+                             VAR (*OUT*) confident: BOOLEAN): LangHandle;
+
+    (* Returns the "majority language" among all lists to which 'name'  *)
+    (* is subscribed, breaking ties in an arbitrary way.  If there are  *)
+    (* no such lists, we return the default language.  Parameter        *)
+    (* 'confident' is returned as TRUE iff there is at least one        *)
+    (* subscription, i.e. we didn't have to default.                    *)
+
+PROCEDURE CreateList (ListName: ARRAY OF CHAR): MailingList;
+
+    (* Creates a new empty mailing list. *)
+
+PROCEDURE ListName (L: MailingList;  VAR (*OUT*) name: ListNameType);
+
+    (* Returns the textual name of this list. *)
+
+PROCEDURE ListLanguage (L: MailingList): LangHandle;
+
+    (* Returns the language assigned to this list. *)
+
+PROCEDURE MailUserIDof (L: MailingList;
+                    VAR (*OUT*) ListEmailAddress: EmailAddress): MailUser;
+
+    (* Returns the mail user ID and e-mail address belonging to this list. *)
+
+PROCEDURE RegisterAllLists;
+
+    (* Refreshes the list information for all lists in the INI file. *)
+
+PROCEDURE RecheckMailForAllLists;
+
+    (* Forces a check to see whether there's new mail for any list. *)
+
+PROCEDURE IdentifyList (listname: ARRAY OF CHAR;
+                        VAR (*OUT*) ML: MailingList): BOOLEAN;
+
+    (* Translates from list name (not case sensitive) to list.          *)
+    (* Returns TRUE iff successful.                                     *)
+
+PROCEDURE IsOwner (name: EmailAddress;  list: MailingList): BOOLEAN;
+
+    (* Returns TRUE iff name is one of the list owners. *)
+
+PROCEDURE IsMember (member: EmailAddress;  list: MailingList): BOOLEAN;
+
+    (* Returns TRUE iff member is already a member of the list. *)
+
+PROCEDURE AddMember (language: LangHandle;  from: EmailAddress;
+                     list: MailingList;
+                     newmember: EmailAddress;  flags: OptionSet): BOOLEAN;
+
+PROCEDURE RemoveMember (language: LangHandle;  from: EmailAddress;
+                        list: MailingList;  member: EmailAddress): BOOLEAN;
+
+    (* Removes a subscriber from a list. *)
+
+PROCEDURE ConfirmationRequired (list: MailingList): BOOLEAN;
+
+    (* Returns TRUE iff this list is one that requires confirmations. *)
+
+PROCEDURE SendConfirmationRequest (L: MailingList;
+                                requester, subscriber: EmailAddress;
+                                userlang: LangHandle;
+                                IsSubscription: BOOLEAN;
+                                VAR (*OUT*) code: ConfirmationCode): BOOLEAN;
+
+    (* Sends an e-mail to the requester, and possibly also to the list  *)
+    (* owners, asking for a confirmation of the (un)subscription of the *)
+    (* specified subscriber.  This procedure also generates the random  *)
+    (* code to be used for the confirmation.                            *)
+
+PROCEDURE AddConfirmationEntry (ML: MailingList;
+                                 code: ConfirmationCode;  IsSubscription: BOOLEAN;
+                                 OptionFlags: OptionSet;  email: EmailAddress;
+                                 userlang: LangHandle);
+
+    (* Adds a new entry to the confirmation list for this mailing list.  *)
+
+PROCEDURE DoConfirmation (list: MailingList;  IsSubscription: BOOLEAN;
+                                VAR (*OUT*) newlang: LangName;
+                                VAR (*IN*) code: ConfirmationCode): BOOLEAN;
+
+    (* Confirms a previously issued command.  The BOOLEAN argument says *)
+    (* whether this is a subscription or an unsubscription.             *)
+
+PROCEDURE AppendFromFile (dstcid: ChanId;  L: MailingList;
+                                    userlang: LangHandle;
+                                    file: ARRAY OF CHAR;
+                                    From, ExtraParam: ARRAY OF CHAR);
+
+    (* Appends the contents of the named file to dstcid (an output file *)
+    (* that is already open).  Parameter L is present to allow some     *)
+    (* macro expansion of % codes in the file, and From allows %S       *)
+    (* expansion.  ExtraParam is irrelevant in the majority of cases,   *)
+    (* but is used where the caller has to transfer a value to be used  *)
+    (* for the expansion of the %X macro.                               *)
+
+    (* The parameter 'file' might itself contain a '%L' macro, and if   *)
+    (* so that is expanded to the code for the userlang language.       *)
+
+PROCEDURE WhoIsLegal (list: MailingList;  from: EmailAddress): BOOLEAN;
+
+    (* Returns TRUE iff the 'who' command is enabled for this list      *)
+    (* or 'from' is an owner of the list.                               *)
+
+PROCEDURE DoWho (cid: ChanId;  lang: LangHandle;  list: MailingList);
+
+    (* Appends a list of list members to the output file cid. *)
+
+PROCEDURE ListLists (cid: ChanId;  lang: LangHandle;  name: EmailAddress);
+
+    (* Appends to the output file cid the names of all lists to which   *)
+    (* member 'name' is subscribed.                                     *)
+
+PROCEDURE ReturnIndex (cid: ChanId;  lang: LangHandle;  list: MailingList);
+
+    (* Appends a directory of the file repository for this list *)
+    (* to the output file cid.                                  *)
+
+END ListChecker.
+

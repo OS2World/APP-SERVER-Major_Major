@@ -1,0 +1,103 @@
+# Mensajes espa¤oles para el Major Major
+# Traducci¢n de Jose De Dona
+
+#======================================================================
+# Section 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Ctrl/C a cerrar"
+Major.started "MajorMajor comenz¢"
+Major.finishing "MajorMajor esta cerrando"
+Major.checkingnew "Chequeando correo nuevo"
+
+ListAdmin.requestfrom "Petici¢n administrativa de %a"
+
+ListChecker.log.subscribed "%a suscripto"
+ListChecker.log.rejected "%a rechazado"
+ListChecker.log.unsubscribed "suscripcion de %a cancelada"
+ListChecker.logmail.rejected "Mensaje rechazado por %a"
+ListChecker.logmail.ignored "Mensaje ignorado por %a"
+ListChecker.logmail.sent "El mensaje de %a ha sido enviado a %1 receptores"
+ListChecker.logmail.senttomoderators "El mensaje de %a ha sido enviado a %1 asesores"
+ListChecker.logmail.failcount " (%1 fallas)"
+ListChecker.processing.one "Procesando un item"
+ListChecker.rejectedbyfilter "Item rechazado por el filtro"
+ListChecker.removing "Removiedo la lista %a"
+ListChecker.checkingnew "Chequeando nuevos mensajes"
+ListChecker.addinglist "Agregando lista %a"
+ListChecker.refreshinglist "Renovando lista %a"
+
+Archives.log.created "Archivo %a creado"
+Archives.log.createfail "La creacion del archivo ha fallado.
+No se pudo renombrar %a a %b"
+
+POPClient.NoAddress "La direcci¢n del servidor POP no ha sido especificada."
+POPClient.NoConnection "Fallo al establecer la conexi¢n."
+POPClient.NoOKreply "No se recibi¢ la respuesta OK en la conexi¢n inicial"
+POPClient.BadPassword "Fall¢ el comando PASS"
+POPClient.UserRejected "Fall¢ el comando USER"
+
+SMTPOut.CantConnect "No se pudo conectar al anfitri¢n SMTP"
+SMTPOut.CantLogin "Fall¢ la conexi¢n SMTP"
+SMTPOut.CommandRejected "Comando %a fue rechazado"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Error:  los comandos recibidos no son validos"
+Commands.reply.NotPlainText "ERROR: Usted ha enviado un mensaje del tipo %a."
+Commands.reply.NoCommand "Comando ilegal %a"
+Commands.reply.End "Final del proceso"
+Commands.nosuchlist "Ninguna lista con ese nombre %a"
+Commands.nosuchfile "Disculpe, ese archivo no existe"
+Commands.notamember "Usted no es un miembro de esta lista"
+Commands.nohelpfile "Disculpe, no hay ayuda disponible"
+Commands.ListNameNeeded "Usted debe especificar el nombre de una lista"
+Commands.alreadysubscribed "%a ya esta suscripto a la lista '%b'"
+Commands.ImpossibleCombination "La suscripci¢n fall¢.  Combinaci¢n de opciones no valida."
+Commands.subscribe.nowriteonly "La suscripci¢n fall¢.  Solamente el due¤o de la lista puede especificar estado de solo escritura."
+
+Commands.subscribe.ConfMailed "El pedido de confirmaci¢n se ha enviado.
+La suscripci¢n sera  aceptada si el usuario confirma esta suscripci¢n."
+
+Commands.configerror "Disculpe, el comando fallo debido a un error de configuracion de la lista."
+Commands.subscribe.success "%a esta ahora suscripto a la lista '%b'"
+Commands.subscribe.restricted "La suscripcion fallo. Solamente el due¤o de la lista puede suscribir a otras personas."
+Commands.unsubscribe.notamember "%a no es un miembro de la lista '%b'"
+
+Commands.unsubscribe.ConfMailed "Un pedido de confirmacion ha sido enviado por e-mail.
+La operacion de cancelacion de la suscripcion sera aceptada si el usuario confirma este comando.")
+
+Commands.unsubscribe.success "La suscripcion ha sido cancelada."
+Commands.unsubscribe.failure "La cancelacion de la suscripcion ha fallado."
+Commands.who.unavailable "El comando 'who' no esta habilitado en la lista %a"
+Commands.confirm.success "La confirmacion ha sido exitosa."
+Commands.confirm.failure "La confirmacion ha fallado."
+Commands.obsolete "Error de programa, la opcion es obsoleta."
+
+ListChecker.ismoderated " (Los mensajes son moderados)"
+ListChecker.list.all "Este servidor administra las listas siguientes:"
+ListChecker.list.subs "Usted esta suscripto a las listas siguientes:"
+ListChecker.list.count "Un total de %1 listas."
+ListChecker.listattr.restricted " [restringido]"
+ListChecker.listattr.moderated " [moderada]"
+ListChecker.RemAttach "[Los adjuntos han sido removidos]"
+ListChecker.who.begin "Miembros de la lista '%a'"
+ListChecker.who.count "Un total de %1 miembros."
+ListChecker.digest.Subject "Compilacion de %a"
+
+Archives.list.heading "Archivo de repositorio de la lista de correo %a."
+Archives.list.count "Un total de %1 archivo(s)."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "Resultados del servidor de lista"
+

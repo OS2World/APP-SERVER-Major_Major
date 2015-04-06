@@ -1,0 +1,101 @@
+# German messages for Major Major
+
+#======================================================================
+# Section 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Strg/C zum Beenden"
+Major.started "MajorMajor gestartet"
+Major.finishing "MajorMajor wird beendet"
+Major.checkingnew "Signal an PrÅfprogramm fÅr neue E-Mail"
+
+ListAdmin.requestfrom "Admin-Anfrage von %a"
+
+ListChecker.log.subscribed "%a abonniert"
+ListChecker.log.rejected "%a abgewiesen"
+ListChecker.log.unsubscribed "%a abbestellt"
+ListChecker.logmail.rejected "ZurÅckgewiesene Mail von %a"
+ListChecker.logmail.ignored "Ignorierte Mail von %a"
+ListChecker.logmail.sent "Nachricht von %a an %1 EmpfÑnger gesendet"
+ListChecker.logmail.senttomoderators "Nachricht von %a an %1 Moderatoren gesendet"
+ListChecker.logmail.failcount " (%1 fehlgeschlagen)"
+ListChecker.processing.one "Verarbeitung eines Eintrags"
+ListChecker.rejectedbyfilter "Eintrag von Filter abgewiesen"
+ListChecker.removing "Entfernung der Liste %a"
+ListChecker.checkingnew "PrÅfung auf neue Mail"
+ListChecker.addinglist "HinzufÅgen der Liste %a"
+ListChecker.refreshinglist "Aktualisierung der Liste %a"
+
+Archives.log.created "Archivdatei %a angelegt"
+Archives.log.createfail "Anlegen der Archivdatei fehlgeschlagen
+Umbenennen von %a in %b nicht mîglich"
+
+POPClient.NoAddress "Adresse des POP-Servers nicht angegeben."
+POPClient.NoConnection "Herstellen der Verbindung fehlgeschlagen"
+POPClient.NoOKreply "Keine Antwort OK auf erste Verbindung"
+POPClient.BadPassword "Befehl PASS fehlgeschlagen"
+POPClient.UserRejected "Befehl USER fehlgeschlagen"
+
+SMTPOut.CantConnect "Verbindung zu SMTP-Host konnte nicht hergestellt werden"
+SMTPOut.CantLogin "SMTP-Anmeldung fehlgeschlagen"
+SMTPOut.CommandRejected "Befehl %a wurde abgewiesen"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Fehler: keine g¸ltigen Befehle erhalten"
+Commands.reply.NotPlainText "FEHLER: Nachricht von Typ %a gesendet."
+Commands.reply.NoCommand "Ung¸ltiger Befehl %a"
+Commands.reply.End "Verarbeitung beendet"
+Commands.nosuchlist "Keine Liste %a vorhanden"
+Commands.nosuchfile "Diese Datei existiert leider nicht"
+Commands.notamember "Sie haben diese Liste nicht abonniert"
+Commands.nohelpfile "Leider keine Hilfe verf¸gbar"
+Commands.ListNameNeeded "Es muﬂ ein Listenname angegeben werden"
+Commands.alreadysubscribed "%a hat die Liste '%b' bereits abonniert"
+Commands.ImpossibleCombination "Abonnieren fehlgeschlagen.  Unmˆgliche Kombination von Optionen."
+Commands.subscribe.nowriteonly "Abonnieren fehlgeschlagen.  Nur-schreiben-Status kann nur vom Listeneigner authorisiert werden."
+
+Commands.subscribe.ConfMailed "Eine Best‰tigungsaufforderung wurde abgeschickt.
+Das Abonnement wird akzeptiert, wenn der Benutzer dieses Abonnement best‰tigt."
+
+Commands.configerror "Dieser Befehl schlug leider aufgrund eines Fehlers in der Listenkonfiguration fehl."
+Commands.subscribe.success "%a hat die Liste '%b' nun abonniert"
+Commands.subscribe.restricted "Abonnieren fehlgeschlagen. Nur ein Listeneigner kann andere anmelden."
+Commands.unsubscribe.notamember "%a hat die Liste '%b' nicht abonniert"
+
+Commands.unsubscribe.ConfMailed "Eine Best‰tigungsaufforderung wurde abgeschickt.
+Der Abbestellungsvorgang wird akzeptiert, wenn der Benutzer den Befehl best‰tigt."
+
+Commands.unsubscribe.success "Abonnement erfolgreich abbestellt."
+Commands.unsubscribe.failure "Abbestellen fehlgeschlagen"
+Commands.who.unavailable "Befehl 'who' wird bei Liste %a nicht unterst¸tzt"
+Commands.confirm.success "Best‰tigung erfolgreich abgeschlossen"
+Commands.confirm.failure "Best‰tigung fehlgeschlagen"
+Commands.obsolete "Programmfehler, veraltete Option"
+
+ListChecker.ismoderated " (Nachrichten werden moderiert)"
+ListChecker.list.all "Dieser Server verwaltet folgende Listen:"
+ListChecker.list.subs "Sie haben folgende Listen abonniert:"
+ListChecker.list.count "Gesamtanzahl von %1 Listen."
+ListChecker.listattr.restricted " [eingeschr‰nkt]"
+ListChecker.listattr.moderated " [moderiert]"
+ListChecker.RemAttach "[Anh‰nge wurden entfernt]"
+ListChecker.who.begin "Abonennten der Liste '%a'"
+ListChecker.who.count "Gesamtanzahl von %1 Abonennten."
+ListChecker.digest.Subject "‹bersicht von %a"
+
+Archives.list.heading "Dateiarchiv der Mailingliste %a."
+Archives.list.count "Gesamtanzahl von %1 Dateien."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "Ergebnisse des Listen-Servers"

@@ -1,0 +1,178 @@
+# Nederlandse teksten voor het Major Major Admin configuratieprogramma
+# Bijgewerkt tot en met Versie 1.594
+# Vertaling: Ronald van Ovost 07-03-2008
+
+#======================================================================
+# Openingsdialoog en remote setup dialoog
+#======================================================================
+
+Opening.title "Major Major admin"
+Opening.local "Lokaal"
+Opening.remote "Remote"
+Opening.setup "Setup"
+Opening.go "GO"
+Opening.exit "Stop"
+Opening.status.loading "Laden, even geduld"
+
+Remote.title "Remote server details"
+Remote.HostLabel "Hostnaam"
+Remote.PortLabel "INIServe poort"
+Remote.PassLabel "INIServe wachtwoord"
+Remote.DirLabel "%a map"
+
+Remote.nosocket "Kan geen socket maken"
+Remote.lookingup "Zoekt naam op"
+Remote.unknownhost "Onbekende host"
+Remote.trying "Poging verbinding te maken"
+Remote.failed "Verbinding niet gelukt"
+Remote.serverrejected "Server weigert ons"
+Remote.invaliddir "Ongeldige remote map"
+Remote.badpassword "Wachtwoord geweigerd"
+Remote.connected "Verbonden"
+
+#======================================================================
+# Teksten voor het hoofddeel van het configuratieprogramma
+#======================================================================
+
+Main.local "Lokaal Major Major Admin"
+Main.remote "Remote Major Major Admin"
+Main.cantopen "Kan het remote INI-bestand niet openen"
+
+Page1.tab "Initieel"
+Page1.mailserver "Mailserver"
+Page1.Weaselhere "Weasel op deze machine"
+Page1.otherserver "Andere mailserver"
+Page1.domain "Mail domeinnaam"
+Page1.BatchLimit "Batch size limit"
+Page1.Weaseldir "Weasel map"
+Page1.SMTPserver "SMTP server voor uitgaande mail"
+Page1.hostname "Hostnaam"
+Page1.port "Poort"
+Page1.useauthent "gebruik SMTP-authentificatie"
+Page1.POPserver "POP3-server voor inkomende mail"
+
+Files.tab "***Files"
+Files.enablelogging "Maak logbestanden"
+Files.translogto "Schrijf activiteitenlog naar"
+Files.disk "Disk"
+Files.screen "Scherm"
+Files.logfilename "***Log file"
+Files.archivedir "***Archive directory"
+
+AdminPage.tab "Admin"
+AdminPage.account "E-mailadres om lijstopdrachten te ontvangen"
+AdminPage.username "Gebruikersnaam"
+AdminPage.loginname "Loginnaam"
+AdminPage.password "Wachtwoord"
+AdminPage.errorresponse "Actie bij onjuiste lijstopdrachten"
+AdminPage.timebetween "Wachttijd voor de controle op nieuwe e-mail"
+AdminPage.hours "Uren"
+AdminPage.minutes "Minuten"
+AdminPage.seconds "Seconden"
+AdminPage.AdminLang "Admin taal"
+AdminPage.DefaultLang "Standaard taal"
+AdminPage.MIMEcharset "MIME karakterset"
+
+Messages.tab "Berichten"
+Messages.title "BERICHTEN BESTANDEN"
+Messages.nonsub "Bericht als een niet-abonnee een bericht naar de lijst stuurt"
+Messages.help "Antwoord op de HELP-opdracht"
+Messages.notplaintext "Bericht als een opdracht niet in platte tekstformaat is"
+
+Lists.tab "Lijsten"
+Lists.title "MAILING LIJSTEN"
+Lists.AddButton "Voeg toe"
+Lists.EditButton "Bewerk"
+Lists.RenameButton "Hernoem"
+Lists.DeleteButton "Verwijder"
+Lists.EnterName "Geef een naam voor de maillijst"
+Lists.NewName "Nieuwe naam voor de maillijst"
+
+About.tab "Over"
+About.1 "Major Major, een maillijst manager"
+About.2 "Versie %a"
+About.3 "Ontwikkeld door"
+About.4 "Voor andere OS/2 software, kijk op"
+
+#======================================================================
+# Berichten voor de lijsten configuratie.
+#======================================================================
+
+EditList.title "Maillijst '%a'"
+
+ELpage1.LoginName "POP3 loginnaam"
+ELpage1.password "POP3 wachtwoord"
+ELpage1.abbrev "Verkorte lijstnaam voor de regel Onderwerp"
+ELpage1.checkinterval "Controleer op nieuwe mail iedere"
+ELpage1.errormess "Foutberichten"
+ELpage1.discard "Weggooien"
+ELpage1.mailto "Mail aan"
+ELpage1.filter "Filter (optioneel)"
+ELpage1.language "Taal"
+
+PSDialogue.title "Uitgaande mail authentificatie"
+PSDialogue.AuthMethod "Authentificatiemethode"
+PSDialogue.none "geen"
+PSDialogue.SMTPAUTH "SMTP AUTH"
+PSDialogue.POPbeforeSMTP "POP voor SMTP"
+PSDialogue.username "Gebruikersnaam"
+PSDialogue.password "Wachwoord"
+PSDialogue.portlabel1 "Poort"
+PSDialogue.portlabel2 "(normaal 110 voor POP3)"
+PSDialogue.hostname "Hostnaam"
+
+ELpage2.tab "Opties 1"
+ELpage2.KillAttachments "Verwijder bijlagen"
+ELpage2.IsModerated "Lijst wordt gecontroleerd"
+ELpage2.SuppressFrom "Afzenderadres weglaten"
+ELpage2.DMARCcompatible "DMARC compatible"
+ELpage2.EnableControlled "Stel opdrachten beschikbaar"
+ELpage2.EnableSubscribe "aanmelden"
+ELpage2.EnableLongSubscribe "aanmelden, lang formaat"
+ELpage2.EnableLongUnsubscribe "afmelden, lang formaat"
+ELpage2.EnableWho "who"
+ELpage2.charset "Standaard karakterset voor archiefbestanden"
+ELpage2.RFC2919ID "RFC 2919 Lijst-ID (optioneel)"
+ELpage2.Add2369Headers "Voeg RFC 2369 headers toe"
+
+ELopt2.tab "Opties 2"
+ELopt2.confbox "Bevestigingen voor aanmelden en afmelden"
+ELopt2.RequireConfirmation "Bevestiging vereist voor deze lijst"
+ELopt2.ConfTime "Aanvrager moet antwoorden binnen"
+ELopt2.ConfHours "uren"
+ELopt2.OwnersMayConfUnsub "Lijstbeheerders kunnen afmeldingen bevestigen"
+ELopt2.nonsub "Mail van niet-abonnees"
+ELopt2.ignore "Negeren"
+ELopt2.accept "Aanvaarden"
+ELopt2.reject "Afwijzen"
+ELopt2.saverefused "Bewaar geweigerde mail in map"
+
+ELpage4.tab "Abonnees"
+ELpage4.title "E-MAILADRESSEN VAN ABONNEES VAN DEZE LIJST"
+ELpage4.ReviseButton "Wijzig"
+ELpage4.total "Totaal %1"
+ELpage4.EnterName "Voer een e-mailadres in"
+ELpage4.NewName "Wijzig het e-mailadres"
+
+ELpage5.tab "Beheerders"
+ELpage5.title "LIJSTBEHEERDER(S)"
+ELpage5.note1 "Een gecontroleerde lijst moet minimaal een (1) beheerder hebben."
+ELpage5.note2 "Indien niet gecontroleerd, is deze beheerderslijst optioneel."
+
+ELMessage.tab1 "Berichten 1"
+ELMessage.tab2 "Berichten 2"
+ELMessage.title "OPTIONELE BERICHTEN BESTANDEN"
+ELMessage.NotifyOwner "Aanmeldbericht aan lijstbeheerder(s)"
+ELMessage.NotifyOwner2 "Afmeldbericht aan lijstbeheerder(s)"
+ELMessage.confreq "Bericht voor verzoek om bevestiging"
+ELMessage.welcome "Welkomstbericht"
+ELMessage.departure "Afmeldingsbericht"
+ELMessage.leader "Koptekst bestand"
+ELMessage.footer "Voettekst bestand"
+
+ELpage6.tab "Archief"
+ELpage6.ArcEnabled "Maak een archief voor deze lijst"
+ELpage6.NewArchive "Nieuw archiefbestand iedere"
+ELpage6.days " dagen"
+ELpage6.months " maanden"
+

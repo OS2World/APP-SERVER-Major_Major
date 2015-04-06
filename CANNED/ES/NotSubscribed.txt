@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Incapaz de entregar su mensaje
+
+Su correo a %L no se podr¡a entregar, porque
+usted no se es abonado a que lista de env¡o.
+

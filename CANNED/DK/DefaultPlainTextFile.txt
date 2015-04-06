@@ -1,0 +1,14 @@
+Kommandoer til denne postliste skal sendes i ren tekst.
+Dette program prøver på bedst mulig måde at finde tekst
+delen i din besked. Hvis din besked f.eks er sendt i HTML,
+er det ikke muligt at finde teksten.
+
+Mange mennesker er ikke klar over, at de faktisk ikke sender
+beksedder i ren tekst, ofte fordi der post program er opsat
+af leverandøren til at sende i mere obskure formater.
+
+Løsning er at indstille dit post program til at sende i
+ren tekst.
+Du kan måske finde hjælp til dette på denne side:
+        http://pyropus.ca/personal/writings/nomime.html
+

@@ -1,0 +1,13 @@
+Ordonoj al cxi tiu posxtlista procezilo devas esti en 'simpla
+teksto' formato.  Cxi tiu programo k.e.p. efike penos trovi la
+tekstan parton de via mesagxo, se gxi ekzistas, sed se la
+ordonoj estas en HTML retpagxa dokumento, Major Major
+eble ne bone procezos ilin.
+
+Multaj homoj ne ecx scias ke ili ne sendas simplan tekston,
+cxar ili uzas posxtprogramon kiu venas jam difinita por
+malpli dezirita formato.  Solvoj al cxi tiu problemo, por multaj
+el la pli favoritaj posxt-programoj, estas troveblaj je la
+retpagxo
+        http://pyropus.ca/personal/writings/nomime.html
+

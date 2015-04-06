@@ -1,0 +1,6 @@
+-----------
+Pour vous désinscrire de cette liste, veuillez envoyer à
+    %A
+le message suivant :
+    unsubscribe %L
+

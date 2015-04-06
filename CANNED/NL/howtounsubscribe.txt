@@ -1,0 +1,10 @@
+-----------
+U ontvangt dit bericht omdat u zich heeft aangemeld voor
+deze berichtenservice (%L).
+Om u af te melden van deze maillijst, stuurt u een bericht aan
+  %A
+In het bericht plaatst u de regels:
+	unsubscribe %L
+	end
+
+U ontvangt een bevestiging ter verificatie.

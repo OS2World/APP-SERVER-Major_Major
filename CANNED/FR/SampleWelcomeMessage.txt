@@ -1,0 +1,8 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Bienvenue sur la liste %L
+
+Vous êtes à present inscrit sur la liste %L.
+

@@ -1,0 +1,26 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+Le présent Courriel est une demande de confirmation pour une
+inscription ou désinscription de %S à la liste de diffusion
+%L sur ce serveur. Vous, ou quelqu'un agissant de
+votre part, avez envoyé une demande pour vous abonner
+à, ou vous désabonner de, la liste d'adresses %L.
+Comme garde contre les demandes malveillantes,
+cette demande sera négligée à moins que vous ne la
+confirmiez dans %H heures. Le code aléatoire dans
+la ligne Subject: de ce message est conçue pour bloquer
+des confirmations fausses des gens qui agissent sans
+votre permission.
+
+Si ceci est une demande authentique, vous devez
+répondre à ce message, en gardant la ligne de Sujet sans
+changement.  Le corps de la réponse n'a pas d'importance,
+mais la ligne de Sujet doit rester inchangée.
+
+Si vous ne voulez pas que la demande soit acceptée, vous
+pouvez négliger ce message.
+

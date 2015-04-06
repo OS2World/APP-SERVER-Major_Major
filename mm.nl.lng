@@ -1,0 +1,104 @@
+# Nederlandse teksten voor Major Major
+# Ver1.566
+# Vertaling: Ronald van Ovost
+
+#======================================================================
+# Sectie 1. Berichten in het logbestand.
+# Deze moeten de karakterset gebruiken van de server met Major Major.
+#======================================================================
+
+Major.CtrlC "Ctrl/C om af te sluiten"
+Major.started "MajorMajor is actief"
+Major.finishing "MajorMajor stopt"
+Major.checkingnew "Activeer controle op nieuwe e-mail"
+
+ListAdmin.requestfrom "Admin verzoek van %a"
+
+ListChecker.log.subscribed "%a aangemeld"
+ListChecker.log.rejected "%a afgewezen"
+ListChecker.log.unsubscribed "%a afgemeld"
+ListChecker.logmail.rejected "Afgewezen e-mail van %a"
+ListChecker.logmail.ignored "Negeer e-mail van %a"
+ListChecker.logmail.sent "Bericht van %a verzonden aan %1 geadresseerden"
+ListChecker.logmail.senttomoderators "Bericht van %a verzonden aan %1 moderatoren"
+ListChecker.logmail.failcount " (%1 fouten)"
+ListChecker.processing.one "Verwerking van een bericht"
+ListChecker.rejectedbyfilter "Bericht geweigerd door filter"
+ListChecker.removing "Verwijderen van lijst %a"
+ListChecker.checkingnew "Controleren op nieuwe e-mail"
+ListChecker.addinglist "Lijst %a toevoegen"
+ListChecker.refreshinglist "Lijst %a vernieuwen"
+
+Archives.log.created "Archiefbestand %a gemaakt"
+Archives.log.createfail "Niet gelukt om archiefbestand te maken
+Kon %a niet hernoemen in %b"
+
+POPClient.NoAddress "POP-serveradres is niet opgegeven."
+POPClient.NoConnection "Niet gelukt om een verbinding te maken"
+POPClient.NoOKreply "Geen OK antwoord ontvangen na verbinding"
+POPClient.BadPassword "PASS opdracht mislukt"
+POPClient.UserRejected "USER opdracht mislukt"
+
+SMTPOut.CantConnect "Kon geen verbinding maken met SMTP host"
+SMTPOut.CantLogin "SMTP login mislukt"
+SMTPOut.CommandRejected "%a opdracht is geweigerd"
+
+#======================================================================
+# Sectie 2. Antwoorden via e-mail aan ontvangers.
+# Deze moeten de MIME karakterset gebruiken zoals aangegeven op de Admin
+# pagina van het Admin configuratieprogramma.
+#======================================================================
+
+Commands.reply.NoneValid "Fout: niet de juiste opdrachten ontvangen"
+Commands.reply.NotPlainText "FOUT: U heeft een %a bericht gestuurd."
+Commands.reply.NoCommand "Onjuiste opdracht %a"
+Commands.reply.End "Einde van de verwerking"
+Commands.nosuchlist "Lijst %a bestaat niet"
+Commands.nosuchfile "Sorry, dat bestand bestaat niet"
+Commands.notamember "U bent geen abonnee van deze lijst"
+Commands.nohelpfile "Sorry, er is geen hulp beschikbaar"
+Commands.ListNameNeeded "U moet de naam van een lijst opgeven"
+Commands.alreadysubscribed "%a is al aangemeld voor de lijst '%b'"
+Commands.ImpossibleCombination "Aanmelding niet gelukt. Onmogelijke samenstelling van opties."
+Commands.subscribe.nowriteonly "Aanmelding niet gelukt. Alleen de lijstbeheerder mag de status 'alleen schrijven' goedkeuren."
+
+Commands.subscribe.ConfMailed "Een bevestigingsverzoek is per e-mail verstuurd.
+De aanmelding zal geaccepteerd worden indien de aanmelder dit bevestigingsverzoek retourneert."
+
+Commands.configerror "Sorry, deze opdracht is niet gelukt vanwege een configuratiefout van de lijst."
+Commands.subscribe.success "%a is nu aangemeld voor de lijst '%b'"
+Commands.subscribe.restricted "Aanmelding niet gelukt.  Alleen de lijstbeheerder kan andere personen aanmelden."
+Commands.unsubscribe.notamember "%a is geen abonnee van de lijst '%b'"
+
+Commands.unsubscribe.ConfMailed "Een bevestigingsverzoek is per e-mail verstuurd.
+De afmelding zal geaccepteerd worden indien de afmelder dit bevestigingsverzoek retourneert."
+
+Commands.unsubscribe.success "De afmelding van de lijst is geslaagd"
+Commands.unsubscribe.failure "Afmelding niet gelukt"
+Commands.who.unavailable "'who' opdracht voor de lijst %a is niet beschikbaar"
+Commands.confirm.success "Bevestiging is geslaagd"
+Commands.confirm.failure "Bevestiging is niet gelukt"
+Commands.obsolete "Programmafout, niet-bestaande optie"
+
+ListChecker.ismoderated " (Berichten worden gecontroleerd)"
+ListChecker.list.all "Deze server onderhoudt de volgende lijsten:"
+ListChecker.list.subs "U bent aangemeld bij de volgende lijsten:"
+ListChecker.list.count "In het totaal %1 lijst(en)."
+ListChecker.listattr.restricted " [beperkt]"
+ListChecker.listattr.moderated " [gecontroleerd]"
+ListChecker.RemAttach "[Bijlagen zijn verwijderd]"
+ListChecker.who.begin "Abonnees van lijst '%a'"
+ListChecker.who.count "In het totaal %1 abonnee(s)."
+ListChecker.digest.Subject "Overzicht van %a"
+
+Archives.list.heading "Bestandenopslag voor de %a maillijst."
+Archives.list.count "In het totaal %1 bestand(en)."
+
+#======================================================================
+# Sectie 3. Berichten in de e-mail header.
+# Alle niet-ASCII karakters in de header regels vereisen speciale
+# codering die aangeeft welke MIME karakterset wordt gebruikt.
+#======================================================================
+
+Commands.reply.Subject "Antwoord van maillijstserver"
+

@@ -1,0 +1,5 @@
+   Svare direktett til avsenderen, post til %S
+   AOL bruker klikk <a href="mailto:%S">her</a>
+   Yahoo brukere: sp›rr Deres mor hvordan sende en e-post
+
+

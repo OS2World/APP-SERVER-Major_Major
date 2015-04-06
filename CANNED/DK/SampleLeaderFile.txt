@@ -1,0 +1,4 @@
+   For at svare direkte til afsenderen, mail til %S
+   AOL brugere klik <a href="mailto:%S">HER</a>
+   Yahoo brugere: Sp›rg din mor, hvardan man sender email
+

@@ -1,0 +1,16 @@
+I comandi al programma di gestione di questa mailing list
+ devono essere inviati come semplice testo. Il programma
+fara' del suo meglio per identificare le parti di testo nel
+messaggio, se ce ne sono. Ma se questi fossero inseriti
+all'interno di un documento HTML, come una pagina web,
+questi potrebbero non essere interpretati correttamente.
+
+Molti utilizzatori di e-mail non sanno che in realta' non stanno
+inviando messaggi in semplice formato testo, perche' usano
+programmi che sono pre-configurati per inviare messaggi in
+formati meno desiderabili. La soluzione di questi problemi,
+per alcuni dei programmi di posta piu' diffusi, sono spiegati
+alla pagina web http://pyropus.ca/personal/writings/nomime.html
+
+
+

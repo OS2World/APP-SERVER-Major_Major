@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Welcome to %L
+
+Vi nun abonas al %L.
+Ni esperas ke vi gxuas gxin.
+

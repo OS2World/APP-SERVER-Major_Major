@@ -1,0 +1,121 @@
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To receive this message in English, enter the following command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Dies ist das Mailinglistenverwaltungsprogramm Major Major. Durch
+senden von Befehlen an diese E-Mail-Adresse können Sie Mailinglisten
+abonnieren und abbestellen. Es werden folgende Befehle erkannt.
+Beachten Sie, daß manche eventuell vom Listeneigner deaktiviert
+worden sein können. In einer Nachricht dürfen mehrere Befehle
+gesendet werden.
+
+lang name
+
+    Bei 'name' in diesem Befehl sollte es sich um einen Sprachcode
+    handeln, z.B. en für englisch und fr für französisch. Hat der
+    Administrator des Listen-Servers die Unterstützung für diese
+    Sprache aktiviert, so wird diese Sprache für die Antworten auf
+    sämtliche nach diesem Befehl erteilte Befehle verwendet werden.
+
+subscribe listenname
+subscribe listenname <optionen>
+
+    Auf diese Weise abonniert man eine Liste. Ist eine Mailingliste
+    mit der Bezeichnung 'listenname' vorhanden und ist das Abonnieren
+    dieser Liste erlaubt, so wird Ihre E-Mail-Adresse der Liste
+    hinzugefügt.
+    Folgende Optionen stehen zur Verfügung
+        readonly   man kann die Liste nur lesen, aber nichts dort
+                     veröffentlichen;
+        writeonly  man kann etwas über die Liste veröffentlichen,
+                     aber keine Nachrichten erhalten;
+        digest     anstatt Listennachrichten so zu erhalten, wie sie
+                     dort eingehen, erhält man nur ab und zu eine
+                     Mail mit in der Zwischenzeit eingegangenen
+                     Nachrichten. Die Häufigkeit wird vom Listeneigner
+                     bestimmt. Beachten Sie, daß dies nur funktioniert,
+                     wenn der Listeneigner die Archivierung der
+                     Nachrichten dieser Liste aktiviert hat.
+
+    Beispiel:        subscribe example-list readonly
+
+    Die einzig sinnvolle Kombination von Optionen ist 'readonly digest'.
+    Beachten Sie, daß sinnlose Kombinationen, wie beispielsweise
+    'readonly writeonly', dazu führen könnten, daß sie eine Liste
+    abonniert haben und niemals Nachrichten erhalten.
+
+    Hinweis 1: Die Option 'writeonly' kann nur von einem Listeneigner
+       angegeben werden.
+
+    Hinweis 2: Sollen die Optionen geändert werden, beispielsweise
+       zum Wechseln vom 'normalen' Abonnement auf ein 'digest', muß
+       man die Liste erst abbestellen und dann mit den neuen Optionen
+       wieder abonnieren.
+
+unsubscribe listenname
+
+    Auf diese Weise bestellt man eine Mailingliste ab.
+
+subscribe listenname emailadresse
+subscribe listenname <optionen> emailadresse
+
+    Auf diese Weise richtet man ein Abonnement einer Liste für eine
+    andere Person oder für sich selbst unter einer anderen E-Mail-
+    Adresse ein. Hinweis: Das Bestellen von Mailinglisten für andere
+    Personen ohne deren Erlaubnis kann dazu führen, daß Sie von
+    der Nutzung dieses Servers ausgeschlossen werden. Dieser Befehl
+    steht im allgemeinen nur dem Listeneigner zur Verfügung.
+
+    Die Optionen sind dieselben wie bei der Kurzform des Abonnierens.
+
+unsubscribe listenname emailadresse
+
+    Auf diese Weise bestellt man eine Mailingliste ab, wenn die für
+    das Listenabonnement verwendete E-Mail-Adresse nicht dieselbe ist
+    wie die, mit der man den Befehl sendet.
+
+lists
+
+    Gibt die Namen der auf diesem Server geführten Listen zurück.
+
+index listenname
+
+    Gibt eine Aufstellung der im Dateiarchiv dieser Liste vorhandenen
+    Dateien zurück. Beachten Sie, daß nicht jede Liste ein Dateiarchiv
+    besitzt.
+
+get listenname dateiname
+
+    Sendet eine Kopie der Textdatei 'dateiname' aus dem Dateiarchiv
+    dieser Liste.
+
+which
+
+    Gibt die Namen sämtlicher Listen zurück, die man abonniert hat.
+
+who listenname
+
+    Gibt die Namen der Abonennten einer Liste zurück.
+
+help
+
+    Dieser Befehl sendet die Nachricht, die Sie gerade lesen.
+
+end
+
+    Gibt an, daß keine weiteren Befehle folgen. Alternativ kann läßt
+    sich die Befehlsfolge durch eine Zeile beenden, die mit dem Zeichen
+    '-' beginnt.
+
+Mehr über Major Major erfahren Sie unter:
+          http://www.pmoylan.org/pages/os2/major.html
+

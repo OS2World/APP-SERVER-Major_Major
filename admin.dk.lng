@@ -1,0 +1,177 @@
+# Danish labels for the Major Major Admin notebook
+# Translated by: Allan Holm (allan@warpspeed.dyndns.dk) on 7. jan 2004
+
+#======================================================================
+# Opening dialogue and remote setup dialogue
+#======================================================================
+
+Opening.title "Major Major administration"
+Opening.local "Lokal"
+Opening.remote "Fjern"
+Opening.setup "Vëlg"
+Opening.go "KùR"
+Opening.exit "Afslut"
+Opening.status.loading "Lëser, vent....c"
+
+Remote.title "Indstillinger for fjernstyret server"
+Remote.HostLabel "Hostnavn eller IP"
+Remote.PortLabel "INIServe port"
+Remote.PassLabel "INIServe kodeord"
+Remote.DirLabel "Sti til %a"
+
+Remote.nosocket "Kan ikke fÜ en socket"
+Remote.lookingup "SlÜr navnet op"
+Remote.unknownhost "Ukendt host"
+Remote.trying "Forbinder til server..."
+Remote.failed "Ingen forbindelse"
+Remote.serverrejected "Afvist af server"
+Remote.invaliddir "Forkert sti pÜ server"
+Remote.badpassword "Kodeordet er afvist"
+Remote.connected "Forbundet!"
+
+#======================================================================
+# Messages for the main notebook.
+#======================================================================
+
+Main.local "Lokal Major Major Administration"
+Main.remote "Fjernstyret Major Major Administration"
+Main.cantopen "INI filen kan ikke Übnes"
+
+Page1.tab "Generelt"
+Page1.mailserver "Post server"
+Page1.Weaselhere "Weasel pÜ denne maskine"
+Page1.otherserver "Anden (fjern) post server"
+Page1.domain "Post domëne navn"
+Page1.BatchLimit "Batch size limit"
+Page1.Weaseldir "Sti til Weasel"
+Page1.SMTPserver "SMTP server til udgÜende post"
+Page1.hostname "Hostnavn"
+Page1.port "Port"
+Page1.useauthent "brug navn og kodeord til SMTP serveren"
+Page1.POPserver "POP3 server til indkommende post"
+
+Files.tab "***Files"
+Files.enablelogging "SlÜ LOG til"
+Files.translogto "Skriv transaktionslog til"
+Files.disk "Disk"
+Files.screen "Skërm"
+Files.logfilename "***Log file"
+Files.archivedir "***Archive directory"
+
+AdminPage.tab "Administration"
+AdminPage.account "e-mail konto til modtagelse af list manager kommandoer"
+AdminPage.username "Brugernavn"
+AdminPage.loginname "Loginnavn"
+AdminPage.password "Kodeord"
+AdminPage.errorresponse "Reactie op defecte input"
+AdminPage.timebetween "Interval mellem afhentning af ny post"
+AdminPage.hours "Timer"
+AdminPage.minutes "Minutter"
+AdminPage.seconds "Sekunder"
+AdminPage.AdminLang "Administrations sprog"
+AdminPage.DefaultLang "Standard sprog"
+AdminPage.MIMEcharset "MIME karakter sët"
+
+Messages.tab "Meddelelser"
+Messages.title "FILER MED FORSKELLIGE MEDDELELSER"
+Messages.nonsub "Meddelelse nÜr et ikke-medlem forsõger at poste"
+Messages.help "Svar pÜ HELP kommando"
+Messages.notplaintext "Meddelelse nÜr kommandoerne ikke er i rent text format"
+
+Lists.tab "Lister"
+Lists.title "POST LISTER"
+Lists.AddButton "Tilfõj"
+Lists.EditButton "Ret"
+Lists.RenameButton "Omdõb"
+Lists.DeleteButton "Slet"
+Lists.EnterName "Angiv navnet pÜ postlisten"
+Lists.NewName "Angiv nyt navn pÜ postlisten"
+
+About.tab "Om"
+About.1 "MajorMajor, en post liste manager"
+About.2 "Version %a"
+About.3 "Udviklet af"
+About.4 "Andre OS/2 programmer, se"
+
+#======================================================================
+# Messages for the list notebook.
+#======================================================================
+
+EditList.title "Post liste '%a'"
+
+ELpage1.LoginName "POP3 loginnavn"
+ELpage1.password "POP3 kodeord"
+ELpage1.abbrev "Forkortet navn for listen i Subject linje"
+ELpage1.checkinterval "Interval for afhentning af post"
+ELpage1.errormess "Fejl meddelelser"
+ELpage1.discard "Afvis"
+ELpage1.mailto "Sendes til"
+ELpage1.filter "Filter (valgfrit)"
+ELpage1.language "Sprog"
+
+PSDialogue.title "Identifikation ved udgÜende post"
+PSDialogue.AuthMethod "Identifikations metode"
+PSDialogue.none "ingen"
+PSDialogue.SMTPAUTH "SMTP AUTH"
+PSDialogue.POPbeforeSMTP "POP fõr SMTP"
+PSDialogue.username "Brugernavn"
+PSDialogue.password "Kodeord"
+PSDialogue.portlabel1 "Port"
+PSDialogue.portlabel2 "(normalt 110 til POP3)"
+PSDialogue.hostname "Hostnavn"
+
+ELpage2.tab "Diverse 1"
+ELpage2.KillAttachments "Fjern vedhëftede filer"
+ELpage2.IsModerated "Listen er modereret"
+ELpage2.SuppressFrom "Suppress sender address"
+ELpage2.DMARCcompatible "DMARC compatible"
+ELpage2.EnableControlled "Vëlg tilladte kommandoer"
+ELpage2.EnableSubscribe "subscribe"
+ELpage2.EnableLongSubscribe "subscribe, lang form"
+ELpage2.EnableLongUnsubscribe "unsubscribe, lang form"
+ELpage2.EnableWho "who"
+ELpage2.charset "Karaktersët for arkiver"
+ELpage2.RFC2919ID "RFC 2919 List ID (valgfrit)"
+ELpage2.Add2369Headers "Add RFC 2369 headers"
+
+ELopt2.tab "Diverse 2"
+ELopt2.confbox "Bekrëft subscribe/unsubscribe"
+ELopt2.RequireConfirmation "Bekrëftigelse krëvet for denne liste"
+ELopt2.ConfTime "Brugeren skal svare inden"
+ELopt2.ConfHours "timer"
+ELopt2.OwnersMayConfUnsub "Owners may confirm 'unsubscribe'"
+ELopt2.nonsub "Post fra ikke-medlemmer"
+ELopt2.ignore "Ignorer"
+ELopt2.accept "Accepter"
+ELopt2.reject "Afvis"
+ELopt2.saverefused "Gem afvist post i stien:"
+
+ELpage4.tab "Medlemmer"
+ELpage4.title "E-MAIL ADRESSER Pè MEDLEMMER AF DENNE LISTE"
+ELpage4.ReviseButton "Ret"
+ELpage4.total "Total %1"
+ELpage4.EnterName "Angiv en e-mail adresse"
+ELpage4.NewName "Ret e-mail adressen"
+
+ELpage5.tab "Ejere"
+ELpage5.title "EJER(E) AF LISTEN"
+ELpage5.note1 "En modereret liste skal have mindst 1 ejer."
+ELpage5.note2 "Derudover er ejerlisten valgfri."
+
+ELMessage.tab1 "Meddelelser 1"
+ELMessage.tab2 "Meddelelser 2"
+ELMessage.title "VALGFRI MEDDELELSES FILER"
+ELMessage.NotifyOwner "Message to owners after 'subscribe'"
+ELMessage.NotifyOwner2 "Message to owners after 'unsubscribe'"
+ELMessage.confreq "Bekrëftigelses meddelelse"
+ELMessage.welcome "Velkomst meddelelse"
+ELMessage.departure "Departure meddelelse"
+ELMessage.leader "Top text fil"
+ELMessage.footer "Bund text fil"
+
+ELpage6.tab "Arkiver"
+ELpage6.ArcEnabled "Opret et arkiv for denne liste"
+ELpage6.NewArchive "Ny arkiv fil for hver"
+ELpage6.days " dage"
+ELpage6.months " mÜneder"
+

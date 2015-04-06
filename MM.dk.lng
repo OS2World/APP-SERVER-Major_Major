@@ -1,0 +1,104 @@
+# Danish translation of messages for Major Major
+# This translation is done by Allan Holm (allan@warpspeed.dyndns.dk)
+# on 7. dec 2003, revised on 28 Jan 2004
+
+#======================================================================
+# Section 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Ctrl/C for afslutning"
+Major.started "MajorMajor er startet"
+Major.finishing "MajorMajor lukker ned"
+Major.checkingnew "Signal om ny mail"
+
+ListAdmin.requestfrom "Admin foresp›rgsel fra %a"
+
+ListChecker.log.subscribed "%a er medlem"
+ListChecker.log.rejected "%a er afvist"
+ListChecker.log.unsubscribed "%a er afmeldt"
+ListChecker.logmail.rejected "Afvist mail fra %a"
+ListChecker.logmail.ignored "Ignoreret mail fra %a"
+ListChecker.logmail.sent "Besked fra %a sendt til %1 modtagere"
+ListChecker.logmail.senttomoderators "Besked fra %a sendt til %1 moderatorer"
+ListChecker.logmail.failcount " (%1 fejl)"
+ListChecker.processing.one "Bearbejder een besked"
+ListChecker.rejectedbyfilter "Item afvist af et filter"
+ListChecker.removing "Sletter listen %a"
+ListChecker.checkingnew "Check'er for ny post"
+ListChecker.addinglist "Tilf›jer listen %a"
+ListChecker.refreshinglist "Genopfrisker listen %a"
+
+Archives.log.created "Dannede arkiv fil %a"
+Archives.log.createfail "Arkiv fil kunne ikke dannes
+Kunne ikke omd›be %a til %b"
+
+POPClient.NoAddress "POP server adresse er ikke angivet."
+POPClient.NoConnection "Kunne ikke f† forbindelse"
+POPClient.NoOKreply "Intet OK svar ved forbindelse"
+POPClient.BadPassword "Fejl ved PASS komando"
+POPClient.UserRejected "Fejl ved USER komando"
+
+SMTPOut.CantConnect "Ingen forbindelse til SMTP server"
+SMTPOut.CantLogin "SMTP login fejl"
+SMTPOut.CommandRejected "%a komandoen blev afvist"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Fejl: ingen gyldig kommando modtaget"
+Commands.reply.NotPlainText "Fejl: Du har sent en besked af typen %a."
+Commands.reply.NoCommand "Ulovlig kommando %a"
+Commands.reply.End "Processen er afsluttet"
+Commands.nosuchlist "Denne liste existerer ikke %a"
+Commands.nosuchfile "Filen existerer ikke"
+Commands.notamember "Du er ikke medlem af denne liste"
+Commands.nohelpfile "Der kan ikke gives yderligere hj‘lp"
+Commands.ListNameNeeded "Du skal angive navnet p† en liste"
+Commands.alreadysubscribed "%a er allerede medlem af listen '%b'"
+Commands.ImpossibleCombination "Medlemskab ikke opn†et.  Ulovlig kombination."
+Commands.subscribe.nowriteonly "Medlemskab ikke opn†et.  Kun ejeren af listen kan give dig skrive status."
+
+Commands.subscribe.ConfMailed "En bekr‘ftelses mail er afsendt.
+Medlemskabet vil blive accepteret, n†r brugeren bekr‘fter denne."
+
+Commands.configerror "Beklager, kommandoen kan ikke udf›res pga en konfigurationsfejl."
+Commands.subscribe.success "%a er nu medlem af listen '%b'"
+Commands.subscribe.restricted "Medlemskab ikke opn†et.  Kun listens ejer kan tilmelde andre personer."
+Commands.unsubscribe.notamember "%a er ikke medlem af listen '%b'"
+
+Commands.unsubscribe.ConfMailed "En bekr‘ftelses mail er afsendt.
+Medlemskabet vil blive slettet, n†r brugeren bekr‘fter denne.")
+
+Commands.unsubscribe.success "Dit medlemskab er blevet slettet"
+Commands.unsubscribe.failure "Sletning af medlemskab lykkedes ikke"
+Commands.who.unavailable "'who' kommandoen er ikke underst›ttet for listen %a"
+Commands.confirm.success "Bekr‘ftelse modtaget (OK)"
+Commands.confirm.failure "Bekr‘ftelsen lykkedes ikke"
+Commands.obsolete "Program fejl, ugyldig parameter"
+
+ListChecker.ismoderated " (Beskedder er Modereret)"
+ListChecker.list.all "Denne server har f›lgende lister til r†dighed:"
+ListChecker.list.subs "Du er medlem af f›lgende lister:"
+ListChecker.list.count "Ialt %1 lister."
+ListChecker.listattr.restricted " [begr‘nset]"
+ListChecker.listattr.moderated " [modereret]"
+ListChecker.RemAttach "[vedh‘ftninger er fjernet]"
+ListChecker.who.begin "Medlemmer af listen '%a'"
+ListChecker.who.count "Ialt %1 medlemmer."
+ListChecker.digest.Subject "Digest af %a"
+
+Archives.list.heading "Fil katalog for %a listen."
+Archives.list.count "Ialt %1 file(r)."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "Listserver resultater"
+

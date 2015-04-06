@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: New subscription to %L
+
+Un nuovo membro '%X' si e' iscritto a %L.
+
+

@@ -1,0 +1,92 @@
+# Messaggi perr Major Major
+
+#======================================================================
+# Sezione 1. Messaggi per il file di log.
+# Questi devono usare la code page usata dal computer che ospita il server.
+#======================================================================
+
+Major.CtrlC "Ctrl/C per arrestare il programma"
+Major.started "MajorMajor avviato"
+Major.finishing "MajorMajor sta chiudendo"
+Major.checkingnew "Controllo arrivo nuova posta"
+
+ListAdmin.requestfrom "Richiesta amministrativa da %a"
+
+ListChecker.log.subscribed "%a iscritto"
+ListChecker.log.rejected "%a respinto"
+ListChecker.log.unsubscribed "%a cancellato"
+ListChecker.logmail.rejected "Respinto un messaggio da %a"
+ListChecker.logmail.ignored "Ignorato messaggio da %a"
+ListChecker.logmail.sent "Messaggio da %a inviato a %1 destinatari"
+ListChecker.logmail.senttomoderators "Messaggio da %a inviato a %1 moderatori"
+ListChecker.logmail.failcount " (%1 operazioni fallite)"
+ListChecker.processing.one "Elaborazione di un elemento in corso"
+ListChecker.rejectedbyfilter "Elemento respinto da filtro"
+ListChecker.removing "In corso rimozione della lista  %a"
+ListChecker.checkingnew "Controllo per nuovi messaggi in corso"
+ListChecker.addinglist "Aggiunta della lista %a in corso"
+ListChecker.refreshinglist "Aggiornamento della lista %a"
+
+Archives.log.created "Creato il file archivio %a"
+Archives.log.createfail "Creazione del file archivio fallito: impossibile rinominare  %a come %b"
+
+#======================================================================
+# Sezione 2. Messaggi di risposta per e-mail.
+# Devono usare is set di caratteri MIME specificati nella pagina di Gestione
+# del notebook  Admin.
+#======================================================================
+
+Commands.reply.NoneValid "Errore: nessun comando valido ricevuto"
+Commands.reply.NotPlainText "ERRORE: Hai mandato un messaggio di tipo %a."
+Commands.reply.NoCommand "Comando illegale %a"
+Commands.reply.End "Fine della elaborazione"
+Commands.nosuchlist "La lista %a non esiste"
+Commands.nosuchfile "Spiacente, quel file non esiste"
+Commands.notamember "Non sei un membro di questa lista"
+Commands.nohelpfile "Spiacente, non sono disponibili informazioni di aiuto"
+Commands.ListNameNeeded "Occorre specificare il nome di una lista"
+Commands.alreadysubscribed "%a e' gia'' iscritto alla lista '%b'"
+Commands.ImpossibleCombination "Iscrizione fallita.  Combinazione di opzioni impossible."
+Commands.subscribe.nowriteonly "Iscrizione fallita.  Solo un amministratore di lista puo' autorizzare lo stato di sola scrittura."
+
+Commands.subscribe.ConfMailed "Una richiesta di conferma e' stata inviata per e-mail.
+L' iscrizione sara' accettata se l' utente confermera' l'iscrizione"
+
+Commands.configerror "Spiacente, questo comando e' fallito a causa di un errore di configurazione della lista.."
+Commands.subscribe.success "%a e' ora iscritto alla lista '%b'"
+Commands.subscribe.restricted "Iscrizione fallita.  Solo un amministratore di lista puo' iscrivere altre persone."
+Commands.unsubscribe.notamember "%a non e' un membro della lista '%b'"
+
+Commands.unsubscribe.ConfMailed "Una richiesta di conferma e' stata inviata per e-mail.
+La cancellazione dell' iscrizione sara' accettata se l' utente confermera' il comando."
+
+Commands.unsubscribe.success "Cancellazione della iscrizione riuscita"
+Commands.unsubscribe.failure "Cancellazione della iscrizione non riuscita"
+Commands.who.unavailable "Il comando 'who' non e' abilitato per la lista %a"
+Commands.confirm.success "Conferma riuscita"
+Commands.confirm.failure "Conferma non riuscita"
+Commands.obsolete "Errore del programma, opzione obsoleta"
+
+ListChecker.ismoderated " (l'acettazione dei messaggi alla lista e' controllata del Moderatore)"
+ListChecker.list.all "Questo server gestisce le seguenti liste:"
+ListChecker.list.subs "Sei iscritto/a alle seguenti liste:"
+ListChecker.list.count "Per un totale di %1 liste."
+ListChecker.listattr.restricted " [accesso ristretto]"
+ListChecker.listattr.moderated " [moderata]"
+ListChecker.RemAttach "[Gli attachments sono stati rimossi]"
+ListChecker.who.begin "Membri della lista '%a'"
+ListChecker.who.count "Per un totale di %1 membri."
+ListChecker.digest.Subject "Digest di %a"
+
+Archives.list.heading "Archivio dei files per la mailing list %a."
+Archives.list.count "Per un totale di %1 file(s)."
+
+#======================================================================
+# Sezione 3. Messaggi inseriti nell'header di una e-mail.
+# L'uso di qualsiasi carattere non-ASCII in un header richiede una speciale codifica
+# per dire quale set di caratteri MIME deve esere usata.
+#======================================================================
+
+Commands.reply.Subject "Risultati del server della lista (Listserver)"
+
+

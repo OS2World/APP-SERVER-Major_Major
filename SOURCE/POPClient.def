@@ -1,0 +1,53 @@
+DEFINITION MODULE POPClient;
+
+        (********************************************************)
+        (*                                                      *)
+        (*        Fetches inbound mail from a POP3 server       *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            7 August 2000                   *)
+        (*  Last edited:        26 July 2004                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM FileOps   IMPORT (* type *)  FilenameString;
+FROM Languages IMPORT (* type *)  LangHandle;
+FROM TransLog  IMPORT (* type *)  TransactionLogID;
+
+TYPE POP3User;         (* is private *)
+
+
+PROCEDURE SetServerAddress (hostname: ARRAY OF CHAR;  port: CARDINAL;
+                                            AdminLang: LangHandle);
+
+    (* The caller specifies which POP3 server and port to use, *)
+    (* also what language to use for log messages.             *)
+
+PROCEDURE RegisterPOP3User(): POP3User;
+
+    (* Creates a new user record. *)
+
+PROCEDURE SetPOP3LoginDetails (U: POP3User;
+                               LoginName, NewPassword: ARRAY OF CHAR);
+
+    (* Sets the POP3 username and password for the mail account. *)
+
+PROCEDURE DiscardPOP3User (VAR (*INOUT*) U: POP3User);
+
+    (* Deletes a user record. *)
+
+PROCEDURE FetchFirstMessage (U: POP3User;  VAR (*OUT*) filename: FilenameString;
+                             LogID: TransactionLogID);
+
+    (* Fetches one message from the server, creates a local file to     *)
+    (* hold it.  If there's no message, filename is set to the null     *)
+    (* string.                                                          *)
+
+PROCEDURE DeleteFirstMessage (U: POP3User;  LogID: TransactionLogID);
+
+    (* Tells the server to delete the message just fetched. *)
+
+END POPClient.
+

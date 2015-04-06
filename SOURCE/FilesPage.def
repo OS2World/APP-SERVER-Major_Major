@@ -1,0 +1,38 @@
+DEFINITION MODULE FilesPage;
+
+        (****************************************************************)
+        (*                                                              *)
+        (*                  Admin program for MajorMajor                *)
+        (*          Logging and archiving page of the notebook          *)
+        (*                                                              *)
+        (*    Started:        9 February 2009                           *)
+        (*    Last edited:    10 February 2009                          *)
+        (*    Status:         Just started                              *)
+        (*                                                              *)
+        (****************************************************************)
+
+
+IMPORT OS2, CommonSettings, Languages;
+
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+
+    (* Sets the INI file name and mode. *)
+
+PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
+
+    (* Creates the files page and adds it to the notebook. *)
+
+PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
+
+    (* Sets the font of the text on this page. *)
+
+PROCEDURE SetLanguage (lang: Languages.LangHandle);
+
+    (* Relabels this page in the new language. *)
+
+PROCEDURE StoreData (hwnd: OS2.HWND);
+
+    (* Stores the values on the files page back into the INI file.  *)
+
+END FilesPage.
+

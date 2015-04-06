@@ -1,0 +1,7 @@
+-----------
+Til unsubscribe sender Dem fra denne listen, det f›lgende
+budskapet til %A slutt
+
+     unsubscribe %L
+     end
+

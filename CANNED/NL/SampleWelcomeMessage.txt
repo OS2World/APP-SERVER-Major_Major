@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Welkom bij de lijst %L
+
+U bent nu abonnee van de lijst %L.
+Wij hopen u hiermee van dienst te zijn.
+

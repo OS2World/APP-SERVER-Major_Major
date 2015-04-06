@@ -1,0 +1,121 @@
+DEFINITION MODULE AddressLists;
+
+        (********************************************************)
+        (*                                                      *)
+        (*         Maintains lists of e-mail addresses          *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            5 August 2000                   *)
+        (*  Last edited:        29 June 2014                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM INIData IMPORT (*type*) HINI;
+
+CONST
+    NameLength = 256;
+    EmailAddressSize = 256;
+
+TYPE
+    AddressList;                               (* is private *)
+    ListNameType = ARRAY [0..NameLength-1] OF CHAR;
+    EmailAddress = ARRAY [0..EmailAddressSize-1] OF CHAR;
+    OptionType = (maywrite, mayread, digestmember);
+    OptionSet = SET OF OptionType;
+
+PROCEDURE NameMatch (A, B: ARRAY OF CHAR): BOOLEAN;
+
+    (* Checks for A = B, module alphabetic case. *)
+
+PROCEDURE CreateAddressList(): AddressList;
+
+    (* Creates a new empty list. *)
+
+PROCEDURE DiscardAddressList (VAR (*INOUT*) list: AddressList);
+
+    (* Disposes of an existing list. *)
+
+PROCEDURE EmptyList (list: AddressList): BOOLEAN;
+
+    (* Returns TRUE iff list has no entries. *)
+
+PROCEDURE AddRecipient (list: AddressList;
+                        VAR (*IN*) address: EmailAddress;  flags: OptionSet);
+
+    (* Adds a new e-mail address to the list. *)
+
+PROCEDURE RemoveRecipient (list: AddressList;
+                        VAR (*IN*) address: EmailAddress): BOOLEAN;
+
+    (* Removes an e-mail address from the list.  Returns TRUE iff  *)
+    (* this was a digest member of the list.                       *)
+
+PROCEDURE IsOnList (member: EmailAddress;  list: AddressList): BOOLEAN;
+
+    (* Returns TRUE iff member is already a member of the list. *)
+
+PROCEDURE MemberFlags (member: EmailAddress;  list: AddressList): OptionSet;
+
+    (* Returns the options applicable to this list member, or the empty *)
+    (* set if 'member' is not a list member.                            *)
+
+PROCEDURE GetDigestMembers (list: AddressList;
+                            VAR (*OUT*) result: AddressList): BOOLEAN;
+
+    (* The result is a copy of a subset of the list, being only the     *)
+    (* digest members of the list.  If there are no digest members,     *)
+    (* no result list is created and the function result is FALSE.      *)
+
+TYPE
+    BufferIndex = [0..65535];
+    BufferPointer = POINTER TO ARRAY BufferIndex OF CHAR;
+
+PROCEDURE EncodeList (list: AddressList;  VAR (*OUT*) bufptr: BufferPointer;
+                                          VAR (*OUT*) BufferSize: CARDINAL);
+
+    (* Puts the list into a buffer in a form suitable for writing   *)
+    (* back to the INI file.                                        *)
+
+PROCEDURE FirstOnList (list: AddressList;  option: CARDINAL;
+                       VAR (*IN*) address: EmailAddress): BOOLEAN;
+
+    (* Sets address to the first entry on the list, returns FALSE if    *)
+    (* there is no such entry.  The options are:                        *)
+    (*      0   unconditional check                                     *)
+    (*      1   'mayread' members only                                  *)
+
+PROCEDURE NextOnList (list: AddressList;  option: CARDINAL;
+                      VAR (*IN*) address: EmailAddress): BOOLEAN;
+
+    (* Sets address to the next entry on the list, returns FALSE if     *)
+    (* there is no such entry.  Same options as for FirstOnList.        *)
+
+PROCEDURE SetBatchLimit (limit: CARDINAL);
+
+    (* Sets the limit on the number of list members that can be         *)
+    (* selected to be sent mail at the same time.  According to the     *)
+    (* mail RFCs this should be no more than 100.                       *)
+
+PROCEDURE FirstGroup (option: CARDINAL;  list: AddressList;
+                            VAR (*OUT*) groupsize: CARDINAL): AddressList;
+PROCEDURE NextGroup (option: CARDINAL;  list: AddressList;
+                            VAR (*OUT*) groupsize: CARDINAL): AddressList;
+
+    (* Returns a copy of a subset of the list, so that we can in effect *)
+    (* split up the list so as to avoid sending to too many addresses   *)
+    (* at the same time.  Note that these procedures produce extra      *)
+    (* lists; the caller must later call DiscardAddressList.            *)
+    (* For the options, see procedure FirstOnList.                      *)
+    (* The groupsize parameter returns the size of the result list.     *)
+
+PROCEDURE MergeAndResave (hini: HINI;  ListName:ListNameType;
+                          VAR (*INOUT*) list1, list2: AddressList);
+
+    (* Combines two lists, so that list1 ends up holding the original   *)
+    (* contents of both lists, and list2 ends up empty. Duplicate       *)
+    (* entries are removed.  The combined list is then written back     *)
+    (* as the "Members" entry of the INI file.                          *)
+
+END AddressLists.

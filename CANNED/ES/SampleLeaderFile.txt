@@ -1,0 +1,4 @@
+   Para contestar directamente al emisor, el correo a %S usuarios
+   AOL hacen clic <a href="mailto:%S">aqu¡</a>
+   Usuarios de Yahoo: pregunta a su madre para c¢mo mandar un correo electr¢nico
+

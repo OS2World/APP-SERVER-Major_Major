@@ -1,0 +1,24 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+This is a confirmation request for a subscription or
+unsubscription of %S to the mailing list %L
+on this server. You, or someone acting on your behalf,
+has sent a request to subscribe you to, or unsubscribe
+you from, the mailing list %L. As a guard against
+malicious requests, this request will be ignored unless
+you confirm it within %H hours. The random code in the
+Subject: line of this message is designed to block fake
+confirmations from people pretending to be you.
+
+If this is a genuine request, you should reply to this
+message, keeping the same Subject line. The body of
+the reply will be ignored, but the Subject line must
+remain unchanged.
+
+If you do NOT want the request to be accepted, you may
+ignore this message.
+

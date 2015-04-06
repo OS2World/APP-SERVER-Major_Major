@@ -1,0 +1,87 @@
+Major Major - a mailing list manager for OS/2
+=============================================
+
+This program is distributed as open-source freeware.
+
+   Author:  Peter Moylan
+   E-mail:  peter@pmoylan.org
+   Web:     http://www.pmoylan.org
+
+
+PREREQUISITES
+
+To make this work, you need the ability to create e-mail accounts.
+One way to do this is to request your ISP to create the extra
+accounts for you, because the mail server doesn't have to be on
+the same machine as Major Major.  Another way to do it is to
+become your own postmaster, by installing a mail server (e.g. Weasel)
+on your own computer.
+
+You can get Weasel from the same place as you got this program.
+If you don't like Weasel, you can find other SMTP and POP3
+servers by looking in the usual OS/2 archive sites, for
+example <http://hobbes.nmsu.edu/>.
+
+
+INSTALLATION
+
+Create a suitable directory, e.g. D:\Apps\Major.  Unzip the zip
+file into that directory.  (If you are upgrading from an earlier
+version, unzip into the same directory as you used for that
+earlier version, so that you can continue to use your existing
+configuration data.)  Now you are ready to go.
+
+The script makefolder.cmd is optional.  If you run it, it will
+create a folder on the desktop containing appropriate program
+objects.  The desktop folder is a convenience, but is not
+essential.
+
+There are two executables.  Admin.EXE is the configuration program,
+and you should run this first.  (And you should run it again any
+time you want to create a new mailing list, delete a mailing list,
+etc.)
+
+Note that Admin.EXE does NOT create e-mail accounts.  You have to
+do this in your mail server software.  You need at least two
+mail accounts: one for Major Major itself -- this is the e-mail
+address that receives things like "subscribe" requests -- and
+then one for each mailing list you create.  To run N mailing
+lists you need N+1 e-mail accounts.
+
+Major.EXE is the program that checks for mail, sends out mail to
+people on the mailing lists, etc.  You should leave this
+running all the time.  If you need to terminate it, type Ctrl/C.
+Alternatively, you may terminate it by running the Rexx script
+Shutmajor.cmd that you will find in the 'tools' subdirectory.
+This automated shutdown method will be useful if you use a
+technique (such as that found in xWorkplace) that cleanly closes
+running applications during shutdown of the operating system.
+
+The 'tools' directory can be ignored by most people.  Most of
+the tools are Rexx scripts to do things that would normally be
+done by running the Admin.exe program.  They are useful if you
+want to automate some operations.  (For example, controlling
+Major Major from a web interface.)
+
+The 'Canned' directory contains some sample messages.  If you
+edit these, I suggest you give your versions different file names,
+or put them in a different directory, so that your customised
+files will not be overwritten when you upgrade to a future new
+version of Major Major.
+
+
+JOIN THE MAJOR MAJOR MAILING LIST
+
+To give me feedback about what you like and dislike about this
+program, and to have discussions with other users, send an
+e-mail to
+
+        majormajor@os2voice.org
+
+The body of this e-mail message should contain the single line:
+
+        subscribe majormajor-list
+
+You should get an e-mail back saying that your subscription
+was successful.
+

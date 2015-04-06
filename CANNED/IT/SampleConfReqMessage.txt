@@ -1,0 +1,26 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+Questa e' una richiesta di conferma per l'iscrizione o la
+cancellazione dell'iscrizione di %S alla mailing list  %L su
+questo server. Tu, o qualcuno per tuo conto, ha inviato
+una richiesta di iscriverti o di cancellarti dalla mailing
+list  %L. Come precauzione nei confronti di possibili
+richieste fittizie, tale richiesta sara' ignorata se non
+la confermerai nelle prossime %H ore. Il numero casuale
+nella linea del Subject: di questo messaggio e' creato in
+modo da bloccare false conferme da parte di qualcuno che
+cercasse di iscriverti o cancellarti a tua insaputa.
+
+Se la richiesta era autentica, rispondi a questo messaggio
+mantenendo la linea di Subject invariata. Il corpo del messaggio
+di risposta sara' ignorato, ma il Subject non dovra' essere modificato.
+
+Se invece NON vuoi che la richiesta venga accettata, semplicemente
+ignora questo messaggio.
+
+
+

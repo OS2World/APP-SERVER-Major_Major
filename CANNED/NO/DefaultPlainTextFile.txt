@@ -1,0 +1,13 @@
+Kommandoer til denne postende listeprosessor sendt som
+ren tekst. Dette programet gj›r dets best finne tekstdelen
+av Deres budskap, hvis noe, men om det vender ut at
+kommandoene setter ned i innenfor et HTML
+vevsidedokument, de bearbeidet ikke skikkelig.
+
+Mange folk forst†r ikke at hva de sender er ikke ren
+tekst, fordi de bruker postprogramvare som kommer
+preconfigured bruke et mindre ›nskelig format. L›sninger
+til dette problemet, for noe av det mere popul‘re
+postprogramer, forklarer p† vevsiden
+         http://pyropus.ca/personal/writings/nomime.html
+

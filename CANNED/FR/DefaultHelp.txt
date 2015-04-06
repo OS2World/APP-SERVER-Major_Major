@@ -1,0 +1,125 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To read this message in English, use the command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Ceci est le logiciel de gestion de listes de distribution
+Major Major. Vous pouvez vous inscrire ou vous désinscrire
+au moyen d'un courriel adressé à l'adresse qui vous a envoyé
+ce message. Le logiciel reconnaît les commandes suivantes.
+(Note : certaines commandes peuvent avoir été rendues
+inutilisables par le propriétaire de la liste.)  Il est possible
+d'envoyer plusieurs commandes dans un seul courriel.
+
+lang nom
+
+   Le "nom" dans cette commande est le code défini pour une langue
+   en particulier, par exemple 'en' pour l'anglais, 'fr' pour
+   le français. Si l'administrateur du serveur de liste a activé
+   l'aide pour cette langue, celle-ci sera utilisée pour
+   répondre aux commandes consécutives.
+
+subscribe listname
+subscribe listname <options>
+
+   Pour s'inscrire à la liste appelée « listname ». Si cette
+   liste existe sur ce serveur, et que les inscriptions y sont
+   permises, cette commande abonnera votre adresse à la liste.
+
+   Les options disponibles sont les suivantes :
+     readonly : vous pouvez lire la liste mais non
+               y contribuer ;
+     writeonly : vous pouvez contribuer à la liste, mais vous
+               n'en recevrez pas les messages ;
+     digest :  au lieu de recevoir les messages de la liste
+               dès qu'ils arrivent, vous recevrez un envoi
+               moins fréquent qui contiendra tous les messages
+               qui seront arrivés depuis le dernier envoi.
+               La fréquence est définie par le propriétaire de liste.
+               Notez que l'option « digest » ne fonctionnera que si
+               l'administrateur de la liste a activé l'archivage
+               des messages de cette liste.
+
+   Exemple : subscribe exemple-liste readonly
+
+   La seule combinaison possible de différentes options est
+  'readonly digest'.
+
+   Note 1: Seul un propriétaire de liste peut demander
+           l'option 'writeonly'.
+
+   Note 2: Si vous voulez changer d'options, par exemple
+           passer d'un abonné 'normal' en un abonné 'digest',
+           vous devrez d'abord vous désinscrire et puis vous
+           réinscrire avec la nouvelle option.
+
+unsubscribe listname
+
+    Pour se désinscrire de la liste « listname ».
+
+subscribe listname emailaddress
+subscribe listname <options> emailaddress
+
+   Cette commande vous permet de vous abonner à une liste lorsque
+   l'adresse d'inscription est différente de l'adresse utilisée
+   pour envoyer cette commande. Note : en abonnant d'autres
+   personnes à une liste sans leur permission, vous vous exposez
+   à vous voir refuser l'accès de ce serveur. En général cette
+   commande n'est admise que de la part du propriétaire de la liste.
+
+   Les options sont les mêmes que celles de 'subscribe' en
+   forme courte.
+
+unsubscribe listname emailaddress
+
+    A utiliser pour vous désinscrire de la liste « listname »
+    si l'adresse utilisée pour envoyer cette commande est
+    différente de l'adresse d'inscription à la liste.
+
+lists
+
+   Cette commande vous donne le nom des listes disponsibles
+   sur ce serveur.
+
+index listname
+
+   Cette commande vous donne une liste des documents contenus
+   dans l'archive de cette liste. Note : certaines listes n'ont
+   pas d'archives constituées.
+
+get listname nom
+
+   Cette commande vous donne une copie du document appelé
+   'nom' dans les archives de la liste 'listname'.
+
+which
+
+   Cette commande énumère les listes auxquelles vous êtes
+   inscrit.
+
+who listname
+
+   Cette commande vous donnera une liste des abonnés à la
+   liste 'listname'.
+
+help
+
+   Cette commande vous enverra le message que vous lisez maintenant.
+
+end
+
+   Par cette commande, vous indiquez qu'il n'y a plus d'autres
+   commandes qui suivent. Vous pouvez aussi terminer votre liste
+   de commandes par une ligne commençant par le caractère '-'.
+
+Pour de plus amples informations concernant Major Major,
+consultez
+    <http://www.pmoylan.org/pages/os2/major.html>.

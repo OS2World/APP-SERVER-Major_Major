@@ -1,0 +1,24 @@
+DEFINITION MODULE OneLine;
+
+        (************************************************************)
+        (*                                                          *)
+        (*               Admin program for MajorMajor               *)
+        (*            Dialogue to edit a one-line string            *)
+        (*                                                          *)
+        (*    Started:        18 June 2000                          *)
+        (*    Last edited:    5 April 2010                          *)
+        (*    Status:         Working                               *)
+        (*                                                          *)
+        (************************************************************)
+
+
+FROM OS2 IMPORT HWND;
+
+PROCEDURE Edit (owner: HWND;  title: ARRAY OF CHAR;
+                 VAR (*INOUT*) item: ARRAY OF CHAR;
+                       UseTNI: BOOLEAN);
+
+    (* Edits the one-line string "item". *)
+
+END OneLine.
+

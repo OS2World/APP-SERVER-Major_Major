@@ -1,0 +1,114 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To read this message in English, use the command
+        lang en
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Jen la Major Majro posxtlista procezilo.  Vi povas aligxi aux malaligxi
+posxtlistojn per sendi ordonojn al cxi tiu retadreso.  La jenaj
+ordonoj estas eblaj.  Rimarku ke kelkaj el ili eble estis malebligitaj
+per la listposedanto.  Vi rajtas sendi kelkajn ordonojn en la sama
+mesagxo.
+
+lang nomo
+
+    La 'nomo' en cxi tiu ordono devas esti la kodo por iu lingvo,
+    ekz. en por la angla, fr por la franca, eo por Esperanto. Se la
+    administranto de la listservilo ebligis tiun lingvon, la lingvo
+    estos uzata por respondoj al la aliaj ordonoj kiujn vi donas
+    post cxi tiu.
+
+subscribe listnomo
+subscribe listnomo <alternativoj>
+
+    Jen kiel vi abonas al listo. Se posxtlisto kun la nomo 'listnomo'
+    ekzistas cxi tie, kaj abonoj al gxi estas ebligitaj, cxi tiu ordono
+    aldonos vian retadreson al la listo.
+    La eblaj alternativoj estas
+        readonly   vi povas legi la liston sed ne sendi al  gxi;
+        writeonly  vi povas skribi al la listo, sed vi ne ricevas la
+                     mesagxojn;
+        digest     anstataux ol ricevi listmesagxojn dum ili venas,
+                     vi ricevas malpli ofta posxtado de mesagxoj por
+                     la antauxnelonga estinteco. La ofteco estas
+                     kontrolata de la listposedanto. Rimarku ke cxi
+                     tio nur funkcios se la listposedanto ebligis
+                     arhxivadon de mesagxoj por cxi tiu listo.
+
+    Ekzemple:     subscribe ekzemplo-listo readonly
+
+    La nura kombinado de alternativoj kiu funkcias estas
+    'readonly digest'. Rimarku ke sensignifa kombino, ekz.
+    'readonly writeonly', povus signifi ke vi estas listmembro
+    kiu neniam ricevas mesagxojn.
+
+    Noto 1: Nur listposedanto rajtas havi la 'writeonly' alternativon.
+
+    Noto 2: Se vi volas sxangxi la alternativojn, ekz. sxangxi de
+       'normala' abonanto al 'digest' abonanto, vi devas unue
+       malaboni kaj poste reaboni kun la nova alternativo.
+
+unsubscribe listnomo
+
+    Jen kiel vi forprenas vin de posxtlisto.
+
+subscribe listnomo retposxtadreso
+subscribe listnomo <alternativoj> retposxtadreso
+
+    Jen kiel vi abonigas iun alian al listo, aux abonas mem kun
+    alia retposxtadreso.  Rimarku: abonigi aliajn homojn senpermese
+    povus rezulti en via malpermesado de la servilo.  Normale cxi
+    tiu ordono estas nur ebligita por la listposedanto.
+
+    La alternativoj estas samaj kiel en la mallonga subscribe.
+
+unsubscribe listnomo retposxtadreso
+
+    Jen kiel vi forprenas vin de listo kiam via retposxtadreso en
+    la listo ne estas sama kiel la adreso de kiu vi sendas cxi tiun
+    ordonon.
+
+lists
+
+    Cxi tio diras al vi la nomojn de la listoj je cxi tiu servilo.
+
+index listnomo
+
+    Donas la nomojn de la dosieroj en la dosieraro por cxi tiu
+    listo.
+    Rimarku ke ne cxiu listo havas dosieraron.
+
+get listnomo dosiernomo
+
+    Resendas kopion de la tekstdosieron 'dosiernomo' de la
+    dosieraro por cxi tiu listo.
+
+which
+
+    Cxi tio donas al vi la liston de posxtlistoj al kiuj vi jam abonas.
+
+who listnomo
+
+    Cxi tio donos liston de abonantoj al listo.
+
+help
+
+    Cxi tiu ordono donos al vi kopion de la mesagxo kiun vi nun
+    legas.
+
+end
+
+    Cxi tio precizigas ke ne plu sekvas ordonoj. Alternative, vi povas
+    finigi vian liston de ordonoj kun linio komencanta kun la '-'
+    karaktero.
+
+Por lerni pli pri Major Major, vizitu
+          http://www.pmoylan.org/pages/os2/major.html
+

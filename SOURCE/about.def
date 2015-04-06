@@ -1,0 +1,30 @@
+DEFINITION MODULE About;
+
+        (****************************************************************)
+        (*                                                              *)
+        (*                Admin program for MajorMajor                  *)
+        (*                     The 'about' dialogue                     *)
+        (*                                                              *)
+        (*    Started:        21 June 2000                              *)
+        (*    Last edited:    1 January 2004                            *)
+        (*    Status:         OK                                        *)
+        (*                                                              *)
+        (****************************************************************)
+
+
+IMPORT OS2, CommonSettings, Languages;
+
+PROCEDURE Create (owner: OS2.HWND);
+
+    (* Creates the dialogue box. *)
+
+PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
+
+    (* Sets the font of the text on this page. *)
+
+PROCEDURE SetLanguage (lang: Languages.LangHandle);
+
+    (* Relabels this page in the new language. *)
+
+END About.
+

@@ -1,0 +1,13 @@
+Les ordres à ce gestionnaire de listes de distribution doivent
+être envoyés sous forme de texte simple. Ce logiciel fera
+ce qu'il peut pour trouver la partie textuelle de votre message,
+mais si vos ordres sont inclus dans un document HTML
+il sera probablement impossible de les identifier.
+
+Beaucoup de gens ne se rendent pas compte que leur courriel
+n'est pas sous forme de texte simple, parce qu'ils utilisent
+des logiciels de courrier dont la préconfiguration produit un
+format moins désirable.  Les solutions à ce problème, pour
+plusieurs des logiciels les plus populaires, sont expliquées sur
+           http://pyropus.ca/personal/writings/nomime.html
+

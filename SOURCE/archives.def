@@ -1,0 +1,83 @@
+DEFINITION MODULE Archives;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*         Module to deal with the archive files        *)
+        (*               for the mailing lists                  *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            12 January 2000                 *)
+        (*  Last edited:        10 February 2009                *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+FROM FileOps IMPORT
+    (* type *)  ChanId, FilenameString;
+
+FROM AddressLists IMPORT
+    (* type *)  ListNameType;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+FROM Semaphores IMPORT
+    (* type *)  Semaphore;
+
+
+
+TYPE
+    Archive;      (* is private *)
+    TimeType = (days, months);
+
+
+PROCEDURE SetLoggingLanguage (lang: LangHandle);
+
+    (* Sets the language to be used for the transaction log. *)
+
+PROCEDURE SetArchiveRoot (root: ARRAY OF CHAR);
+
+    (* Sets the root of the archive directory tree. *)
+
+PROCEDURE FileListing (lang: LangHandle;  cid: ChanId;
+                                          ListName: ListNameType);
+
+    (* Returns a directory listing of the directory holding the *)
+    (* archives for this list.                                  *)
+
+PROCEDURE AppendFromArchive (dstcid: ChanId;
+                       VAR (*IN*) listname, file: ARRAY OF CHAR): BOOLEAN;
+
+    (* Appends the contents of the named file to dstcid (an output file *)
+    (* that is already open).  Returns FALSE if the file is not         *)
+    (* available.                                                       *)
+
+PROCEDURE RegisterArchive (listname: ARRAY OF CHAR;
+                           lang: LangHandle;
+                           TimeBetweenUpdates: CARDINAL;
+                           TimeUnit: TimeType;
+                           DigestSignal: Semaphore;
+                           LogID: TransactionLogID): Archive;
+
+    (* Creates the archive belonging to this list, and returns its handle. *)
+
+PROCEDURE DeregisterArchive (VAR (*INOUT*) A: Archive);
+
+    (* Stops archiving for this archive.  The files that have already   *)
+    (* been created are retained, but the caller will not longer be     *)
+    (* able to call AddToArchive.                                       *)
+
+PROCEDURE AddToArchive (A: Archive;  filename: FilenameString);
+
+    (* Adds the given file to the archive. *)
+
+PROCEDURE AppendDigest (A: Archive;  target: FilenameString);
+
+    (* Appends the contents of the current digest to target.    *)
+
+END Archives.
+

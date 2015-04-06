@@ -1,0 +1,148 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To read this message in English, use the command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+
+Dit is de Major Major maillijst manager. U kunt zich aanmelden of
+afmelden voor de maillijsten door een opdracht te sturen naar dit
+e-mailadres. De navolgende opdrachten zijn in het algemeen geldig,
+maar sommige kunnen gedeactiveerd zijn door de lijstbeheerder.
+U kunt meerdere opdrachten in een bericht plaatsen, ieder bericht
+op een aparte regel.
+
+Hieronder volgt een uitleg van de opdrachten.
+
+lang taalcode
+
+    De optie 'taalcode' in deze opdracht is de code voor de taal van
+    de berichten die aan u gestuurd worden.
+    Bijvoorbeeld, en is Engels, nl is Nederlands, fr is Frans.
+    Antwoorden van de maillijstserver op de navolgende opdrachten
+    worden in de door u gekozen taal weergegeven.
+
+
+subscribe lijstnaam
+
+    Zo kunt u uw e-mailadres aan de lijst met 'lijstnaam' toevoegen.
+
+
+subscribe lijstnaam <opties>
+
+    Zo meldt u zich aan voor een lijst. Als een maillijst met de
+    naam 'lijstnaam' bestaat en de aanmelding hiervoor is mogelijk
+    dan zal deze opdracht uw e-mailadres toevoegen aan de lijst.
+    De opties die u nog kunt gebruiken zijn:
+        readonly    u kunt wel berichten ontvangen van de lijst,
+                    maar er geen berichten naar toe sturen.
+        writeonly   u kunt wel berichten aan de lijst toesturen,
+                    maar u ontvangt geen berichten.
+        digest      in plaats van berichten te ontvangen zodra ze
+                    geplaatst worden, ontvangt u de berichten per
+                    tijdsperiode, bijvoorbeeld een keer per dag of
+                    per week, afhankelijk van de instelling die
+                    door de lijstbeheerder is gekozen.
+                    Dit werkt natuurlijk alleen maar indien er voor
+                    een digest is gekozen door de beheerder.
+
+    Voorbeeld: subscribe voorbeeldlijst readonly
+
+    De enige combinatie van meerdere opties die logisch is, is
+    'readonly digest'. Nutteloze opties, zoals 'readonly writeonly'
+    betekent dat u een abonnee bent die nooit berichten zal
+    ontvangen.
+
+    Noot 1: Alleen de lijstbeheerder kan de 'writeonly' optie
+            gebruiken.
+
+    Noot 2: Als u een andere optie wilt gebruiken, bijvoorbeeld
+            i.p.v. een 'normale' abonnee naar een 'digest' abonnee,
+            dan dient u zich eerst af te melden en dan weer aan te
+                    melden met de nieuwe optie.
+
+
+subscribe lijstnaam e-mailadres
+subscribe lijstnaam <opties> e-mailadres
+
+    Zo kunt iemand anders aanmelden voor een lijst, of uzelf met
+    een ander e-mailadres voor een lijst aanmelden.
+    Let op: iemand anders aanmelden zonder diens toestemming kan
+            leiden tot uitsluiting van u van de lijsten. Normaal
+            gesproken zal deze opdracht alleen voor de beheerder
+            beschikbaar zijn.
+
+    De opties zijn hetzelfde als bij de korte notatie vorm.
+
+
+unsubscribe lijstnaam
+
+    Zo kunt u uw e-mailadres van de lijst met 'lijstnaam' verwijderen.
+
+
+unsubscribe lijstnaam e-mailadres
+
+    Zo kunt u zich afmelden van een lijst indien uw e-mailadres
+    van de lijst een andere is dan het e-mailadres waarmee u de
+    opdracht verstuurd.
+
+
+lists
+
+    Dit geeft u een overzicht van de beschikbare lijsten op
+    de maillijstserver.
+
+
+index lijstnaam
+
+    Geeft een overzicht van de bestanden die (eventueel)
+    beschikbaar zijn voor deze lijst.
+    Noot: Niet iedere lijst heeft een map met bestanden.
+
+
+get lijstnaam bestandsnaam
+
+    Geeft een kopie van het tekstbestand 'bestandsnaam' van de
+    map met bestanden van de lijst 'lijstnaam'.
+
+
+which
+
+    Deze opdracht geeft u een overzicht van de lijsten waarop
+    u bent geabonneerd.
+
+
+who lijstnaam
+
+    Hiermee krijgt u een overzicht van de abonnees van de lijst
+    'lijstnaam'. Deze optie is niet altijd beschikbaar uit
+    privacy-overwegingen.
+
+
+help
+
+    Deze opdracht geeft u het tekstbestand met hulpinformatie
+    dat u nu leest.
+
+
+end
+
+    Deze opdracht geeft aan dat er niet meer opdrachten komen
+    om uit te voeren. Het is verstandig hiermee te eindigen,
+    om te voorkomen dat een eventuele voetnoot of afzender-
+    informatie in uw e-mail als opdracht wordt gelezen.
+    Als alternatief kunt u uw opdrachtenreeks ook afsluiten
+    met een regel die begint met het '-' karakter.
+
+
+Wilt meer weten over Major Major, ga naar
+    http://www.pmoylan.org/pages/os2/major.html
+
+
+[MajorMajor V1.566]

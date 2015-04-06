@@ -1,0 +1,120 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+To read this message in English, use the command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Dette er Major Major mailing list processoren.
+Du kan til- og afmelde dig fra postlisterne ved at sende
+kommandoerne til denne email adresse.
+Bemærk at nogle af kommandoerne kan godt været slået fra af
+ejeren af den enkelte liste. Der må gerne sendes flere
+kommandoer i en besked.
+
+Følgende kommandoer kan bruges:
+
+lang sprogkode
+
+    'Sprogkode' er en forkortelse for det sprog, som du ønsker
+    at få svar i. Du kan vælge mellem bl.a følgende koder:
+    dk for dansk
+    en for engelsk
+    fr for fransk
+    de for tysk
+    eo for esperanto
+    Husk at angive denne komando som den første i din besked
+
+subscribe listenavn
+subscribe listenavn <option>
+
+    Denne kommando bruges til at tilmelde dig til en postliste.
+    Hvis der existerer en liste med det 'listenavn' du angiver,
+    og der er åbent for tilmeldinger til listen, så bliver din
+    emailadresse tilføjet til listen.
+    Mulige options er
+        readonly   du kan læse, men ikke skrive til listen.
+        writeonly  du kan skrive til listen, men modtager ingen
+                    beskedder.
+        digest     I stedet for at modtage hver enkelt besked hver
+                    for sig, kan du vælge at modtage en samlet
+                    besked for et givent interval. Intervallet
+                    bestemmes af listens ejer, og forudsætter at
+                    han har slået funktionen til.
+
+    Exempel:     subscribe example-list readonly
+
+    Den eneste kombination der er mulig af disse options er
+    'readonly digest'.
+
+    Note 1: Kun listens ejer må bruge 'writeonly'.
+
+    Note 2: Hvis du ønsker at skifte option fra at være 'normal'
+            og til at modtage 'digest', må du først afmelde dig
+            listen, og derefter tilmelde dig med den nye option.
+
+unsubscribe listenavn
+
+    Med denne komando afmelder du dig fra 'listenavn'.
+
+subscribe listenavn emailadresse
+subscribe listenavn <options> emailadresse
+
+    Dette er måden at tilmelde andre personer på, eller dig
+    selv med en anden emailadresse, end den du skriver fra.
+    Bemærk: Tilmeld aldrig andre personer, men mindre du har deres
+    tilladelse til at gøre det. Overtrædelse af dette medfører
+    banlysning fra denne server.
+    Ofte er det kun listens ejer, der kan bruge denne komando.
+
+unsubscribe listenavn emailadresse
+
+    Dette er måden er afmelde sig en liste på, hvis man skriver
+    fra en anden emailadresse end den man er tilmeldt med.
+
+lists
+
+    Denne kommando sender dig en liste over alle postlister på
+    denne server.
+
+index listenavn
+
+    Sender dig en liste over alle de filer, som er til
+    rådighed for denne liste.
+    Bemærk at ikke alle lister har nogen filer til rådighed.
+
+get listenavn filnavn
+
+    Sender filen 'filnavn' til dig.
+
+which
+
+    Fortæller dig hvilke postlister du allerede er tilmeldt.
+
+who listenavn
+
+    Sender dig en liste med alle der er tilmeldt listen.
+    Denne funktion kan være slået fra af listens ejer.
+
+help
+
+    Sender dig denne tekst, som du nu sidder og læser :-)
+
+end
+
+    Angiver at der ikke kommer flere kommandoer til serveren.
+    Denne kommando bruges for at undgå at server prøver at
+    fortolke en fx automatisk indsæt signatur i din besked.
+    En linje der starter med '-' fortolkes ligesom 'end'.
+
+Hvis du er interesseret i at vide mere og Major Major,
+så kig på siden:
+
+          http://www.pmoylan.org/pages/os2/major.html
+

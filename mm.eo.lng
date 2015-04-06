@@ -1,0 +1,102 @@
+# Esperantlingvaj mesagxoj por Major Major
+
+#======================================================================
+# Sekcio 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Ctrl/C por fermigi"
+Major.started "MajorMajor komencita"
+Major.finishing "MajorMajor fermigxas"
+Major.checkingnew "Signalo al 'nova posxto' kontrolilo"
+
+ListAdmin.requestfrom "Administra peto de %a"
+
+ListChecker.log.subscribed "%a abonis"
+ListChecker.log.rejected "%a malakceptita"
+ListChecker.log.unsubscribed "%a malabonita"
+ListChecker.logmail.rejected "Malakceptis posxton de %a"
+ListChecker.logmail.ignored "Ignoris posxton de %a"
+ListChecker.logmail.sent "Mesagxo de %a sendita al %1 ricevontoj"
+ListChecker.logmail.senttomoderators "Mesagxo de %a sendita al %1 moderigantoj"
+ListChecker.logmail.failcount " (%1 malsukcesoj)"
+ListChecker.processing.one "Procezas unu eron"
+ListChecker.rejectedbyfilter "Ero malakceptita per la filtrilo"
+ListChecker.removing "Forprenas liston %a"
+ListChecker.checkingnew "Kontrolas por nova posxto"
+ListChecker.addinglist "Aldonas liston %a"
+ListChecker.refreshinglist "Refresxigas liston %a"
+
+Archives.log.created "Kreis arhxiv-dosieron %a"
+Archives.log.createfail "Malsukcesis kreii arhxivan dosieron
+Ne povis doni al %a la nomon %b"
+
+POPClient.NoAddress "POPserva adreso estas neprecizigita."
+POPClient.NoConnection "Malsukcesis ekhavi konekton"
+POPClient.NoOKreply "Ne akcepta respondo post ekkonekto"
+POPClient.BadPassword "PASS-ordono malsukcesis"
+POPClient.UserRejected "USER-ordono malsukcesis"
+
+SMTPOut.CantConnect "Ne povis konekti al SMTP posxtejo"
+SMTPOut.CantLogin "SMTP enregistro malsukcesis"
+SMTPOut.CommandRejected "%a ordono estis malakceptita"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Eraro: neniuj validaj ordonoj estas ricevitaj"
+Commands.reply.NotPlainText "ERARO: Vi jam sendis %a -specan mesagxon."
+Commands.reply.NoCommand "Malpermesenda ordono %a"
+Commands.reply.End "Fino de procezado"
+Commands.nosuchlist "Listo %a ne ekzistas"
+Commands.nosuchfile "Ni pardonpetas, tiu dosiero ne ekzistas"
+Commands.notamember "Vi ne membras al cxi tiu listo"
+Commands.nohelpfile "Ni pardonpetas, helpo estas nuntempe nehavebla"
+Commands.ListNameNeeded "Vi devas skribi la nomon de iu listo"
+Commands.alreadysubscribed "%a jam abonis al la listo '%b'"
+Commands.ImpossibleCombination "Abonado malsukcesis. Ne-ebla kombinado de difinaj alternativoj."
+Commands.subscribe.nowriteonly "Abonado malsukcesis. Nur list-posedanto rajtas permesi la nurskriban alternativon."
+
+Commands.subscribe.ConfMailed "Peto por konfirmado estas retsendita.
+La abono estos akceptita se la uzanto konfirmas cxi tiun abonon."
+
+Commands.configerror "Ni pardonpetas, cxi tiu ordono malsukcesis pro list-difina eraro."
+Commands.subscribe.success "%a nun jam abonis al la listo '%b'"
+Commands.subscribe.restricted "La abono malsukcesis. Nur listposedanto rajtas abonigi aliajn homojn."
+Commands.unsubscribe.notamember "%a ne membras al la listo '%b'"
+
+Commands.unsubscribe.ConfMailed "Peto por konfirmado estas retsendita.
+La malabono nur okazos se la uzisto konfirmas cxi tiun ordonon."
+
+Commands.unsubscribe.success "Sukcesa nuligo de la abono."
+Commands.unsubscribe.failure "La malabono malsukcesis"
+Commands.who.unavailable "La 'who' (kiu) ordono ne funkcias por la listo %a"
+Commands.confirm.success "Sukcesa konfirmo"
+Commands.confirm.failure "Konfirmo malsukcesis"
+Commands.obsolete "Programa eraro, nepluuzebla alternativo"
+
+ListChecker.ismoderated " (Posxtado estas Redaktata)"
+ListChecker.list.all "Cxi tiu servilo administras la jenajn listojn:"
+ListChecker.list.subs "Vi nun estas abonita al la jenaj listoj:"
+ListChecker.list.count "%1 listoj entute."
+ListChecker.listattr.restricted " [limigata]"
+ListChecker.listattr.moderated " [redaktata]"
+ListChecker.RemAttach "[aldonoj estas forprenitaj]"
+ListChecker.who.begin "Membroj de la listo '%a'"
+ListChecker.who.count "%1 membroj entute."
+ListChecker.digest.Subject "Resumo de %a"
+
+Archives.list.heading "Dosieraro por la %a posxtlisto."
+Archives.list.count "%1 dosiero(j) entute."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "Listservilo-rezultoj"
+

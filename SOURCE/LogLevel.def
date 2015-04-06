@@ -1,0 +1,20 @@
+DEFINITION MODULE LogLevel;
+
+        (********************************************************)
+        (*                                                      *)
+        (*             Definition of LogLevelType               *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            6 May 2012                      *)
+        (*  Last edited:        6 May 2012                      *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+
+TYPE
+     LogLevelType = (lognone, logsummary, logdetailed, logdebug);
+
+END LogLevel.
+

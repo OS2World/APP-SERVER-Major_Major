@@ -1,0 +1,7 @@
+-----------
+Zum Abbestellen dieser Liste senden Sie folgende Nachricht an
+%A
+ 
+     unsubscribe %L
+     end
+ 

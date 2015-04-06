@@ -1,0 +1,4 @@
+   Por respondi rekte al la sendinto, posxtu al %S
+   AOL uzantoj klaku <a href="mailto:%S">cxi tie</a>
+   Jahu uzantoj: demandu al via patrino kiel retumi
+

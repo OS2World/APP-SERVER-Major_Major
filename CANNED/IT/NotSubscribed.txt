@@ -1,0 +1,8 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Unable to deliver your message
+
+Non e' stato possibile inviare il tuo messaggio a %L, perche' l'indirizzo da cui e' stato inviato non risulta iscritto a quella mailing list.
+

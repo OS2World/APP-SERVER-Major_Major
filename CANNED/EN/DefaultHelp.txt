@@ -1,0 +1,116 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+This is the Major Major mailing list processor.  You can join or
+leave mailing lists by sending commands to this e-mail address.
+The following commands are recognised.  Note that some of them
+might have been disabled by the list owner.  It is legal to send
+several commands in the same message.
+
+lang name
+
+    The 'name' in this command should be the code for a language,
+    e.g. en for English, fr for French.  If the manager of the
+    listserver has enabled support for that language, the
+    language will be used for replies to the other commands you
+    give following this one.
+
+subscribe listname
+subscribe listname <options>
+
+    This is how you subscribe to a list.  If a mailing list
+    called 'listname' exists here, and subscriptions to it are
+    enabled, this command will add your e-mail address to the list.
+    The available options are
+        readonly   you can read the list but not post to it;
+        writeonly  you can post to the list, but you don't
+                     receive the messages;
+        digest     instead of receiving list messages as they
+                     arrive, you receive a less frequent mailing
+                     of messages for the recent past.  The
+                     frequency is controlled by the list owner.
+                     Note that this will work only if the list
+                     manager has enabled archiving of messages
+                     for this list.
+
+    Example:     subscribe example-list readonly
+
+    The only combination of options that makes sense is
+    'readonly digest'.  Note that a meaningless combination, for
+    example 'readonly writeonly', could mean that you are a list
+    member who never receives any messages.
+
+    Note 1: Only a list owner may specify the 'writeonly' option.
+
+    Note 2: If you want to change the options, for example by
+       switching from being a 'normal' subscriber to a 'digest'
+       subscriber, you must first unsubscribe and then subscribe
+       again with the new option.
+
+unsubscribe listname
+
+    This is how you remove yourself from a mailing list.
+
+subscribe listname emailaddress
+subscribe listname <options> emailaddress
+
+    This is how you subscribe someone else to a list, or subscribe
+    yourself under a different e-mail address.  Note: subscribing
+    other people without their permission could lead to your being
+    banned from this server.  Typically this command is enabled
+    only for the list owner.
+
+    The options are the same as in the short-form subscribe.
+
+unsubscribe listname emailaddress
+
+    This is how you remove yourself from a list when your e-mail
+    address as recorded on the list is not the same as the e-mail
+    address from which you are sending this command.
+
+lists
+
+    This tells you the names of the lists on this server.
+
+index listname
+
+    Lists the files held in the file repository for this list.
+    Note that not every list has a file repository.
+
+get listname filename
+
+    Returns a copy of the text file 'filename' from the file
+    repository for this list.
+
+which
+
+    This tells you which lists you are already subscribed to.
+
+who listname
+
+    This will return a list of subscribers to a list.
+
+help
+
+    This command will give you a copy of the message you are
+    now reading.
+
+end
+
+    This specifies that there are no more commands to follow.
+    Alternatively, you can terminate your list of commands with
+    a line starting with the '-' character.
+
+To learn more about Major Major, go to
+          http://www.pmoylan.org/pages/os2/major.html
+

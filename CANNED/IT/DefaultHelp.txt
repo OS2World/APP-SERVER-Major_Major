@@ -1,0 +1,158 @@
+MESSAGGIO DI AIUTO DI MajorMajor
+
+Questo e' il programma di gestione di mailing lists  the Major Major
+E' possibile iscriversi o cancellarsi dalle mailing lists ospitate su
+questo server inviando comandi a questo indirizzo.
+I comandi riconosciuti sono riportati qui di seguito. Nota che alcuni di essi
+potrebbero essere stati disabilitati dall'amministratore della lista. E' possibile
+inviare piu' comandi nello stesso messaggio.
+
+lang codice
+
+    Il 'codice' in questo comando deve essere il codice per una lingua
+    riconosciuta dal programma. Se il supporto per quella lingua e'
+    abilitato, quella lingua verra' utilizzata nelle risposte ai comandi
+    successivi nello stesso messaggio. I codici riconosciuti sono:
+      en  (Inglese)
+      fr  (Francese)
+      nl  (Olandese)
+      es  (Spagnolo)
+      dk  (Danese)
+      de  (Tedesco)
+      oe  (Esperanto)
+      it  (Italiano)
+
+
+
+subscribe lista
+subscribe lista <opzioni>
+
+    Questo comando serve ad iscriversi ad una lista.  Se una mailing
+    list chiamata 'lista' esiste su questo server e le iscrizioni sono
+    abilitate, questo comando aggiungera' il tuo indirizzo e-mail alla
+    lista. In alcuni casi verra' prima richiesto un messaggio di conferma.
+    Le opzioni disponibili sono:
+
+        readonly   Potrai ricevere i messaggi ma non inviarli;
+        writeonly  Potrai inviare messaggi, ma non riceverli;
+                    (Questo e' utile per chi ha piu' di un indirizzo
+                    e-mail, che potra' inviare messaggi da tutti gli
+                    indirizzi ma riceverli una volta sola)
+        digest     invece di ricevere i messaggi via via che arrivano,
+                     li riceverai ad intervalli fissi in un unico messaggio.
+                     L'intervallo fra i messaggi e' controllato dal Proprietario
+                     della lista.
+                     Nota che questo funzionera' solo se questa modalita' e'
+                     abilitata per quella lista.
+
+
+    Esempio:     subscribe lista-esempio readonly
+
+    L'unica combinazione di opzioni che ha un senso e' 'readonly digest'.
+    Nota che una combinazione priva di significato, ad esempio
+    'readonly writeonly', puo' risultare in una situazione in cui non e'
+    possibile ne' inviare ne' ricevere messaggi.
+
+    Nota 1: Solo un Proprietario di lista puo' specificare l'opzione 'writeonly'.
+
+    Nota 2: Per cambiare le opzioni, ad esempio passare da una iscrizine
+    'normale' a una 'digest', bisogna prima cancellarsi  e poi iscriversi di
+     nuovo con la nuova opzione.
+
+unsubscribe lista
+
+    Questo comando ti cancellera' da una mailing list (in alcuni casi
+    verra' prima richiesto un messaggio di conferma)
+
+
+subscribe lista indirizzoemail
+subscribe lista <opzioni> indirizzoemail
+
+    Questo comando serve ad iscrivere alla lista qualcun altro,
+    oppure ad iscrivere se' stessi con un indirizzo di e-mail diverso.
+    Nota: iscrivere qualcun altro senza il suo permesso e' considerato
+    scorretto e puo' comportare la messa al bando da questo server.
+    Tipicamente questo comando e' abilitato solo per il Proprietario di lista.
+
+    Le opzioni sono le stesse gia' elencate per la iscrizione in forma breve.
+
+unsubscribe lista indirizzoemail
+
+    Questo comando serve a cancellarsi dalla lista quando l'indirizzo col quale
+    si e' refistrati nella lista e' diverso da quello da cui si invia il comando.
+
+lists
+
+    Invia l'elenco delle liste gestite dal server.
+
+index lista
+
+    Elenca i files contenuti nel depisito dei files di questa lista.
+    Nota che non tutte le liste avranno un deposito di files.
+
+get lista file
+
+    Invia una copia del file 'file' dal deposito dei files della lista 'lista'.
+
+which
+
+    Questo comando invia l'elenco delle liste cui risulti iscritto.
+
+who lista
+
+    Questo comando, se abilitato, invia l'elenco degli iscritti alla lista.
+
+help
+
+    Questo comando serve a ricevere una copia di questo messaggio di aiuto.
+
+end
+
+    Questo comando specifica che non ci sono comandi successivi.
+    Alternativamente, si puo' terminare la lista di comandi con una linea
+    che comincia col carattere '-'
+
+Per saperne di piu' su Major Major, vai a:
+          http://www.pmoylan.org/pages/os2/major.html
+
+========================================================
+To receive this message in English, type
+        lang en
+        help
+        end
+
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+        help
+        end
+
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+        help
+        end
+
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+        help
+        end
+
+Para recebir esto mansaje en español, escribe
+        lang es
+        help
+        end
+
+Pour recevoir ce message en français, tapez
+        lang fr
+        help
+        end
+
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+        help
+        end
+
+Per ricevere questo messaggio in italiano, scrivi
+        lang it
+        help
+        end
+

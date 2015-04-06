@@ -1,0 +1,122 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To read this message in English, use the command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Esto es el procesador Major Major de lista de env¡o.
+Usted puede unir o puede salir lista de env¡o mandando
+las ¢rdenes a esta direcci¢n del correo electr¢nico.
+Las ¢rdenes siguientes se reconocen. Note que algunos
+de ellos quiz s fue incapacitados por el due¤o de la lista.
+Es legal mandar varias ¢rdenes en el mismo mensaje.
+
+lang nombre
+
+   El 'nombre' en esta orden debe ser el c¢digo para
+   un idioma , por ejemplo en para el ingl‚s, fr para el
+   franc‚s. Si el director del listserver ha permitido apoyo
+   para ese idioma, el idioma se utilizar  para
+   contestaciones a las otras ¢rdenes que usted da
+   siguiendo ‚ste.
+
+subscribe listname
+subscribe listname <options>
+
+   Esto es c¢mo usted se abona a una lista. Si una lista
+   de env¡o llam¢ 'listname' existe aqu¡, y las
+   suscripciones a se permiten, esta orden agregar 
+   su direcci¢n de correo electr¢nico a la lista. Las
+   opciones disponibles no son
+     readonly  usted puede leer la lista pero el poste a ;
+     writeonly que usted puede anunciar a la lista,
+               pero a usted no recibe los mensajes ;
+     digest    en vez de mensajes recipientes de lista
+               como ellos llegan, usted recibe un frecuenta
+               menos enviar de mensajes para el pasado reciente.
+               La frecuencia es controlada por el due¤o de la lista.
+               Note que esto trabajar  s¢lo si el director de la
+               lista ha permitido archiving de mensajes para esta lista.
+
+   El ejemplo : subscribe lista-ejemplo readonly
+
+   La £nica combinaci¢n de las opciones que tiene
+   sentido es "readonly digest". Note que una combinaci¢n
+   sin sentido, por ejemplo "writeonly readonly", podr¡a
+   significar que usted es un miembro de la lista que nunca
+   recibe cualquier mensaje.
+
+   Note 1: S¢lo un due¤o de lista puede especificar el 'writeonly' la opci¢n.
+
+   Note 2: Si usted quiere cambiar las opciones, por
+   ejemplo cambiando de es un 'normal' suscriptor a un
+   'digest' suscriptor, usted debe primero unsubscribe
+   y entonces se abona otra vez con la opci¢n nueva.
+
+unsubscribe listname
+
+   Esto es c¢mo usted se quita de una lista de env¡o.
+
+subscribe listname emailaddress
+subscribe listname <options> emailaddress
+
+   Esto es c¢mo usted se abona otra persona a una lista,
+   o se abona bajo una direcci¢n diferente de correo
+   electr¢nico. La nota: abon ndo se otras personas sin
+   su permiso podr¡an llevar a su ser prohibido de este
+   camarero. T¡picamente esta orden se permite s¢lo
+   para el due¤o de lista.
+
+   Las opciones son igual que en el de forma corta se abona.
+
+unsubscribe listname emailaddress
+
+   Esto es c¢mo usted se quita de una lista cuando
+   su direcci¢n de correo electr¢nico registr¢ como
+   en la lista no es el mismo que la direcci¢n de
+   correo electr¢nico de que usted manda esta orden.
+
+lists
+
+   Esto le dice los nombres de las listas en este camarero.
+
+index listname
+
+   Las listas que los archivos tuvieron en el dep¢sito
+   del archivo para esta lista. Note que no cada lista
+   tiene un dep¢sito del archivo.
+
+get listname fichero
+
+   Los regresos una copia del archivo de texto
+   'fichero' del dep¢sito del archivo para esta lista.
+
+which
+
+   Esto dice usted que lista usted ya se es abonado a.
+
+who listname
+
+   Esto volver  una lista de suscriptores a una lista.
+
+help
+
+   Esta orden le dar  una copia del mensaje que usted ahora leen.
+
+end
+
+   Esto especifica eso no hay m s ¢rdenes de seguir.
+   Alternativamente, usted puede terminar su lista
+   de ¢rdenes con una l¡nea que empieza con
+   el car cter '-'.
+
+Para aprender m s acerca de Mayor Mayor, va a
+     http://www.pmoylan.org/pages/os2/major.html
+

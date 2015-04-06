@@ -1,0 +1,24 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+Dette er en bekreftelsesanmodning for et abonnement
+eller unsubscription til den postende listen %L p† denne
+tjeneren. De, eller noen fungering p† Deres vegene, sender
+en anmodning abonnere De til, eller unsubscribe De fra, den
+postende listen %L. Som en beskytter mot malicious ignorert
+anmodninger, denne anmodningen hvis ikker De bekrefter
+det innenfor %H timer. Den tilfeldige koden i Subject: utformer
+ledning av dette budskapet blokkere forfalskete
+bekreftelser fra folk foregir v‘re De.
+
+Om dette er en ekte anmodning, svarer De til dette
+budskapet, som beholder den samme emneledning.
+Kroppen av svaret ignorert, men emnesom ledningen
+forblir uforandret.
+
+Om De IKKE vil ha anmodningen akseptert, De ignorerer
+dette budskapet.
+

@@ -1,0 +1,26 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+ 
+Dies ist eine Bestätigungsaufforderung für die
+Bestellung oder Abbestellung eines Abonnements der
+Mailingliste %L auf diesem Server. Sie oder jemand
+in Ihrem Auftrag hat den Auftrag erteilt, für Sie ein
+Abonnement der Mailingliste %L einzurichten bzw. es
+abbestellt. Als Sicherheitsmaßnahme gegen arglistige
+Anfragen wird dieser Antrag ignoriert, wenn Sie ihn
+nicht innerhalb von %H Stunden bestätigen. Der Zufalls-
+zahlencode in der Betreffzeile dieser Nachricht dient
+der Abwehr gefälschter Bestätigungen von Personen, die
+vorgeben, Sie zu sein.
+ 
+Wenn es sich hier um eine authentische Anfrage handelt,
+sollten Sie unter Beibehalten der Betreffzeile auf diese
+Nachricht antworten. Der Nachrichtenkörper wird ignoriert,
+aber die Betreffzeile darf nicht geändert werden.
+ 
+Falls Sie nicht wünschen, daß die Anfrage akzeptiert wird,
+können Sie diese Nachricht ignorieren.
+ 

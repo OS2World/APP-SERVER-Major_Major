@@ -1,0 +1,26 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+Dette er en bekræftelse på, at du enten har tilmeldt
+eller afmeldt dig fra post listen %L
+Enter har du, eller osse har nogen på dine vegne,
+sendt en til eller afmelding til listen %L
+For at gardere mod svindel, vil denne til/afmelding
+blive ignorer, medmindre du bekræfter den inden der
+er gået %H timer.
+
+Den tilfældige kode i Subject: linjen forhindrer andre
+i at lave falske bekræftelser i dit navn.
+
+Hvis denne til/afmelding er fra dig, skal du sende
+et svar på denne besked, hvor du sørger for at
+Subject: (Emne:) linjen er intakt. Det har ingen
+betydning hvad der står i selve beskedden.
+Hvis dit postprogram indsætter "SV: " i Subject (Emne)
+linjen, så fjern dette før du sender svaret.
+
+Hvis du ikke ønsker at blive til/afmeldt fra denne
+postliste, skal du blot ignorere denne besked.

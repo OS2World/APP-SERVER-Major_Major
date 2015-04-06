@@ -1,0 +1,20 @@
+DEFINITION MODULE OpeningDialogue;
+
+        (****************************************************************)
+        (*                                                              *)
+        (*                  PM Setup for Major Major                    *)
+        (*                    Initial dialogue box                      *)
+        (*                                                              *)
+        (*    Started:        20 May 2002                               *)
+        (*    Last edited:    4 April 2010                              *)
+        (*    Status:         OK                                        *)
+        (*                                                              *)
+        (****************************************************************)
+
+
+PROCEDURE CreateMainDialogue (LocalRemote: CARDINAL;  TNImode: BOOLEAN);
+
+    (* Creates the main dialogue box. *)
+
+END OpeningDialogue.
+

@@ -1,0 +1,7 @@
+-----------
+Per cancellarti da questa lista, invia il seguente messaggio all'indirizzo %A
+
+     unsubscribe %L
+     end
+
+

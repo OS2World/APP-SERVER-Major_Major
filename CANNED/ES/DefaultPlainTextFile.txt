@@ -1,0 +1,16 @@
+Las ¢rdenes a este procesador de la lista de env¡o se
+deben mandar texto como simple. Este programa har 
+su encontrar mejor la parte de texto de su mensaje, si
+cualquiera, pero si resulta que las ¢rdenes se empotran
+dentro de un documento de p gina web de protocolo de
+transferencia de hipertexto, ellos no quiz s sea procesados
+apropiadamente.
+
+Muchas personas no se dan cuenta de que lo que ellos
+mandan no es texto simple, porque ellos utilizan software
+de correo que viene preconfigured para utilizar un formato
+menos deseable. Las soluciones a este problema, para
+parte del programas m s populares del correo, se explican
+en la p gina web
+           http://pyropus.ca/personal/writings/nomime.html
+

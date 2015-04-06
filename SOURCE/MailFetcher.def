@@ -1,0 +1,56 @@
+DEFINITION MODULE MailFetcher;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*             Module to pick up the mail               *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            21 May 2000                     *)
+        (*  Last edited:        8 July 2008                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+TYPE MailUser;   (* is private *)
+
+PROCEDURE EnableLocalOperation (maildir, ourdomain: ARRAY OF CHAR);
+
+    (* Sets us up to send/receive mail by looking in a local disk       *)
+    (* directory.  If this procedure is not called, we use POP3 to      *)
+    (* fetch mail and SMTP to send it.                                  *)
+
+PROCEDURE DisableLocalOperation;
+
+    (* Sets us up to send/receive mail by using POP3 to      *)
+    (* fetch mail and SMTP to send it.                       *)
+
+PROCEDURE RegisterMailUser (name: ARRAY OF CHAR): MailUser;
+
+    (* Creates a user record. *)
+
+PROCEDURE UnregisterMailUser (VAR (*INOUT*) MU: MailUser);
+
+    (* Removes our stored data for this user. *)
+
+PROCEDURE SetLoginInfo (MU: MailUser;  UserName, NewPassword: ARRAY OF CHAR);
+
+    (* Sets the POP3 username and password for the mail account. *)
+
+PROCEDURE FirstItem (user: MailUser;
+                     VAR (*OUT*) filename: ARRAY OF CHAR;
+                     LogID: TransactionLogID);
+
+    (* Returns the name of the first incoming mail item for this user.  *)
+
+PROCEDURE DeleteFirstItem (user: MailUser;  LogID: TransactionLogID);
+
+    (* Removes one item from the system.  This includes deleting its    *)
+    (* disk file.                                                       *)
+
+END MailFetcher.
+

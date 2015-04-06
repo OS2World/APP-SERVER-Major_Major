@@ -1,0 +1,52 @@
+DEFINITION MODULE CommonSettings;
+
+        (****************************************************************)
+        (*                                                              *)
+        (*                  Admin program for MajorMajor                *)
+        (*             Data common to the main Admin notebook           *)
+        (*                                                              *)
+        (*    Started:        22 October 2003                           *)
+        (*    Last edited:    8 February 2009                           *)
+        (*    Status:         OK                                        *)
+        (*                                                              *)
+        (****************************************************************)
+
+
+FROM OS2 IMPORT WM_USER, HWND;
+FROM Languages IMPORT LangHandle;
+
+CONST
+    FONTCHANGED = WM_USER + 1;
+    LANGCHANGED = WM_USER + 2;
+    FontNameSize = 256;
+
+TYPE
+    FontName = ARRAY [0..FontNameSize-1] OF CHAR;
+    FontGroup = (MainNotebook, ListNotebook);
+
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+
+    (* Sets the INI file name and mode. *)
+
+PROCEDURE CurrentFont (group: FontGroup;  VAR (*OUT*) fontname: FontName);
+
+    (* Returns the currently set font for this group. *)
+
+PROCEDURE UpdateFontFrom (hwnd: HWND;  group: FontGroup);
+
+    (* Takes the font setting from window hwnd and propagates it to the *)
+    (* entire group.  Note that this will often be a "no operation"     *)
+    (* because the font is no different from the presently active one.  *)
+
+PROCEDURE ChangeLanguageTo (name: ARRAY OF CHAR): BOOLEAN;
+
+    (* Changes the current language setting, but only if a suitable     *)
+    (* Admin.name.lng file exists.  Returns FALSE if no change.         *)
+
+PROCEDURE CurrentLanguage (VAR (*OUT*) lang: LangHandle;
+                                VAR (*OUT*) name: ARRAY OF CHAR);
+
+    (* Returns the current language setting. *)
+
+END CommonSettings.
+

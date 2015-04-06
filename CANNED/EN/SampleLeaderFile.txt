@@ -1,0 +1,4 @@
+   To reply directly to the sender, mail to %S
+   AOL users click <a href="mailto:%S">here</a>
+   Yahoo users: ask your mother how to send an e-mail
+

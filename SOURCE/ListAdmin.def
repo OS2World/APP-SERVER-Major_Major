@@ -1,0 +1,49 @@
+DEFINITION MODULE ListAdmin;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*         Module to look after mail to list admin      *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            21 May 2000                     *)
+        (*  Last edited:        22 May 2012                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM AddressLists IMPORT
+    (* type *)  EmailAddress;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM LogLevel IMPORT
+    (* type *)  LogLevelType;
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+FROM FileOps IMPORT
+    (* type *)  FilenameString;
+
+PROCEDURE SetAdminName (accountname, loginname: EmailAddress;
+                         adminpassword: ARRAY OF CHAR;
+                          AdminLang, DefaultLang: LangHandle;
+                           LogDetail: LogLevelType;
+                             Filter: FilenameString;  acceptinvalid: BOOLEAN);
+
+    (* Sets the name and password for the e-mail account to be used as the      *)
+    (* administrator account.  Also specifies the language for admin messages,  *)
+    (* the default user language, how detailed the transaction log should be,   *)
+    (* the name of the optional filter for admin main, and whether we're        *)
+    (* willing to respond to invalid input.                                     *)
+
+PROCEDURE ProcessAdminRequests (LogID: TransactionLogID);
+
+    (* Called periodically to see whether there's any mail for the list         *)
+    (* administrator, processes it if so.                                       *)
+
+END ListAdmin.
+

@@ -1,0 +1,119 @@
+Um diese Nachricht auf deutsch lesen zu können, geben Sie folgenden Befehl ein
+        lang de
+Brug følgende kommando for at få denne meddelelse på Dansk
+        lang dk
+To read this message in English, use the command
+        lang en
+Por legi cxi tiun mesagxon en Esperanto, sendu la ordonon
+        lang eo
+Para recebir esto mansaje en español, escribe
+        lang es
+Pour recevoir ce message en français, tapez
+        lang fr
+Om dit bericht in het Nederlands te ontvangen, type
+        lang nl
+
+Dette er den HovedMajoren som poste listeprosessor. De forbinder
+eller forlater postende lister ved † sende kommandoer til denne
+e-postadresse. De f›lgende kommandoene anerkjenner. Anmerkning
+at noen av dem udyktiggjort av listeeieren. Det er lovlig sende
+adskillige kommandoer i det samme budskapet.
+
+lang name
+
+   Det 'kaller' i denne kommandoen er koden for et spr†k , f.eks.
+   en for Engelsk, fr for Fransk. Om sjefen av listserver muliggj›rer
+   st›tte for det spr†ket , brukt spr†ket for svarer til det andre
+   kommanderer De gir f›lgende denne.
+
+subscribe listname
+subscribe listname <options>
+
+   Dette er hvordan De abonnerer til en liste. Om et postende
+   lister kalle opp 'listname' finnes her, og abonnementer til
+   det muliggj›rer, denne kommandoen tilf›yer Deres
+   e-postadresse til listen. De tilgjengelige alternativene er
+     readonly  De leser listen men ikke post til det ;
+     writeonly De til listen, men De mottar ikke budskapene ;
+     digest    i stedet for mottakelse listebudskap da de ,
+               De mottar et mindre hyppig posting av budskap
+               for den nylige fortiden. Frekvensen styrer av listeeieren.
+               Anmerkning at dette arbeider bare muliggj›rer om liste
+               som sjefen archiving av budskap for denne listen.
+
+   Eksempel : subscribe eksempel-liste readonly
+
+   Den eneste kombinasjonen av alternativer som f†r
+   mening til mening 'readonly digest'. Anmerkning at
+   en meaningless kombinasjon, for eksempel
+   'readonly writeonly', betyr at De er et liste medlem
+   som mottar aldri noen budskap.
+
+   Bemerk 1: spesifiserer Bare en listeeier det 'writeonly' alternativ.
+
+   Bemerk 2: Om De forandrer alternativene, for
+             eksempel ved † kople fra † v‘re et 'normal'
+             abonnent til et 'digest ' abonnent, De f›rst
+             unsubscribe og abonner da igjen med det nye
+             alternativet.
+
+unsubscribe listname
+
+   Dette er hvordan De fjerner Dem fra en postende liste.
+
+subscribe listname emailaddress
+subscribe listname  emailaddress
+
+   Dette er hvordan De abonnerer en annen til en liste,
+   eller abonnerer Dem under en forskjellig
+   e-postadresse. Anmerkning: leder abonnering av annet
+   folk uten deres tillatelse til Deres v‘ring som forbudt
+   fra denne tjeneren. Typisk muliggj›rer denne
+   kommandoen bare for listeeieren.
+
+   Alternativene er akkurat som i kort-formen abonnerer.
+
+unsubscribe listname emailaddress
+
+   Dette er hvordan De fjerner Dem fra en liste n†r
+   Deres e-post adresse som lagret p† den lister v‘re
+   opp ikke akkurat som e-post adressen sender som
+   De denne kommandoen fra.
+
+lists
+
+   Dette forteller De navnene av listene p† denne tjeneren.
+
+index listname
+
+   Lister opp arkivene holdt i arkivoppbevaringsstedet for
+   denne listen. Anmerkning at ikke hver lister ha opp
+   et arkivoppbevaringssted.
+
+get listname filnavn
+
+   Returnerer en kopi av tekstarkivet 'filnavn' fra
+   arkiv oppbevaringsstedet for denne listen.
+
+which
+
+   Dette forteller Dem som lister opp De allerede abonnerer til.
+
+who listname
+
+   Dette returnerer en liste av abonnenter til en liste.
+
+help
+
+   Denne kommandoen gir De en kopi av budskapet
+   som De er n† lesende.
+
+end
+
+   Dette spesifiserer det det er ikke mer kommanderer
+   f›lge. Alternativt avslutter De Deres liste av
+   kommandoer med en ledningsstart med det '-' karakter.
+
+L‘re mere om MajorMajor, drar til
+          http://www.pmoylan.org/pages/os2/major.html
+

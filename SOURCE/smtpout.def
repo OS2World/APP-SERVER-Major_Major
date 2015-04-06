@@ -1,0 +1,72 @@
+DEFINITION MODULE SMTPOut;
+
+        (********************************************************)
+        (*                                                      *)
+        (* Sends outbound mail by sending it to an SMTP server  *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            5 August 2000                   *)
+        (*  Last edited:        23 May 2012                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM AddressLists IMPORT
+    (* type *)  EmailAddress, AddressList;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM FileOps IMPORT
+    (* type *)  FilenameString;
+
+FROM LogLevel IMPORT
+    (* type *)  LogLevelType;
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+
+PROCEDURE SetOurHostname (VAR (*IN*) name: ARRAY OF CHAR);
+
+    (* The caller specifies the argument we should use in the HELO      *)
+    (* and EHLO commands.                                               *)
+
+PROCEDURE SetSMTPAddress (SMTPHostname: ARRAY OF CHAR;
+                          SMTPport: CARDINAL;  lang: LangHandle);
+
+    (* The caller specifies which SMTP server and port to use,  and     *)
+    (* what language to use for log messages.                           *)
+
+PROCEDURE SetPSParameters (UseAUTHoption: CARDINAL;
+                           hostname: ARRAY OF CHAR;  port: CARDINAL;
+                           username, password: ARRAY OF CHAR);
+
+    (* The caller specifies the parameters to user for authentication   *)
+    (* of outbound relay mail.  UseAUTHoption has the meaning:          *)
+    (*      0    don't use authentication                               *)
+    (*      1    use the SMTP AUTH command                              *)
+    (*      2    use POP-before-SMTP                                    *)
+    (* The hostname and port are relevant only in case 2.               *)
+
+PROCEDURE MailOneMessage (VAR (*IN*) sender: EmailAddress;
+                          VAR (*IN*) sourcefile: FilenameString;
+                          VAR (*OUT*) failures: CARDINAL;
+                                     option: CARDINAL;
+                                     recipients: AddressList;
+                                     LogLevel: LogLevelType;
+                                     LogID: TransactionLogID): CARDINAL;
+
+    (* Sends one mail item, possibly to multiple recipients.            *)
+    (* The message file is not deleted, regardless of success or        *)
+    (* failure; we leave that decision up to the caller.  The value     *)
+    (* returned is the number of recipients for whom delivery was made, *)
+    (* and the failures parameter returns the number of recipients      *)
+    (* for whom we were unable to deliver the message.                  *)
+    (* The options are                                                  *)
+    (*       0      send to everyone on the recipients list             *)
+    (*       1      send only to the 'mayread' recipients               *)
+
+END SMTPOut.
+

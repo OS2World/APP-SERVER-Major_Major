@@ -1,0 +1,25 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: % X
+
+Esto es un pedido de la confirmaci¢n para una suscripci¢n
+o unsubscription por %S a la lista de env¡o %L en este camarero.
+Usted, o alguien actuando sobre su beneficio, ha mandado
+un pedido a abonarse usted a, o a unsubscribe usted de,
+la lista de env¡o %L. Cuando un guardia contra pedidos
+maliciosos, este pedido se ignorar  a menos que usted
+confirmar  dentro de %H horas. El c¢digo aleatorio en
+la l¡nea Subject: de este mensaje se dise¤a para bloquear
+las confirmaciones de falsificaci¢n de personas que fingen
+para ser usted.
+
+Si esto es un pedido genuino, usted debe contestar a este
+mensaje, manteniendo la misma l¡nea Subject. El cuerpo de
+la contestaci¢n se ignorar , pero la l¡nea Sujeta debe
+quedarse igual.
+
+Si usted no quiere que el pedido para ser aceptado, usted
+puede ignorar este mensaje.
+

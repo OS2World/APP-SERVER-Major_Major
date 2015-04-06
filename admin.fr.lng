@@ -1,0 +1,177 @@
+# Notations en franáais pour le carnet Admin de Major Major.
+# Traduction : Marion Gevers.
+
+#======================================================================
+# Dialogue d'ouverture et dialogue d'installation Ö distance
+#======================================================================
+
+Opening.title "Major Major admin fr"
+Opening.local "Local"
+Opening.remote "∑ distance"
+Opening.setup "Configuration"
+Opening.go "Allez"
+Opening.exit "Sortie"
+Opening.status.loading "Attendez svp"
+
+Remote.title "Serveur Ö distance"
+Remote.HostLabel "Serveur"
+Remote.PortLabel "Port INIServe"
+Remote.PassLabel "Mot de passe INIServe"
+Remote.DirLabel "Archive %a"
+
+Remote.nosocket "Pas de jonction"
+Remote.lookingup "Recherche de nom"
+Remote.unknownhost "Serveur inconnu"
+Remote.trying "Tentative de connexion"
+Remote.failed "Connexion ratÇe"
+Remote.serverrejected "Refus par le serveur"
+Remote.invaliddir "Archive Ö distance non valable"
+Remote.badpassword "Mot de passe refusÇ"
+Remote.connected "Connexion Çtablie"
+
+#======================================================================
+# Messages pour le carnet principal.
+#======================================================================
+
+Main.local "Admin Major Major Local"
+Main.remote "Admin Major Major Ö distance"
+Main.cantopen "Impossible d'ouvrir fichier INI Ö distance"
+
+Page1.tab "Base"
+Page1.mailserver "Serveur"
+Page1.Weaselhere "Weasel local"
+Page1.otherserver "Autre serveur"
+Page1.domain "Domaine courriel"
+Page1.BatchLimit "Batch size limit"
+Page1.Weaseldir "Fichier Weasel"
+Page1.SMTPserver "Serveur SMTP (courriel sortant)"
+Page1.hostname "Serveur"
+Page1.port "Port"
+Page1.useauthent "Utiliser authentification SMTP"
+Page1.POPserver "Serveur POP3 (courriel entrant)"
+
+Files.tab "Fichiers"
+Files.enablelogging "Logging"
+Files.translogto "êcrire log Ö"
+Files.disk "Disque"
+Files.screen "êcran"
+Files.logfilename "Fichier logging"
+Files.archivedir "Fichier archives"
+
+AdminPage.tab "Admin"
+AdminPage.account "Compte hÇbergeant les commandes destinÇes au gestionnaire de liste"
+AdminPage.username "Utilisateur"
+AdminPage.loginname "Nom login"
+AdminPage.password "Mot de passe"
+AdminPage.errorresponse "RÇponse Ö l'entrÇe dÇfectueuse"
+AdminPage.timebetween "Intervalle entre les vÇrifications de nouveau courriel"
+AdminPage.hours "Heures"
+AdminPage.minutes "Minutes"
+AdminPage.seconds "Secondes"
+AdminPage.AdminLang "Langue Admin"
+AdminPage.DefaultLang "Langue par dÇfaut"
+AdminPage.MIMEcharset "Jeu de caractäres MIME"
+
+Messages.tab "Messages"
+Messages.title "FICHIERS MESSAGES"
+Messages.nonsub "Message quand un non-membre essaie de publier un message"
+Messages.help "RÇponse Ö la commande HELP"
+Messages.notplaintext "Message quand les commandes ne sont pas en format texte brut"
+
+Lists.tab "Listes"
+Lists.title "LISTES"
+Lists.AddButton "Ajouter"
+Lists.EditButton "Modifier"
+Lists.RenameButton "Renommer"
+Lists.DeleteButton "Supprimer"
+Lists.EnterName "InsÇrez un nom pour la liste de distribution"
+Lists.NewName "Nouveau nom pour la liste"
+
+About.tab "Concernant"
+About.1 "MajorMajor, un gestionnaire de listes de distribution"
+About.2 "Version %a"
+About.3 "DeveloppÇ par"
+About.4 "Pour d'autres logiciels pour OS/2, voir"
+
+#======================================================================
+# Messages for the list notebook. #======================================================================
+
+EditList.title "Liste de distribution '%a'"
+
+ELpage1.LoginName "Nom login POP3"
+ELpage1.password "Mot de passe POP3"
+ELpage1.abbrev "Nom abrÇgÇ de la liste dans le Sujet"
+ELpage1.checkinterval "Contrìle d'arrivÇe de nouveau courrier tous les"
+ELpage1.errormess "Notifications d'erreur"
+ELpage1.discard "Supprimer"
+ELpage1.mailto "Envoyer Ö"
+ELpage1.filter "Filtre (facultatif)"
+ELpage1.language "Langue"
+
+PSDialogue.title "Authentification pour courriel sortant"
+PSDialogue.AuthMethod "MÇthode d'authentification"
+PSDialogue.none "aucune"
+PSDialogue.SMTPAUTH "SMTP AUTH"
+PSDialogue.POPbeforeSMTP "POP avant SMTP"
+PSDialogue.username "Nom"
+PSDialogue.password "Mot de passe"
+PSDialogue.portlabel1 "Port"
+PSDialogue.portlabel2 "(par dÇfaut 110 pour POP3)"
+PSDialogue.hostname "Serveur"
+
+ELpage2.tab "Options 1"
+ELpage2.KillAttachments "Supprimer les piäces jointes"
+ELpage2.IsModerated "Liste modÇrÇe"
+ELpage2.SuppressFrom "Suppress sender address"
+ELpage2.DMARCcompatible "DMARC compatible"
+ELpage2.EnableControlled "Autoriser les commandes controlÇes"
+ELpage2.EnableSubscribe "Inscription"
+ELpage2.EnableLongSubscribe "Inscription, forme longue"
+ELpage2.EnableLongUnsubscribe "DÇsinscription, forme longue"
+ELpage2.EnableWho "who"
+ELpage2.charset "Jeu de caractäres par dÇfaut pour les archives"
+ELpage2.RFC2919ID "RFC 2919 Liste ID (facultatif)"
+ELpage2.Add2369Headers "Add RFC 2369 headers"
+
+ELopt2.tab "Options 2"
+ELopt2.confbox "Confirmations pour inscription/dÇsinscription"
+ELopt2.RequireConfirmation "Demande de confirmation pour cette liste"
+ELopt2.ConfTime "Utilisateur doit rÇpondre dans les"
+ELopt2.ConfHours "heures"
+ELopt2.OwnersMayConfUnsub "Les propriÇtaires peuvent confirmer les dÇsinscriptions"
+ELopt2.nonsub "Courriel de non-membres"
+ELopt2.ignore "Ignorer"
+ELopt2.accept "Accepter"
+ELopt2.reject "Rejeter"
+ELopt2.saverefused "Sauver une copie du courriel rejetÇ dans l'archive"
+
+ELpage4.tab "Membres"
+ELpage4.title "ADDRESSES ELECTRONIQUES DES MEMBRES DE CETTE LISTE"
+ELpage4.ReviseButton "Modifier"
+ELpage4.total "Totale %1"
+ELpage4.EnterName "Entrez une adresse de courriel"
+ELpage4.NewName "Modifiez l'adresse"
+
+ELpage5.tab "PropriÇtaires"
+ELpage5.title "PROPRIêTAIRE(S) DE LA LISTE"
+ELpage5.note1 "Si la liste est modÇrÇe, elle doit avoir un propriÇtaire."
+ELpage5.note2 "Une liste non modÇrÇe ne requiert pas de propriÇtaire."
+
+ELMessage.tab1 "Messages 1"
+ELMessage.tab2 "Messages 2"
+ELMessage.title "FICHIERS MESSAGES (FACULTATIF)"
+ELMessage.NotifyOwner "Message aux proprÇtaires apräs 'subscribe'"
+ELMessage.NotifyOwner2 "Message aux proprÇtaires apräs 'unsubscribe'"
+ELMessage.confreq "Demande de confirmation"
+ELMessage.welcome "Message de bienvenue"
+ELMessage.departure "Message d'adieu"
+ELMessage.leader "Texte d'introduction"
+ELMessage.footer "Texte de clìture"
+
+ELpage6.tab "Archive"
+ELpage6.ArcEnabled "Archiver cette liste"
+ELpage6.NewArchive "Nouvelle archive tous les"
+ELpage6.days " jours"
+ELpage6.months " mois"
+
+

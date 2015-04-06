@@ -1,0 +1,53 @@
+DEFINITION MODULE MailOut;
+
+        (********************************************************)
+        (*                                                      *)
+        (*                Mailing list manager                  *)
+        (*           Module to handle outbound mail             *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            12 June 2000                    *)
+        (*  Last edited:        22 May 2012                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM AddressLists IMPORT
+    (* type *)  EmailAddress, AddressList;
+
+FROM FileOps IMPORT
+    (* type *)  FilenameString;
+
+FROM LogLevel IMPORT
+    (* type *)  LogLevelType;
+
+FROM TransLog IMPORT
+    (* type *)  TransactionLogID;
+
+
+PROCEDURE SetLocalOperation (root: ARRAY OF CHAR);
+
+    (* To be called during program initialisation or reinitialisation.  *)
+    (* The caller specifies the name of the mail root directory.  If    *)
+    (* root is the empty string, or if this routine is never called,    *)
+    (* we use SMTP instead to send mail.                                *)
+
+PROCEDURE DeliverItem (sender: EmailAddress;
+                            VAR (*IN*) sourcefile: FilenameString;
+                            VAR (*OUT*) failures: CARDINAL;
+                            option: CARDINAL;
+                            recipients: AddressList;
+                            LogLevel: LogLevelType;
+                            LogID: TransactionLogID): CARDINAL;
+
+    (* Delivers the mail in sourcefile to the recipients, with sender   *)
+    (* identified as the originator of the mail.  The options are       *)
+    (*       0      send to everyone on the recipients list             *)
+    (*       1      send only to the 'mayread' recipients               *)
+    (* The return value is the number of recipients for whom the        *)
+    (* delivery was successful.  The failures parameter counts those to *)
+    (* whom we were unable to deliver the message.                      *)
+
+END MailOut.
+

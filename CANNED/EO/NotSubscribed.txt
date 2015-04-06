@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major por OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Ne povis liveri vian mesagxon
+
+Via mesagxo al %L ne povis esti liverita, cxar vi ne
+abonas al tiu posxtlisto.
+

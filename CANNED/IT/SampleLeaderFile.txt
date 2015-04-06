@@ -1,0 +1,6 @@
+   Per rispondere direttamente all' autore del messaggio, indirizza a %S
+   Utilizzatori di AOL: selezionare <a href="mailto:%S">qui</a>
+   Utilizzatori di Yahoo: chiedete a vostra madre come inviare una e-mail
+
+
+

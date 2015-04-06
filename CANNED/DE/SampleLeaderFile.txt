@@ -1,0 +1,7 @@
+   Um dem Absender direkt zu antworten, senden Sie
+   eine E-Mail an %S
+   AOL-Benutzer sollten <a href="mailto:%S>hier</a>
+   klicken.
+   Yahoo-Benutzer: Fragen Sie Ihre Mutter, wie man
+   eine E-Mail verschickt.
+ 

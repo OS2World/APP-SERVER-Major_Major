@@ -1,0 +1,7 @@
+-----------
+To unsubscribe yourself from this list, send the following message
+to %A
+
+     unsubscribe %L
+     end
+

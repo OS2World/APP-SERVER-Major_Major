@@ -1,0 +1,103 @@
+# Messages en fran‡ais pour Major Major
+# Traduction : Marion Gevers
+
+#======================================================================
+# Section 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Pour fermer: Ctrl/C"
+Major.started "MajorMajor a d‚marr‚"
+Major.finishing "Arrˆt de MajorMajor"
+Major.checkingnew "Signal de v‚rification d'arriv‚e de nouveau message"
+
+ListAdmin.requestfrom "Demande administrative de %a"
+
+ListChecker.log.subscribed "%a inscrit"
+ListChecker.log.rejected "%a rejet‚"
+ListChecker.log.unsubscribed "%a : r‚siliation"
+ListChecker.logmail.rejected "Courriel de %a refus‚"
+ListChecker.logmail.ignored "Courriel de %a rejet‚"
+ListChecker.logmail.sent "Message de %a envoy‚ … %1 abonn‚s"
+ListChecker.logmail.senttomoderators "Message de %a envoy‚ … %1 mod‚rateurs"
+ListChecker.logmail.failcount " (%1 erreurs)"
+ListChecker.processing.one "Acheminement d'un article"
+ListChecker.rejectedbyfilter "Article rejet‚ par le filtre"
+ListChecker.removing "Suppression de la liste %a"
+ListChecker.checkingnew "Recherche de nouveaux courriels"
+ListChecker.addinglist "Addition d'une nouvelle liste %a"
+ListChecker.refreshinglist "RafraŒchissement de la liste %a"
+
+Archives.log.created "Cr‚ation du fichier archive %a"
+Archives.log.createfail "La cr‚ation du fichier archive a ‚chou‚.
+Impossible de changer le nom du fichier de %a … %b"
+
+POPClient.NoAddress "L'adresse du serveur POP n'est pas sp‚cifi‚e."
+POPClient.NoConnection "Connexion non ‚tablie"
+POPClient.NoOKreply "Pas de r‚ponse 'OK' … la connexion initiale"
+POPClient.BadPassword "Commande PASS rat‚e"
+POPClient.UserRejected "Commande USER rat‚e"
+
+SMTPOut.CantConnect "Connexion au serveur SMTP rat‚e"
+SMTPOut.CantLogin "Login SMTP rat‚"
+SMTPOut.CommandRejected "La commande %a a ‚t‚ refus‚e"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Erreur: pas de commande valide reçue"
+Commands.reply.NotPlainText "ERREUR : Vous avez envoyé un message de type %a."
+Commands.reply.NoCommand "Commande illégale %a"
+Commands.reply.End "Fin des transactions"
+Commands.nosuchlist "Cette liste %a n'existe pas"
+Commands.nosuchfile "Désolé, ce fichier n'existe pas"
+Commands.notamember "Vous n'êtes pas abonné à cette liste"
+Commands.nohelpfile "Désolé, il n'y a pas d'aide disponible"
+Commands.ListNameNeeded "Vous devez spécifier un nom de liste"
+Commands.alreadysubscribed "%a est déjà abonné à la liste '%b'"
+Commands.ImpossibleCombination "Inscription ratée.  Combinaison d'options impossible."
+Commands.subscribe.nowriteonly "Inscription ratée.  Seul le propriétaire de la liste peut autoriser l'accès <<writeonly>>."
+
+Commands.subscribe.ConfMailed "Une demande de confirmation a été envoyée.
+L'inscription sera acceptée si elle est confirmée par l'utilisateur."
+
+Commands.configerror "Désolé, cette commande a échoué à cause d'une erreur de configuration."
+Commands.subscribe.success "%a est maintenant inscrit à la liste '%b'"
+Commands.subscribe.restricted "Inscription ratée.  Seul un propriétaire de liste peut inscrire une tierce personne."
+Commands.unsubscribe.notamember "%a n'est pas abonné à la liste '%b'"
+
+Commands.unsubscribe.ConfMailed "Une demande de confirmation a été envoyée.
+La résiliation sera acceptée si l'utilisitateur confirme la demande."
+
+Commands.unsubscribe.success "Résiliation réussie"
+Commands.unsubscribe.failure "Résiliation ratée"
+Commands.who.unavailable "La commande <<who>> n'est pas valable pour la liste %a"
+Commands.confirm.success "Confirmation réussie"
+Commands.confirm.failure "Confirmation ratée"
+Commands.obsolete "Erreur de programmation, option obsolète"
+
+ListChecker.ismoderated " (Liste modérée)"
+ListChecker.list.all "Ce serveur gère les listes suivantes :"
+ListChecker.list.subs "Vous êtes abonné aux listes suivantes :"
+ListChecker.list.count "Un total de %1 listes."
+ListChecker.listattr.restricted " [restreinte]"
+ListChecker.listattr.moderated " [modérée]"
+ListChecker.RemAttach "[les pièces jointes ont été retirées]"
+ListChecker.who.begin "Membres de la liste '%a'"
+ListChecker.who.count "Un total de %1 membres."
+ListChecker.digest.Subject "Digest de la liste %a"
+
+Archives.list.heading "Archivage des fichiers pour la liste %a."
+Archives.list.count "%1 fichier(s) en tout."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "R=?iso-8859-1?q?=E9?=sultats du gestionnaire de listes"
+

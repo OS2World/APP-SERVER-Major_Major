@@ -1,0 +1,14 @@
+Befehle an dieses Programm zur Verwaltung von Mailinglisten
+müssen als Plain Text gesendet werden. Das Programm versucht
+alles, um eventuell vorhandene Textpassagen in Ihrer Nachricht
+zu finden, aber falls die Befehle in einem HTML-Dokument enthalten
+sein sollten, kann es vorkommen, daß sie nicht ordnungsgemäß
+verarbeitet werden.
+
+Viele sind sich nicht der Tatsache bewußt, daß sie nicht Plain
+Text senden, da ihre Mail-Software zur Nutzung eines weniger
+wünschenswerten Formates vorkonfiguriert ist. Lösungen des
+Problems für einige der gebräuchlicheren Mail-Programme werden
+auf folgender Internetseite erläutert:
+        http://pyropus.ca/personal/writings/nomime.html
+

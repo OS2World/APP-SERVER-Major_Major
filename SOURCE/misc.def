@@ -1,0 +1,62 @@
+DEFINITION MODULE Misc;
+
+        (************************************************************)
+        (*                                                          *)
+        (*               Miscellaneous definitions                  *)
+        (*                                                          *)
+        (*    Started:        13 June 2000                          *)
+        (*    Last edited:    24 June 2014                          *)
+        (*    Status:         OK                                    *)
+        (*                                                          *)
+        (************************************************************)
+
+
+FROM OS2 IMPORT
+    (* type *)  HWND;
+
+FROM FileOps IMPORT
+    (* type *)  ChanId, FilenameString;
+
+
+PROCEDURE AppendCard (number: CARDINAL;  VAR (*INOUT*) string: ARRAY OF CHAR);
+
+    (* Converts number to decimal, appends the result to the string. *)
+
+PROCEDURE WinSetDlgItemCard (hwnd: HWND;  idItem, value: CARDINAL);
+
+    (* Sets a cardinal field in a dialogue. *)
+
+PROCEDURE WinQueryDlgItemCard (hwnd: HWND;  idItem: CARDINAL;
+                                 VAR (*OUT*) result: CARDINAL);
+
+    (* Reads back the value in a cardinal field in a dialogue. *)
+
+PROCEDURE HeadMatch (VAR (*IN*) buffer: ARRAY OF CHAR;
+                                                    head: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE iff head is a leading substring of buffer, modulo   *)
+    (* alphabetic case.                                                 *)
+
+PROCEDURE ExtractEmailAddress (source: ARRAY OF CHAR;  skip: CARDINAL;
+                                         VAR (*OUT*) displayname: ARRAY OF CHAR;
+                                         VAR (*OUT*) result: ARRAY OF CHAR);
+
+    (* Extracts an e-mail address from source, skipping the first 'skip' chars. *)
+
+PROCEDURE MakeNewFilename (BaseName, tail: ARRAY OF CHAR;
+                       VAR (*OUT*) NewName: FilenameString);
+
+    (* Creates a file name of the form BaseNamexxxtail, where xxx is    *)
+    (* chosen such that a file of that name does not already exist.     *)
+    (* Note that BaseName and tail can include punctuation.             *)
+
+PROCEDURE OpenNewOutputFile (BaseName, tail: ARRAY OF CHAR;
+                       VAR (*OUT*) NewName: FilenameString): ChanId;
+
+    (* Creates a file name of the form BaseNamexxxtail, where xxx is    *)
+    (* chosen such that a file of that name does not already exist, and *)
+    (* opens that file.                                                 *)
+    (* Note that BaseName and tail can include punctuation.             *)
+
+END Misc.
+

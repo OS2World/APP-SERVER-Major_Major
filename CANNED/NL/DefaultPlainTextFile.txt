@@ -1,0 +1,11 @@
+Opdrachten aan deze maillijst server moeten in platte tekst
+worden gestuurd. Het programma probeert de tekstinformatie
+in uw bericht te vinden, maar het blijkt dat de opdrachten
+in HTML-code zijn opgenomen, zoals op een webpagina. Deze
+kunnen niet goed verwerkt worden door de maillijst server.
+
+Veel mensen weten niet dat ze hun e-mail als HTML-code
+versturen, omdat het mailprogramma al is voorgeconfigureerd
+in dit vaak ongewenste formaat. Voor meer informatie en
+oplossingen kijkt u op http://pyropus.ca/personal/writings/nomime.html.
+

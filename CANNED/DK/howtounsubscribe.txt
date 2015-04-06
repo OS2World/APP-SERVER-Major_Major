@@ -1,0 +1,7 @@
+-----------
+Hvis du vil afmeldes fra denne postliste, skal du sende følgende besked
+til %A
+
+     unsubscribe %L
+     end
+

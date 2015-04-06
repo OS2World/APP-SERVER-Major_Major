@@ -1,0 +1,103 @@
+# English messages for Major Major
+
+#======================================================================
+# Section 1. Messages for the log file.
+# These should use the code page that the server machine is using.
+#======================================================================
+
+Major.CtrlC "Ctrl/C to shut down"
+Major.started "MajorMajor started"
+Major.finishing "MajorMajor closing down"
+Major.checkingnew "Signal to new mail checker"
+
+ListAdmin.requestfrom "Admin request from %a"
+
+ListChecker.log.subscribed "%a subscribed"
+ListChecker.log.rejected "%a rejected"
+ListChecker.log.unsubscribed "%a unsubscribed"
+ListChecker.logmail.rejected "Rejected mail from %a"
+ListChecker.logmail.ignored "Ignored mail from %a"
+ListChecker.logmail.sent "Message from %a sent to %1 recipients"
+ListChecker.logmail.senttomoderators "Message from %a sent to %1 moderators"
+ListChecker.logmail.failcount " (%1 failures)"
+ListChecker.processing.one "Processing one item"
+ListChecker.rejectedbyfilter "Item rejected by filter"
+ListChecker.removing "Removing list %a"
+ListChecker.checkingnew "Checking for new mail"
+ListChecker.addinglist "Adding list %a"
+ListChecker.refreshinglist "Refreshing list %a"
+
+Archives.log.created "Created archive file %a"
+Archives.log.createfail "Failed to create archive file
+Could not rename %a to %b"
+
+POPClient.NoAddress "POP server address is unspecified."
+POPClient.NoConnection "Failed to establish connection"
+POPClient.NoOKreply "No OK reply on initial connection"
+POPClient.BadPassword "PASS command failed"
+POPClient.UserRejected "USER command failed"
+
+SMTPOut.CantConnect "Could not connect to SMTP host"
+SMTPOut.CantLogin "SMTP login failed"
+SMTPOut.CommandRejected "%a command was rejected"
+
+#======================================================================
+# Section 2. Messages sent back by e-mail.
+# These should use MIME character set specified on the Admin page
+# of the Admin notebook.
+#======================================================================
+
+Commands.reply.NoneValid "Error: no valid commands received"
+Commands.reply.NotPlainText "ERROR: You have sent a message of type %a."
+Commands.reply.NoCommand "Illegal command %a"
+Commands.reply.End "End of processing"
+Commands.nosuchlist "No such list %a"
+Commands.nosuchfile "Sorry, that file does not exist"
+Commands.notamember "You are not a member of this list"
+Commands.nohelpfile "Sorry, no help is available"
+Commands.ListNameNeeded "You must specify the name of a list"
+Commands.alreadysubscribed "%a is already subscribed to the list '%b'"
+Commands.ImpossibleCombination "Subscription failed.  Impossible combination of options."
+Commands.subscribe.nowriteonly "Subscription failed.  Only a list owner may authorize writeonly status."
+
+Commands.subscribe.ConfMailed "A request for confirmation has been e-mailed.
+The subscription will be accepted if the user confirms this subscription."
+
+Commands.configerror "Sorry, this command failed because of a list configuration error."
+Commands.subscribe.success "%a is now subscribed to the list '%b'"
+Commands.subscribe.restricted "Subscription failed.  Only a list owner may subscribe other people."
+Commands.unsubscribe.notamember "%a is not a member of the list '%b'"
+
+Commands.unsubscribe.ConfMailed "A request for confirmation has been e-mailed.
+The unsubscribe operation will be accepted if the user confirms this command."
+
+Commands.unsubscribe.success "Successful cancellation of subscription"
+Commands.unsubscribe.failure "Unsubscribe failed"
+Commands.version "MajorMajor version %a"
+Commands.who.unavailable "'who' command is not supported for list %a"
+Commands.confirm.success "Successful confirmation"
+Commands.confirm.failure "Confirmation failed"
+Commands.obsolete "Program error, obsolete option"
+
+ListChecker.ismoderated " (Postings are Moderated)"
+ListChecker.list.all "This server manages the following lists:"
+ListChecker.list.subs "You are subscribed to the following lists:"
+ListChecker.list.count "A total of %1 lists."
+ListChecker.listattr.restricted " [restricted]"
+ListChecker.listattr.moderated " [moderated]"
+ListChecker.RemAttach "[attachments have been removed]"
+ListChecker.who.begin "Members of list '%a'"
+ListChecker.who.count "A total of %1 members."
+ListChecker.digest.Subject "Digest of %a"
+
+Archives.list.heading "File repository for the %a mailing list."
+Archives.list.count "A total of %1 file(s)."
+
+#======================================================================
+# Section 3. Messages in an e-mail header.
+# Any non-ASCII characters in a header line require special encoding
+# to say which MIME character set to use.
+#======================================================================
+
+Commands.reply.Subject "Listserver results"
+

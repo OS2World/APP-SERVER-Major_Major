@@ -1,0 +1,4 @@
+   Pour répondre directement à l'expéditeur, répondre à %S
+   Si vous êtes utilisateur de AOL, cliquez <a href="mailto:%S">ici</a>
+
+

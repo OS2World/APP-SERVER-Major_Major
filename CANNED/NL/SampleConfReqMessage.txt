@@ -1,0 +1,23 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: %X
+
+Dit is een verzoek om een bevestiging van een aanmelding
+voor, of afmelding van, de maillijst %L.
+U, of misschien iemand anders, heeft een aanmelding c.q. 
+afmelding gestuurd voor de lijst %L.
+Als extra controle op foutieve of spookverzoeken vragen 
+wij u om het verzoek te bevestigen, daar anders binnen 
+%H uren de aanmelding/afmelding zal worden genegeerd.
+De code in de regel Onderwerp: van dit bericht is bedoeld 
+als controle en verhoedt dat valse bevestigingen worden 
+gestuurd. Verander deze code daarom niet.
+
+Als u zich daadwerkelijk wilt aanmelden c.q. afmelden 
+stuur dit bericht dan onveranderd terug.
+
+Mocht het verzoek een vergissing zijn, negeer dan dit 
+bericht. U wordt dan niet aangemeld c.q. afgemeld.
+

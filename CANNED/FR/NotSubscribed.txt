@@ -1,0 +1,9 @@
+MIME-version: 1.0
+X-Mailer: Major Major for OS/2
+Content-type: text/plain; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
+Subject: Impossible de livrer votre message
+
+Votre courrier à %L ne pourra pas être livré,
+parce que vous n'êtes pas abonné à cette liste.
+
