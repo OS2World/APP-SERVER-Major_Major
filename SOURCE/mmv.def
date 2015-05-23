@@ -5,14 +5,14 @@ DEFINITION MODULE MMV;
         (*                  Major Major version number                  *)
         (*                                                              *)
         (*    Started:        01 January 2004                           *)
-        (*    Last edited:    20 September 2014                         *)
+        (*    Last edited:    21 May 2015                               *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
 
 
 CONST
-    version = "2.0";
+    version = "2.2";
 
 END MMV.
 

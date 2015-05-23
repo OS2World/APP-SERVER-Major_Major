@@ -18,7 +18,7 @@ It is distributed as open-source freeware subject to the GNU GPL
 licence. You may obtain source code from the place where you
 downloaded this package.
 
-:p.This documentation is for version 2.0.
+:p.This documentation is for version 2.2.
 
 :p.
 :hp2.Disclaimer of Warranty:ehp2.
@@ -1846,11 +1846,10 @@ This also gives you the possibility of manually editing the data, for
 example when trying to create a mailing list from an address book in
 your e-mail software.
 
-:p.These two utilities are actually copies taken from the GenINI
-package available from
-http&colon.&slash.&slash.www.pmoylan.org/pages/os2/software.html, so
-that is where you should look if you want the latest version of the
-two programs.
+:p.These two utilities are no longer distributed with Major Major.
+They can instead be obtained by downloading the GenINI
+package from
+http&colon.&slash.&slash.www.pmoylan.org/pages/os2/software.html.
 
 :p.:hp2.DumpINI:ehp2.
 

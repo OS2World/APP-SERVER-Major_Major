@@ -195,6 +195,21 @@ PROCEDURE WaitForSocket (S: Socket;  timeout: CARDINAL): INTEGER;
 
 (************************************************************************)
 
+PROCEDURE WaitForSocketOut (S: Socket;  timeout: CARDINAL): INTEGER;
+
+    (* Waits until socket S is ready for more output.  The possible     *)
+    (* return codes are +1 for OK, 0 for timeout, -1 for error (or      *)
+    (* cancel).  Set timeout=MAX(CARDINAL) if you don't want a timeout. *)
+
+    VAR SocketArray: ARRAY [0..0] OF Socket;
+
+    BEGIN
+        SocketArray[0] := S;
+        RETURN select (SocketArray, 0, 1, 0, timeout);
+    END WaitForSocketOut;
+
+(************************************************************************)
+
 PROCEDURE Synch (S: Socket);
 
     (* Ensures that outgoing data is sent right now rather than being   *)

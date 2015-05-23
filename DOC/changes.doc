@@ -1,9 +1,21 @@
 LIST OF CHANGES
 
-Version 2.0         (20 Sep 2014)
+Version 2.2         (21 May 2015)
+   Fixed: sender information overwritten when
+      attachments deleted.
+   Fixed: message corruption when attachments removed.
+   DumpINI and LoadINI removed from distribution, with
+      the manual updated to point to GenINI.
+
+Version 2.1         (13 May 2015)
+   Fixed: some continuation lines in header were
+      being deleted.
+   Public release.
+
+Version 2.0         ( 5 May 2015)
    Re-released with GNU GPL licence.
    Fixed: messages not being sent to list members.
-   Not yet released.
+   Public release.
 
 Version 1.68        (29 Jun 2014)
    Now recognises OS/2 limit of 256 threads/process.

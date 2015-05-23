@@ -30,7 +30,7 @@ IMPLEMENTATION MODULE ListChecker;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            23 May 2000                     *)
-        (*  Last edited:        28 June 2014                    *)
+        (*  Last edited:        21 May 2015                     *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -1609,6 +1609,7 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
     BEGIN
         IllegalSender := FALSE;
         AlreadyHaveLine := FALSE;
+        DropLine := FALSE;
         boundary := "";
         OriginalSender := "";
         OriginalReplyTo := "";
@@ -1710,6 +1711,12 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     AlreadyHaveLine := TRUE;
                     DropLine := TRUE;
 
+                    (* We are not actually dropping the line, which is by now   *)
+                    (* the header line following the Content-Type header.  The  *)
+                    (* DropLine := TRUE means that we don't copy it this time,  *)
+                    (* but the line remains to be processed the next time       *)
+                    (* around the loop.                                         *)
+
                 ELSIF HeadMatch (buffer, "Subject:") THEN
 
                     (* Modify the Subject line by inserting an abbreviation.    *)
@@ -1721,28 +1728,35 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
                 END (*IF*);
 
-                IF NOT DropLine THEN
-                    FWriteString (dstcid, buffer);
-                    FWriteLn (dstcid);
-                END (*IF*);
+            END (*IF*);
 
+            (* Write the current line, unless the above logic has told us       *)
+            (* to drop it.                                                      *)
+
+            IF NOT DropLine THEN
+                FWriteString (dstcid, buffer);
+                FWriteLn (dstcid);
             END (*IF*);
 
         END (*LOOP*);
 
-        IF Sender[0] = Nul THEN
-            Strings.Assign ("?", Sender);
-        END (*IF*);
-        IF OriginalSender[0] = Nul THEN
-            OriginalSender := Sender;
-        END (*IF*);
+        (* Check the sender, but only if this is a top-level call. *)
 
-        (* Abort the operation if we discover that we don't approve     *)
-        (* of the sender.                                               *)
-
-        IF (L^.NonsubOption < 2) AND NOT MaySend (Sender, L) THEN
-            IllegalSender := TRUE;
-            RETURN FALSE;
+        IF terminator[0] = CtrlZ THEN
+            IF Sender[0] = Nul THEN
+                Strings.Assign ("?", Sender);
+            END (*IF*);
+            IF OriginalSender[0] = Nul THEN
+                OriginalSender := Sender;
+            END (*IF*);
+    
+            (* Abort the operation if we discover that we don't approve     *)
+            (* of the sender.                                               *)
+    
+            IF (L^.NonsubOption < 2) AND NOT MaySend (Sender, L) THEN
+                IllegalSender := TRUE;
+                RETURN FALSE;
+            END (*IF*);
         END (*IF*);
 
         (* End of header.  Add extra header lines as needed, but only   *)
@@ -1813,13 +1827,15 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
         END (*IF*);
 
+        (* End of header processing. *)
+
         (* A non-empty boundary code at this stage means that   *)
         (* we have to remove attachments.                       *)
 
         IF boundary[0] = Nul THEN
 
             (* A blank line separates header from body. *)
-
+    
             FWriteLn (dstcid);
 
             (* Add in the leader material if any. *)
@@ -1850,9 +1866,11 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
             (* Copy everything up to, but not including, the next       *)
             (* boundary.  A recursive method is necessary because       *)
-            (* MIME allows nested attachments.                          *)
+            (* MIME allows nested attachments, and also because there   *)
+            (* will be extra header lines to copy over.  We don't let   *)
+            (* the recursive call overwrite sender information.         *)
 
-            EVAL (ProcessItem (L, srccid, dstcid, boundary, Sender, dummy));
+            EVAL (ProcessItem (L, srccid, dstcid, boundary, AddrTemp, dummy));
             RETURN TRUE;
 
         END (*IF*);
