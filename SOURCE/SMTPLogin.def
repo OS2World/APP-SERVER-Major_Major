@@ -7,21 +7,23 @@ DEFINITION MODULE SMTPLogin;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            5 February 2003                 *)
-        (*  Last edited:        18 May 2005                     *)
+        (*  Last edited:        26 May 2017                     *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
 
 
+FROM Semaphores IMPORT (*type*) Semaphore;
 FROM SBuffers IMPORT  (*type*) SBuffer;
-FROM Names    IMPORT  (*type*) UserName, PassString, HostName;
+FROM Names    IMPORT  (*type*) UserName, PassString, HostName, DomainName;
 FROM TransLog IMPORT  (*type*) TransactionLogID;
 
 
 PROCEDURE DoLogin (SB: SBuffer;  LocalHostName: HostName;
                    UseAuth: BOOLEAN;  user: UserName;  pass: PassString;
                    VAR (*OUT*) ConnectionLost: BOOLEAN;
-                   LogIt: BOOLEAN;  LogID: TransactionLogID): BOOLEAN;
+                   VAR (*OUT*) ChunkingAvailable: BOOLEAN;
+                   LogID: TransactionLogID): BOOLEAN;
 
     (* Assumption: we already have a connection to the server via SB.   *)
     (* We now do an EHLO login if possible, or a HELO if the EHLO is    *)
@@ -30,6 +32,10 @@ PROCEDURE DoLogin (SB: SBuffer;  LocalHostName: HostName;
     (* provided that the server will accept one of the AUTH methods     *)
     (* that we support.                                                 *)
 
+    (* ChunkingAvailable is TRUE iff the remote server supports the     *)
+    (* CHUNKING option, with one exception: we do not allow chunking    *)
+    (* with Microsoft servers, because of its strange timeout rules.    *)
+
 PROCEDURE DoPOPLogin (IPAddr, port: CARDINAL;
                            user: UserName;  pass: PassString;
                            LogIt: BOOLEAN;  LogID: TransactionLogID);
@@ -37,6 +43,15 @@ PROCEDURE DoPOPLogin (IPAddr, port: CARDINAL;
     (* Attempts a POP3 login to the given address.  We do not need to   *)
     (* record whether the attempt succeeded, because if it failed       *)
     (* this would not change our actions.                               *)
+
+PROCEDURE PostmasterCheck (domain: DomainName;  OurHostName: HostName;
+                                OurDomain: DomainName;
+                                LogID: TransactionLogID;
+                                watchdog: Semaphore;
+                                VAR (*OUT*) TempFailure: BOOLEAN): BOOLEAN;
+
+    (* SMTP connection for a dummy "send to postmaster" whose purpose   *)
+    (* is to check that user "postmaster" is recognised.                *)
 
 END SMTPLogin.
 

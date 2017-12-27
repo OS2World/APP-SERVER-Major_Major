@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ListsPage;
         (*           The "lists" page of the settings notebook          *)
         (*                                                              *)
         (*    Started:        16 June 2000                              *)
-        (*    Last edited:    5 April 2010                              *)
+        (*    Last edited:    22 May 2017                               *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -38,7 +38,7 @@ FROM SYSTEM IMPORT ADDRESS, CAST, ADR;
 
 IMPORT OS2, OS2RTL, DID, Strings, EditList, OneLine, CommonSettings;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* type *)  CharArrayPointer;
 
 FROM RINIData IMPORT

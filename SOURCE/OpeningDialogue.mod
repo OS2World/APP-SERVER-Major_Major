@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE OpeningDialogue;
         (*                    Initial dialogue box                      *)
         (*                                                              *)
         (*    Started:        20 May 2002                               *)
-        (*    Last edited:    10 November 2012                          *)
+        (*    Last edited:    22 May 2017                               *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -42,7 +42,7 @@ FROM Languages IMPORT
 FROM RINIData IMPORT
     (* proc *)  SetRemote;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* proc *)  EVAL;
 
 (************************************************************************)

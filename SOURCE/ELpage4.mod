@@ -44,7 +44,7 @@ FROM Languages IMPORT
     (* type *)  LangHandle,
     (* proc *)  StrToBuffer, StrToBufferN;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* type *)  CharArrayPointer,
     (* proc *)  ConvertCard;
 

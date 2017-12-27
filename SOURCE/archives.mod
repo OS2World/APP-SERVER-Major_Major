@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -30,7 +30,7 @@ IMPLEMENTATION MODULE Archives;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            12 January 2000                 *)
-        (*  Last edited:        22 December 2013                *)
+        (*  Last edited:        24 October 2017                 *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -68,7 +68,7 @@ FROM MyClock IMPORT
 FROM Misc IMPORT
     (* proc *)  HeadMatch;
 
-FROM Types IMPORT
+FROM LONGLONG IMPORT
     (* type *)  CARD64;
 
 FROM TransLog IMPORT

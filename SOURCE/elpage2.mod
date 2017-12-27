@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ELpage2;
         (*           Page 2 of the "edit list" notebook             *)
         (*                                                          *)
         (*    Started:        24 October 2000                       *)
-        (*    Last edited:    28 June 2014                          *)
+        (*    Last edited:    11 June 2017                          *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -47,7 +47,7 @@ FROM Languages IMPORT
 FROM Names IMPORT
     (* type *)  FilenameString;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* proc *)  EVAL;
 
 FROM Storage IMPORT
@@ -135,7 +135,6 @@ PROCEDURE LoadListData (hwnd: OS2.HWND);
     VAR opened, bool: BOOLEAN;
 
     BEGIN
-        OldKillAttachments := TRUE;
         OldIsModerated := FALSE;
         OldSuppressFrom := FALSE;
         OldEnableSubscribe := FALSE;
@@ -148,8 +147,11 @@ PROCEDURE LoadListData (hwnd: OS2.HWND);
         (* Kill attachments. *)
 
         bool := TRUE;
-        EVAL (opened AND RINIData.INIFetch (ListName, "KillAttachments", bool));
-        OldKillAttachments := bool;
+        IF (opened AND RINIData.INIFetch (ListName, "KillAttachments", bool)) THEN
+            OldKillAttachments := bool;
+        ELSE
+            OldKillAttachments := FALSE;
+        END (*IF*);
         OS2.WinSendDlgItemMsg (hwnd, DID.KillAttachments, OS2.BM_SETCHECK,
                                     OS2.MPFROMSHORT(ORD(bool)), NIL);
 

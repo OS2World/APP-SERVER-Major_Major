@@ -18,7 +18,7 @@ It is distributed as open-source freeware subject to the GNU GPL
 licence. You may obtain source code from the place where you
 downloaded this package.
 
-:p.This documentation is for version 2.2.
+:p.This documentation is for version 2.5.
 
 :p.
 :hp2.Disclaimer of Warranty:ehp2.
@@ -317,7 +317,9 @@ testing and troubleshooting, so most users won't need to use it.
 This parameter will eventually become obsolete, because there is now
 an option in the Admin notebook to enable extra logging.
 
-:p.If you start it with the command
+:p.Major.exe takes its configuration data from either Major.INI or Major.TNI,
+depending on which of these two files is present. If neither one is present, it
+chooses Major.INI. If you start it with the command
 :xmp.
 
            MAJOR T
@@ -423,8 +425,21 @@ with RFC2142 by choosing an administrator name of the form MYLIST-REQUEST.
 :h1 id=configuration.Configuration
 
 :p.The program called Admin.exe is what you use to configure Major Major.
-The configuration parameters are stored in a file called Major.INI.
+The configuration parameters are stored in a file called either Major.INI
+or Major.TNI, depending on which of these is physically present in the
+working directory. (If neither file exists, Admin chooses Major.INI, unless you
+override that decision with the 'T' parameter - see below.)
 In effect, Admin.exe is an editor for that configuration file.
+
+:p.Major.INI, if it exists, is a binary file whose format is natively
+supported by OS/2. Major.TNI, if it exists, is a human-readable file
+that contains the same information. The INI format is more efficient, but
+there is a catch: INI files are stored in a region of main memory that, for
+historical reasons, has limited size, and in modern OS/2 configurations
+there is a risk of memory overflow in that region, which can cause INI
+file corruption. If you discover that Major.INI is being corrupted when
+the system is busy, you should switch to the TNI format. Otherwise, the
+INI format is a good choice.
 
 :p.When you run Admin, you will get a small screen window with Local/Remote
 radio buttons and three pushbuttons. The Remote option is for remote
@@ -438,7 +453,8 @@ start the editing.
 :xmp.            admin -T
 
 :exmp.
-then Admin will edit the file MAJOR.TNI rather than MAJOR.INI. This 'T'
+then Admin will edit the file MAJOR.TNI rather than MAJOR.INI, overriding
+the rule that it should choose whichever of these exists. This 'T'
 option can, if desired, be combined with the 'L', 'R', and 'G' options
 documented below.
 
@@ -491,9 +507,9 @@ the notebook tabs.
 :p.Note that the font must be dropped onto the "background" part of the
 notebook page. If you drop a new font onto an individual entry field, for
 example, the font will change for the current session but it will not
-be remembered the next time you open up the notebook. (I felt that it was
+be remembered the next time you open up the notebook. I felt that it was
 unlikely that anyone would want a whole lot of different fonts for different
-fields.)
+fields.
 
 .***********************************
 .*   BASIC
@@ -955,6 +971,54 @@ port number.
 
 :p.Once the connection is made, the operation is the same as for the
 case of local configuration.
+
+.***********************************
+.*   SUPPORTING MULTIPLE DOMAINS
+.***********************************
+
+:h1 id=multidomain.Supporting multiple domains
+
+:hp2.Supporting multiple domains:ehp2.
+
+:p.If your computer supports more than one domain, or you have ISP accounts for
+more than one domain, you might want to have mailing lists in more than one
+domain.
+
+:p.Major Major does not have a multidomain mode, but this is not a barrier.
+All you need to do is run several instances of Major Major, one for each domain.
+(You don't need several copies of Major.exe to do this; just several program
+objects, typically in different directories, that all point to the same Major.exe.)
+The following description shows one way of doing it, for two domains called
+domain1 and domain2. Variations
+on this approach will be obvious once you see the basic idea.
+
+:ol.
+:li.Make sure you have a Major Major mail account for each domain. That is,
+you need mail accounts majormajor@domain1 and majormajor@domain2.
+:li.Configure the first domain as described in the
+:link reftype=hd refid=Configuration.configuration:elink. section.
+:li.Create a subdirectory domain2 of the main Major Major directory.
+Copy your MAJOR.INI into this subdirectory.
+:li.Create a program object for MAJOR.EXE, and put this program object in
+the domain2 subdirectory. Give it a distinctive name, for example Major.domain2.
+Open the Properties notebook for this program
+object. The "Path and file name" field should already point to the
+original MAJOR.EXE, but you need to modify the "Working directory" to
+specify the domain2 subdirectory.
+:li.Create a program object for ADMIN.EXE in the same way.
+:li.Open the new admin.domain2 program object. Modify the Basic page to
+specify domain2 as the Mail domain name. On the Lists page create the lists
+for domain2, and make whatever other customisations you want. On the Messages
+page, and also on the Messages1 and Messages2 pages for each list, you will
+probably have to specify a "..\" at the beginning of each file name.
+:eol.
+
+:p.Now you have two instances of Major Major, one for each domain.
+
+:p.Note that you still only have one copy of each of MAJOR.EXE and ADMIN.EXE.
+If each instance has a different working directory, and therefore a different
+place to put its INI file, that is sufficient to make the instances independent
+of each other.
 
 .***************************************
 .*   EDITING THE MAILING LIST PROPERTIES

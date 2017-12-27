@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -30,7 +30,7 @@ IMPLEMENTATION MODULE ListChecker;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            23 May 2000                     *)
-        (*  Last edited:        21 May 2015                     *)
+        (*  Last edited:        24 August 2017                  *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -75,7 +75,8 @@ FROM INIData IMPORT
 
 FROM TransLog IMPORT
     (* type *)  TransactionLogID,
-    (* proc *)  OpenLogContext, CloseLogContext, CreateLogID, DiscardLogID, LogTransaction;
+    (* proc *)  OpenLogContext, CloseLogContext, CreateLogID, DiscardLogID,
+                LogTransaction, LogTransactionL;
 
 FROM SplitScreen IMPORT
     (* proc *)  NotDetached, ClearScreen, SetBoundary,
@@ -91,7 +92,7 @@ FROM FileOps IMPORT
     (* const*)  FilenameLength, NoSuchChannel,
     (* type *)  ChanId, FilenameString,
     (* proc *)  Exists, OpenOldFile, CloseFile, DeleteFile, CopyFile,
-                ReadRaw, ReadLine, FWriteChar, FWriteString, FWriteLn,
+                ReadRaw, WriteRaw, ReadLine, FWriteChar, FWriteString, FWriteLn,
                 FWriteLJCard;
 
 FROM Languages IMPORT
@@ -108,7 +109,7 @@ FROM MD5 IMPORT
     (* type *)  MD5_CTX, MD5_DigestType,
     (* proc *)  MD5Init, MD5Update, MD5Final, MD5DigestToString;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* proc *)  ConvertCard;
 
 FROM Semaphores IMPORT
@@ -1364,12 +1365,13 @@ PROCEDURE UpdateSubjectLine (VAR (*INOUT*) buffer: LineBuffer;
 
 PROCEDURE CheckForBoundaryCode (srccid, dstcid: ChanId;
                                 VAR (*INOUT*) NextLine: LineBuffer;
-                                VAR (*OUT*) boundary: LineBuffer);
+                                VAR (*OUT*) boundary: LineBuffer;
+                                killit: BOOLEAN);
 
-    (* Checks this header line for a "boundary=..." field.  If found,   *)
-    (* we discard this line (including its continuation lines).  If not *)
-    (* found, we copy the input to the output.  On return, NextLine is  *)
-    (* the first input line that doesn't belong to us.                  *)
+    (* Checks this header line for a "boundary=..." field.  If found    *)
+    (* and killit = TRUE, we discard this line and its continuation     *)
+    (* lines.  Otherwise we copy the input to the output.  On return,   *)
+    (* NextLine is the first input line that doesn't belong to us.      *)
 
     TYPE lineptr = POINTER TO OneLine;
          OneLine = RECORD
@@ -1383,6 +1385,7 @@ PROCEDURE CheckForBoundaryCode (srccid, dstcid: ChanId;
 
     BEGIN
         StillSearching := TRUE;
+        boundary[0] := Nul;
 
         (* Because we don't know in advance whether we will want to     *)
         (* write this line and its continuation lines to the output     *)
@@ -1455,27 +1458,26 @@ PROCEDURE CheckForBoundaryCode (srccid, dstcid: ChanId;
                     END (*IF*);
 
                 END (*LOOP*);
-            END (*IF*);
+
+            END (*IF StillSearching*);
 
             (* Get the next line from the input, and continue   *)
             (* processing iff it's a continuation line.         *)
 
             ReadLine (srccid, NextLine);
             IF (NextLine[0] <> Space) AND (NextLine[0] <> Tab) THEN EXIT(*LOOP*) END(*IF*);
-            IF StillSearching THEN
-                NEW (p);
-                p^.next := NIL;
-                p^.this := NextLine;
-                tail^.next := p;
-                tail := p;
-            END (*IF*);
+            NEW (p);
+            p^.next := NIL;
+            p^.this := NextLine;
+            tail^.next := p;
+            tail := p;
+
         END (*LOOP*);
 
-        (* If there wasn't any boundary code, write our saved *)
-        (* lines to the output file.                          *)
+        (* If there wasn't any boundary code or if killit = FALSE,  *)
+        (* write our saved lines to the output file.                *)
 
-        IF StillSearching THEN
-            boundary[0] := Nul;
+        IF (NOT killit) OR (boundary[0] = Nul) THEN
             p := head;
             REPEAT
                 FWriteString (dstcid, p^.this);
@@ -1556,6 +1558,28 @@ PROCEDURE AddListHeaders (cid: ChanId;  L: MailingList);
 
 (************************************************************************)
 
+PROCEDURE RemoveBATVoverhead (VAR (*INOUT*) Sender: EmailAddress);
+
+    (* Removes prvs tag, if present, from Sender.  *)
+
+    VAR pos: CARDINAL;  found: BOOLEAN;
+
+    BEGIN
+        IF HeadMatch (Sender, "prvs=") THEN
+
+            (* Look for second = sign. *)
+
+            Strings.FindNext ('=', Sender, 5, found, pos);
+            IF found THEN
+                Strings.Delete (Sender, 0, pos);
+            ELSE
+                Strings.Delete (Sender, 0, 5);
+            END (*IF*);
+        END (*IF*);
+    END RemoveBATVoverhead;
+
+(************************************************************************)
+
 PROCEDURE WriteEmailAddress (cid: ChanId;
                                 VAR (*IN*) DisplayName: ARRAY OF CHAR;
                                 VAR (*IN*) address: EmailAddress);
@@ -1575,21 +1599,23 @@ PROCEDURE WriteEmailAddress (cid: ChanId;
 (************************************************************************)
 
 PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
-                       VAR (*IN*) terminator: LineBuffer;
-                       VAR (*OUT*) Sender: EmailAddress;
-                       VAR (*OUT*) IllegalSender: BOOLEAN): BOOLEAN;
+                          VAR (*IN*) terminator: LineBuffer;
+                          VAR (*OUT*) Sender: EmailAddress;
+                          VAR (*OUT*) reject: BOOLEAN): BOOLEAN;
 
     (* Copies srccid to dstcid, modifying the header lines as needed    *)
-    (* and removing attachments if that is desired.  This procedure is  *)
-    (* called after the filter has been run, but before this item has   *)
-    (* been sent to mailing list members.  We return IllegalSender=TRUE *)
-    (* to tell the caller to abort the operation.  The function result  *)
-    (* is TRUE iff we have stripped attachments.                        *)
+    (* and removing attachments if that is desired.  Also inserts       *)
+    (* leader and trailer text if those are defined for this list.      *)
+    (* This procedure is called after the filter has been run, but      *)
+    (* before this item has been sent to mailing list members.  We      *)
+    (* return IllegalSender=TRUE to tell the caller to abort the        *)
+    (* operation.  The function resultis TRUE iff we have stripped      *)
+    (* attachments.                                                     *)
 
     (* The "From" header line needs special treatment because of list   *)
     (* moderation:                                                      *)
     (*  - unmoderated list: retain the "From" header unchanged (but     *)
-    (*      special treatment needed L^.SuppressFrom is TRUE or if      *)
+    (*      special treatment needed if L^.SuppressFrom is TRUE or if   *)
     (*      L^.DMARCcompatible is TRUE)                                 *)
     (*  - message to be sent to moderator: copy the "From" address      *)
     (*      into an "X-Original-Sender" header, and also retain the     *)
@@ -1601,15 +1627,29 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
     (*      that "From" data in the same way as for an unmoderated      *)
     (*      list.                                                       *)
 
+    (* This procedure calls itself recursively for a message with       *)
+    (* internal MIME structure, but there is only one recursive call.   *)
+    (* We have to add the leader and trailer to the first MIME          *)
+    (* component, then we either ignore all following components or     *)
+    (* copy them verbatim, depending on whether "remove attachments"    *)
+    (* is active.                                                       *)
+
     VAR buffer, boundary: LineBuffer;
         OriginalSender, OriginalReplyTo, AddrTemp: EmailAddress;
         DispTemp, DisplayName: LineBuffer;
-        FromModerator, ToModerator, DropLine, AlreadyHaveLine, dummy: BOOLEAN;
+        FromModerator, ToModerator, DropLine, FirstCall,
+                                    AlreadyHaveLine, dummy: BOOLEAN;
+
+    CONST BigBufferSize = 32768;
+
+    VAR NumberRead: CARDINAL;
+        pbigbuffer: POINTER TO ARRAY [0..BigBufferSize-1] OF CHAR;
 
     BEGIN
-        IllegalSender := FALSE;
         AlreadyHaveLine := FALSE;
         DropLine := FALSE;
+        FirstCall := (terminator[0] = CtrlZ);
+        reject := FirstCall;
         boundary := "";
         OriginalSender := "";
         OriginalReplyTo := "";
@@ -1626,6 +1666,9 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
             ELSE
                 ReadLine (srccid, buffer);
             END (*IF*);
+
+            (* Exit loop if end of header section. *)
+
             IF (buffer[0] = Nul) OR (buffer[0] = CtrlZ) THEN EXIT(*LOOP*) END(*IF*);
 
             (* Continuation lines are either dropped or copied,         *)
@@ -1656,6 +1699,7 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     (* most reliable indication of the sender's address.        *)
 
                     ExtractEmailAddress (buffer, 12, DispTemp, Sender);
+                    RemoveBATVoverhead (Sender);
 
                     (* Don't copy the Return-Path line into the output file,    *)
                     (* because it's now obsolete.                               *)
@@ -1664,7 +1708,7 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
                 ELSIF HeadMatch (buffer, "Reply-To:") THEN
 
-                    (* Drop the Reply-To header, but retain the         *)
+                    (* Drop the Reply-To header, but retain the          *)
                     (* information in case we need to reinsert it later. *)
 
                     ExtractEmailAddress (buffer, 9, DispTemp, OriginalReplyTo);
@@ -1694,12 +1738,13 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     END (*IF*);
 
                     (* Drop the "From" line, although we might decide below to  *)
-                    (* restore it.                                              *)
+                    (* restore it.  We can record, though, that a "From" was    *)
+                    (* present, as required by RFC 5322.                        *)
 
+                    reject := FALSE;
                     DropLine := TRUE;
 
-                ELSIF L^.KillAttachments AND HeadMatch(buffer, "Content-Type:")
-                                        AND (boundary[0] = Nul) THEN
+                ELSIF FirstCall AND HeadMatch(buffer, "Content-Type:") THEN
 
                     (* Scan the line for a BOUNDARY= field.  Note that the      *)
                     (* procedure CheckForBoundaryCode will copy this header     *)
@@ -1707,7 +1752,8 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     (* no boundary code, but will kill it if this turns out to  *)
                     (* be a multipart message.                                  *)
 
-                    CheckForBoundaryCode (srccid, dstcid, buffer, boundary);
+                    CheckForBoundaryCode (srccid, dstcid, buffer,
+                                                 boundary, L^.KillAttachments);
                     AlreadyHaveLine := TRUE;
                     DropLine := TRUE;
 
@@ -1740,21 +1786,27 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
         END (*LOOP*);
 
+        (* Finished processing header.  Reject the item if From: was missing.   *)
+
+        IF reject THEN
+            RETURN FALSE;
+        END (*IF*);
+
         (* Check the sender, but only if this is a top-level call. *)
 
-        IF terminator[0] = CtrlZ THEN
+        IF FirstCall THEN
             IF Sender[0] = Nul THEN
                 Strings.Assign ("?", Sender);
             END (*IF*);
             IF OriginalSender[0] = Nul THEN
                 OriginalSender := Sender;
             END (*IF*);
-    
+
             (* Abort the operation if we discover that we don't approve     *)
             (* of the sender.                                               *)
-    
+
             IF (L^.NonsubOption < 2) AND NOT MaySend (Sender, L) THEN
-                IllegalSender := TRUE;
+                reject := TRUE;
                 RETURN FALSE;
             END (*IF*);
         END (*IF*);
@@ -1762,10 +1814,10 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
         (* End of header.  Add extra header lines as needed, but only   *)
         (* if this is not a nested recursive call.                      *)
 
-        IF terminator[0] = CtrlZ THEN
+        FromModerator := L^.Moderated AND IsOnList (Sender, L^.Owners);
+        ToModerator := L^.Moderated AND NOT FromModerator;
 
-            FromModerator := L^.Moderated AND IsOnList (Sender, L^.Owners);
-            ToModerator := L^.Moderated AND NOT FromModerator;
+        IF FirstCall THEN
 
             IF L^.SuppressFrom THEN
                 OriginalSender[0] := Nul;
@@ -1827,16 +1879,65 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
         END (*IF*);
 
-        (* End of header processing. *)
+        (* End of header processing.  Add the blank line that   *)
+        (* terminates the header.                               *)
 
-        (* A non-empty boundary code at this stage means that   *)
-        (* we have to remove attachments.                       *)
+        FWriteLn (dstcid);
 
-        IF boundary[0] = Nul THEN
+        (* A non-empty boundary code at this stage means that we have   *)
+        (* internal MIME structure; and, because of the conditions      *)
+        (* under which we calculate the boundary code, we are not       *)
+        (* executing a nested recursive call.                           *)
 
-            (* A blank line separates header from body. *)
-    
-            FWriteLn (dstcid);
+        IF boundary[0] <> Nul THEN
+
+            (* Move to the first boundary, copying the intervening      *)
+            (* lines unless we are killing attachments.                 *)
+
+            REPEAT
+                ReadLine (srccid, buffer);
+                IF NOT L^.KillAttachments THEN
+                    FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+                END (*IF*);
+            UNTIL (buffer[0] = CtrlZ) OR Strings.Equal(buffer, terminator)
+                                       OR Strings.Equal(buffer, boundary);
+
+            (* Copy everything up to, but not including, the next       *)
+            (* boundary.  A recursive method is necessary because       *)
+            (* MIME allows nested attachments, and also because there   *)
+            (* will be extra header lines to copy over.  We don't let   *)
+            (* the recursive call overwrite sender information.         *)
+
+            EVAL (ProcessItem (L, srccid, dstcid, boundary, AddrTemp, dummy));
+
+            (* If we are killing attachments, stop processing at this   *)
+            (* point, thereby removing everything except the first      *)
+            (* MIME component that we have already copied.              *)
+
+            IF L^.KillAttachments THEN
+                RETURN TRUE;
+            END (*IF*);
+
+            (* If we are not killing attachments, copy everything to    *)
+            (* end of file.  At this stage we can afford to ignore the  *)
+            (* line structure and to read/write in large chunks.        *)
+
+            FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+            NEW (pbigbuffer);
+            LOOP
+                ReadRaw (srccid, pbigbuffer^, BigBufferSize, NumberRead);
+                IF NumberRead = 0 THEN EXIT(*LOOP*) END(*IF*);
+                WriteRaw (dstcid, pbigbuffer^, NumberRead);
+            END (*LOOP*);
+            DISPOSE (pbigbuffer);
+
+        ELSE
+
+            (* If we reach this point, then we are either at the end of *)
+            (* the headers of a plain message with no internal MIME     *)
+            (* structure, or we are at the end of the MIME headers of   *)
+            (* the first MIME component.  In either case, this counts   *)
+            (* as the main body of the message.                         *)
 
             (* Add in the leader material if any. *)
 
@@ -1852,28 +1953,16 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                 FWriteString (dstcid, buffer);
                 FWriteLn (dstcid);
             END (*LOOP*);
-            RETURN FALSE;
 
-        ELSE
+            (* Add in the trailer material if any. *)
 
-            (* We want to remove attachments.  To begin with, skip to   *)
-            (* the first boundary.                                      *)
-
-            REPEAT
-                ReadLine (srccid, buffer);
-            UNTIL (buffer[0] = CtrlZ) OR Strings.Equal(buffer, terminator)
-                                       OR Strings.Equal(buffer, boundary);
-
-            (* Copy everything up to, but not including, the next       *)
-            (* boundary.  A recursive method is necessary because       *)
-            (* MIME allows nested attachments, and also because there   *)
-            (* will be extra header lines to copy over.  We don't let   *)
-            (* the recursive call overwrite sender information.         *)
-
-            EVAL (ProcessItem (L, srccid, dstcid, boundary, AddrTemp, dummy));
-            RETURN TRUE;
+            IF (L^.Trailer[0] <> Nul) AND NOT ToModerator THEN
+                AppendFromFile (dstcid, L, L^.lang, L^.Trailer, Sender, '');
+            END (*IF*);
 
         END (*IF*);
+
+        RETURN FALSE;
 
     END ProcessItem;
 
@@ -1935,15 +2024,7 @@ PROCEDURE DistributeItem (L: MailingList;
         END (*IF*);
 
         SendToModerator := L^.Moderated AND NOT IsOnList (From, L^.Owners);
-
-        (* Add in the trailer material if any. *)
-
-        IF (L^.Trailer[0] <> Nul) AND NOT SendToModerator THEN
-            AppendFromFile (dstcid, L, L^.lang, L^.Trailer, From, '');
-        END (*IF*);
-
         CloseFile (dstcid);
-
         failures := 0;
         IF SendToModerator THEN
             count := DeliverItem (From, NewFilename, failures, 0, L^.Owners,

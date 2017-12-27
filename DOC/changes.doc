@@ -1,5 +1,32 @@
 LIST OF CHANGES
 
+Version 2.5         (25 Oct 2017)
+   Fixed: missing blank line after header in the case
+      where attachments are not removed.
+   New rule: if only one of Major.INI and Major.TNI is
+      present, then that is the one that both Admin
+      and Major will use. Otherwise, Major.INI will be
+      used.
+   Fixed: my handling of an ERROR_INTERRUPT result from
+      a DosWaitEventSem call was preventing Ctrl/C from
+      terminating the program. After careful consideration
+      of all the available advice, and some experimentation,
+      I have decided that the best way to handle this
+      "error", in the context of DosWaitEventSem, is to
+      ignore it.
+
+Version 2.4         (24 Aug 2017)
+   Remove BATV tag from sender address if present.
+
+Version 2.3         (14 Jun 2017)
+   Added manual section on multiple domains.
+   Added a check for missing From: header.
+   Fixed: for a message with non-deleted attachments,
+      the trailer was being inserted at the wrong place.
+   Fixed: Admin was not storing the "kill attachments"
+      option for a new list, although the option was
+      correctly handled after the first change.
+
 Version 2.2         (21 May 2015)
    Fixed: sender information overwritten when
       attachments deleted.
@@ -15,7 +42,6 @@ Version 2.1         (13 May 2015)
 Version 2.0         ( 5 May 2015)
    Re-released with GNU GPL licence.
    Fixed: messages not being sent to list members.
-   Public release.
 
 Version 1.68        (29 Jun 2014)
    Now recognises OS/2 limit of 256 threads/process.
@@ -23,7 +49,6 @@ Version 1.68        (29 Jun 2014)
       revised the rules for updating headers.
    New option to set a limit of number of
       recipients per mail message.
-   Public release.
 
 Version 1.671       (12 Dec 2013)
    Change in macro meaning: the %S macro expands to
@@ -32,19 +57,16 @@ Version 1.671       (12 Dec 2013)
       unsubscription confirmation message it
       expands to the address of the member who is
       being subscribed or unsubscribed.
-   Released to mailing list.
 
 Version 1.67        (4 Jan 2013)
    Incorporates low-level code changes that were
       introduced by Weasel updates.
    Will use exceptq if it is installed.
-   This version released publicly.
 
 Version 1.66        (10 Nov 2012)
    Fixed: incorrect parsing of boundary code when
       it was not in quotation marks in the
       Content-Type header line.
-   This version released to mailing list.
 
 Version 1.65        (24 May 2012)
    Changed an http: link in DefaultPlainTextFile.txt

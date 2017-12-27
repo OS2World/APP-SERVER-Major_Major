@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  PMOS/2 software library                                               *)
-(*  Copyright (C) 2014   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -34,7 +34,7 @@ IMPLEMENTATION MODULE TaskControl;
         (*                  related procedures.                         *)
         (*                                                              *)
         (*      Programmer:     P. Moylan                               *)
-        (*      Last edited:    22 December 2013                        *)
+        (*      Last edited:    25 October 2017                         *)
         (*      Status:         OK                                      *)
         (*                                                              *)
         (*    Note that most of the PMOS kernel is missing from this    *)
@@ -687,7 +687,7 @@ PROCEDURE SuspendMe (id: TaskID;  TimeLimit: CARDINAL): BOOLEAN;
     (* Suspends the caller.  A TRUE result indicates that the time      *)
     (* limit expired without the task being woken up.                   *)
 
-    VAR T: Task;  status: CARDINAL;  (* PostCount: CARDINAL; *)
+    VAR T: Task;  status: CARDINAL;
         TimedOut: BOOLEAN;
 
     BEGIN
@@ -698,40 +698,41 @@ PROCEDURE SuspendMe (id: TaskID;  TimeLimit: CARDINAL): BOOLEAN;
         ELSE
             (*T^.active := FALSE;*)
             (*NoteSemOperation (sem_wait, T^.WakeUp, T^.threadnum, 0);*)
+
             status := OS2.DosWaitEventSem (T^.WakeUp, TimeLimit);
+
             (*NoteThreadOperation (thr_awake, T^.threadnum, T^.name);*)
             (*T^.active := TRUE;*)
+
+            (* The ERROR_INTERRUPT condition usually means in this case *)
+            (* that a signal (probably Ctrl/C, in my applications)      *)
+            (* occurred while we were waiting, and the system can no    *)
+            (* longer tell why we woke up. In some situations this      *)
+            (* means that the interrupted operation should be retried,  *)
+            (* but that turns out to be a bad idea in the case of a     *)
+            (* semaphore wait.  Accordingly, I have disabled the test   *)
+            (* below.  In effect, I am now treating an ERROR_INTERRUPT  *)
+            (* reply as equivalent to waking up without timing out.     *)
+            (* That might not be the correct decision in all cases, but *)
+            (* it is the best compromise I can make.                    *)
+
+            (*
+            IF status = OS2.ERROR_INTERRUPT THEN
+                (* Interrupt during the wait. Apparently this means     *)
+                (* that the wait didn't happen, and we should retry     *)
+                (* the operation.                                       *)
+
+                status := OS2.DosWaitEventSem (T^.WakeUp, TimeLimit);
+            END (*IF*);
+            *)
+
             TimedOut := status = OS2.ERROR_TIMEOUT;
             IF NOT TimedOut THEN
 
-                (*
-                (* NOTE THAT THIS CODE SECTION IS NOW COMMENTED OUT *)
-
-                IF status = 0 THEN
-
-                    (* This reset should now be redundant, because we   *)
-                    (* are resetting as soon as we post.                *)
-
-                    status := OS2.DosResetEventSem (T^.WakeUp, PostCount);
-                    IF status = OS2.ERROR_ALREADY_RESET THEN
-                        PostCount := 0;
-                        status := 0;
-                    END (*IF*);
-                    IF PostCount > 1 THEN
-                        LockScreen;
-                        WriteString ("Post count = ");
-                        WriteCard (PostCount);
-                        WriteString (" for wakeup semaphore in SuspendMe");
-                        WriteLn;
-                        UnlockScreen;
-                        PtrTo0^ := 0;
-                    END (*IF*);
-                END (*IF*);
-                *)
-
-                IF status = 95 THEN
-                    (* Interrupt during the wait. I don't see why this  *)
-                    (* should be called an error.                       *)
+                IF status = OS2.ERROR_INTERRUPT THEN
+                    (* Interrupt during the wait. This is not an error, *)
+                    (* just an indication that the value of TimedOut is *)
+                    (* not completely trustworthy.                      *)
 
                     status := 0;
                 END (*IF*);
@@ -762,22 +763,6 @@ PROCEDURE ResumeTask (id: TaskID): BOOLEAN;
         IF T = NIL THEN
             UnlockTaskList;
             RETURN FALSE;
-            (*
-        ELSIF T^.active THEN
-
-            (* This condition is occasionally occurring, and I can't    *)
-            (* work out why.  Should I wake up the task anyway, or      *)
-            (* should I ignore the "resume"?                            *)
-
-            LockScreen;
-            WriteString ("ResumeTask called by ");
-            WriteString (Me^.name);
-            WriteString (" to resume ");
-            WriteString (T^.name);
-            WriteLn;
-            UnlockScreen;
-            (*Crash ("Attempt to resume active task");*)
-            *)
 
         END (*IF*);
         status := OS2.DosPostEventSem (T^.WakeUp);
@@ -792,24 +777,13 @@ PROCEDURE ResumeTask (id: TaskID): BOOLEAN;
             status := 0;
         END (*IF*);
 
-        (* We probably don't need to be doing this check on the post    *)
-        (* count, because we are no longer having a problem of this     *)
-        (* nature, but I'll leave the code in for a while.              *)
-
-        IF PostCount > 1 THEN
-            LockScreen;
-            WriteString ("Post count = ");
-            WriteCard (PostCount);
-            WriteString (" for wakeup semaphore in ResumeTask");
-            WriteLn;
-            UnlockScreen;
-            PtrTo0^ := 0;
-        END (*IF*);
         IF status <> 0 THEN
             SemError (eventsem, status);
         END (*IF*);
+
         UnlockTaskList;
         RETURN TRUE;
+
     END ResumeTask;
 
 (************************************************************************)

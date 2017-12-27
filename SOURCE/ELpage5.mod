@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ELpage5;
         (*      The "owners" page of the "edit list" notebook       *)
         (*                                                          *)
         (*    Started:        11 January 2001                       *)
-        (*    Last edited:    5 April 2010                          *)
+        (*    Last edited:    22 May 2017                           *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -44,7 +44,7 @@ FROM Languages IMPORT
     (* type *)  LangHandle,
     (* proc *)  StrToBuffer;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* type *)  CharArrayPointer;
 
 FROM Storage IMPORT

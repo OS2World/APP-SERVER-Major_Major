@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE POPClient;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            7 August 2000                   *)
-        (*  Last edited:        26 July 2004                    *)
+        (*  Last edited:        11 June 2017                    *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -70,13 +70,10 @@ FROM NetDB IMPORT
     (* proc *)  gethostbyname;
 
 FROM Inet2Misc IMPORT
-    (* proc *)  Swap2;
+    (* proc *)  Swap2, WaitForSocket, NameIsNumeric;
 
 FROM Misc IMPORT
     (* proc *)  OpenNewOutputFile;
-
-FROM InetUtilities IMPORT
-    (* proc *)  WaitForSocket, NameIsNumeric;
 
 FROM SplitScreen IMPORT
     (* proc *)  WriteString, WriteLn;
@@ -168,7 +165,7 @@ PROCEDURE SendCommand (U: POP3User;  part1, part2: ARRAY OF CHAR): BOOLEAN;
     (* part2, and finally a CRLF.  If part2 is the empty string then    *)
     (* the space character and part2 are omitted.                       *)
 
-    VAR buffer: ARRAY [0..511] OF CHAR;  success: BOOLEAN;
+    VAR buffer: ARRAY [0..511] OF CHAR;  sent: CARDINAL;  success: BOOLEAN;
 
     BEGIN
         Strings.Assign (part1, buffer);
@@ -176,9 +173,9 @@ PROCEDURE SendCommand (U: POP3User;  part1, part2: ARRAY OF CHAR): BOOLEAN;
             Strings.Append (' ', buffer);
             Strings.Append (part2, buffer);
         END (*IF*);
-        success := SendLine (U^.SB, buffer);
-        FlushOutput (U^.SB);
-        RETURN success;
+        success := SendLine (U^.SB, buffer, sent);
+        INC (sent, FlushOutput (U^.SB));
+        RETURN success AND (sent = Strings.Length(buffer)+2);
     END SendCommand;
 
 (************************************************************************)

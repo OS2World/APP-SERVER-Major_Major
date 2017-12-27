@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE Page1;
         (*                     Page 1 of the notebook                   *)
         (*                                                              *)
         (*    Started:        16 June 2000                              *)
-        (*    Last edited:    29 June 2014                              *)
+        (*    Last edited:    22 May 2017                               *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -65,7 +65,10 @@ FROM LogLevel IMPORT
     (* type *)  LogLevelType;
 
 FROM Inet2Misc IMPORT
-    (* proc *)  EVAL, IPToString;
+    (* proc *)  IPToString;
+
+FROM MiscFuncs IMPORT
+    (* proc *)  EVAL;
 
 FROM Names IMPORT
     (* type *)  FilenameString;

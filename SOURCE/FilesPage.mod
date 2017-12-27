@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE FilesPage;
         (*          Logging and archiving page of the notebook          *)
         (*                                                              *)
         (*    Started:        9 February 2009                           *)
-        (*    Last edited:    10 February 2009                          *)
+        (*    Last edited:    22 May 2017                               *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -61,8 +61,11 @@ FROM NetDB IMPORT
     (* type *)  HostEntPtr,
     (* proc *)  gethostname, gethostbyname, gethostbyaddr;
 
+FROM MiscFuncs IMPORT
+    (* proc *)  EVAL;
+
 FROM Inet2Misc IMPORT
-    (* proc *)  EVAL, IPToString;
+    (* proc *)  IPToString;
 
 FROM Names IMPORT
     (* type *)  FilenameString;

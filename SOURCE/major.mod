@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ MODULE Major;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            20 May 2000                     *)
-        (*  Last edited:        29 June 2014                    *)
+        (*  Last edited:        25 October 2017                 *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -238,7 +238,7 @@ PROCEDURE FetchCommandLineParameters(VAR (*OUT*) UseTNI: BOOLEAN): BOOLEAN;
 
     TYPE CharNumber = [0..255];
 
-    VAR j: CARDINAL;
+    VAR j, TNIoption: CARDINAL;
         args: ChanId;
         ExtraLogging: BOOLEAN;
         Options: ARRAY CharNumber OF CHAR;
@@ -262,6 +262,7 @@ PROCEDURE FetchCommandLineParameters(VAR (*OUT*) UseTNI: BOOLEAN): BOOLEAN;
 
     BEGIN
         ExtraLogging := FALSE;
+        TNIoption := 2;              (* meaning "no decision yet" *)
         args := ArgChan();
         IF IsArgPresent() THEN
             TextIO.ReadString (args, Options);
@@ -269,12 +270,18 @@ PROCEDURE FetchCommandLineParameters(VAR (*OUT*) UseTNI: BOOLEAN): BOOLEAN;
             LOOP
                 CASE CAP(Options[j]) OF
                     CHR(0):   EXIT (*LOOP*);
-                  | 'T':      INC (j);  UseTNI := TRUE;
+                  | 'T':      INC (j);
+                              TNIoption := 1;
                   | 'X':      INC (j);  ExtraLogging := TRUE;
                 ELSE
                               INC (j);
                 END (*CASE*);
             END (*LOOP*);
+        END (*IF*);
+        IF TNIoption < 2 THEN
+            UseTNI := TNIoption <> 0;
+        ELSIF NOT INIData.ChooseDefaultINI("Major", UseTNI) THEN
+            UseTNI := FALSE;
         END (*IF*);
         RETURN ExtraLogging;
     END FetchCommandLineParameters;
@@ -628,7 +635,7 @@ PROCEDURE RunManager;
             StrToBuffer (AdminLang, "Major.CtrlC", logmessage);
             pos1 := 79 - LENGTH(logmessage);
             WriteStringAt (0, (pos1 + LENGTH(buffer)) DIV 2 - 13,
-                                           "(C) 2001-2014 Peter Moylan");
+                                           "(C) 2001-2017 Peter Moylan");
             WriteStringAt (0, pos1, logmessage);
         END (*IF*);
 

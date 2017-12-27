@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -29,7 +29,7 @@ IMPLEMENTATION MODULE ListAdmin;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            21 May 2000                     *)
-        (*  Last edited:        28 June 2014                    *)
+        (*  Last edited:        22 May 2017                     *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
@@ -59,7 +59,7 @@ FROM Languages IMPORT
 FROM Misc IMPORT
     (* proc *)  HeadMatch, ExtractEmailAddress;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* proc *)  StringMatch;
 
 FROM TransLog IMPORT

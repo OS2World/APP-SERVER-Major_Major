@@ -95,7 +95,7 @@ rc = CreateObject( 'WPFolder',,
       'Updates',,
       '<MajorMajor_folder>',,
       'NOPRINT=YES;'||,
-          'URL=http://www.pmoylan.org/os2/major.html',,
+          'URL=http://www.pmoylan.org/pages/os2/major.html',,
       CreateCollision )
 
 return

@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -27,13 +27,16 @@ MODULE Admin;
         (*                Mailing list administration               *)
         (*                                                          *)
         (*    Started:        15 June 2000                          *)
-        (*    Last edited:    4 April 2010                          *)
+        (*    Last edited:    25 October 2017                       *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
 
 
 IMPORT OS2, OS2RTL, OpeningDialogue, IOChan, TextIO;
+
+FROM RINIData IMPORT
+    (* proc *)  ChooseDefaultINI;
 
 FROM ProgramArgs IMPORT
     (* proc *)  ArgChan, IsArgPresent;
@@ -121,6 +124,10 @@ BEGIN
     (* Since signal exceptions are not handled by RTS yet, using module   *)
     (* finalization for clean up is incorrect. This will be changed in the*)
     (* next release.                                                      *)
+
+    IF NOT ChooseDefaultINI ("Major", UseTNI) THEN
+        UseTNI := FALSE;
+    END (*IF*);
 
     GetParameters (LocalRemote, UseTNI);
     OpeningDialogue.CreateMainDialogue (LocalRemote, UseTNI);

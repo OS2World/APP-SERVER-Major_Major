@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE SMTPOut;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            5 August 2000                   *)
-        (*  Last edited:        23 May 2012                     *)
+        (*  Last edited:        11 June 2017                    *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -79,11 +79,8 @@ FROM FileOps IMPORT
     (* type *)  ChanId, FilenameString,
     (* proc *)  OpenOldFile, CloseFile, ReadRaw;
 
-FROM InetUtilities IMPORT
-    (* proc *)  NameIsNumeric;
-
 FROM Inet2Misc IMPORT
-    (* proc *)  Swap2, Swap4, IPToString;
+    (* proc *)  Swap2, Swap4, IPToString, NameIsNumeric;
 
 FROM LowLevel IMPORT
     (* proc *)  EVAL;
@@ -138,6 +135,7 @@ PROCEDURE ConnectToHost (IPaddress: CARDINAL;  SMTPport: CARDINAL;
     (* IPaddress is in network byte order.                              *)
 
     VAR s: Socket;  peer: SockAddr;
+        IPstr: ARRAY [0..23] OF CHAR;
 
     BEGIN
         IF IPaddress <> 0 THEN
@@ -160,7 +158,9 @@ PROCEDURE ConnectToHost (IPaddress: CARDINAL;  SMTPport: CARDINAL;
 
                 IF connect (s, peer, SIZE(peer)) THEN
 
-                    Strings.Assign ("Failed to connect", FailureReason);
+                    Strings.Assign ("Failed to connect to ", FailureReason);
+                    IPToString (IPaddress, TRUE, IPstr);
+                    Strings.Append (IPstr, FailureReason);
                     soclose(s);
                     s := NotASocket;
 
@@ -186,10 +186,13 @@ PROCEDURE SendCommand (SB: SBuffer;  command: ARRAY OF CHAR;
     (* Sends a command, returns TRUE if the command was sent OK and     *)
     (* a positive response was returned.                                *)
 
+    VAR sent: CARDINAL;
+
     BEGIN
-        ConnectionLost := NOT SendLine (SB, command);
-        FlushOutput (SB);
-        RETURN (NOT ConnectionLost) AND PositiveResponse(SB, ConnectionLost);
+        ConnectionLost := NOT SendLine (SB, command, sent);
+        INC (sent, FlushOutput (SB));
+        RETURN (NOT ConnectionLost) AND (sent = Strings.Length(command)+2)
+                                 AND PositiveResponse(SB, ConnectionLost);
     END SendCommand;
 
 (************************************************************************)
@@ -204,7 +207,7 @@ PROCEDURE SendFile (SB: SBuffer;  name: FilenameString;
           LF = CHR(10);
 
     VAR success, MoreToGo, AtEOL: BOOLEAN;
-        cid: ChanId;  amount: CARDINAL;
+        cid: ChanId;  sent, amount, thisamount: CARDINAL;
         buffer: ARRAY [0..BufferSize-1] OF CHAR;
 
     BEGIN
@@ -212,21 +215,29 @@ PROCEDURE SendFile (SB: SBuffer;  name: FilenameString;
         cid := OpenOldFile (name, FALSE, TRUE);
         success := cid <> NoSuchChannel;
         MoreToGo := TRUE;
+        thisamount := 0;
+        sent := 0;
         WHILE success AND MoreToGo DO
             ReadRaw (cid, buffer, BufferSize, amount);
             MoreToGo := amount > 0;
             IF MoreToGo THEN
                 AtEOL := buffer[amount-1] = LF;
-                success := SendRaw (SB, buffer, amount);
+                success := SendRaw (SB, buffer, amount, thisamount);
+                INC (sent, thisamount);
             END (*IF*);
         END (*WHILE*);
         CloseFile (cid);
         IF NOT AtEOL THEN
-            success := success AND SendEOL(SB);
+            success := success AND SendEOL(SB, thisamount);
         END (*IF*);
 
-        success := success AND SendChar (SB, '.') AND SendEOL (SB);
-        FlushOutput (SB);
+        IF success THEN
+            success := SendChar (SB, '.', thisamount);
+        END (*IF*);
+        IF success THEN
+            success := SendEOL (SB, thisamount);
+        END (*IF*);
+        EVAL (FlushOutput (SB));
         ConnectionLost := NOT success;
         RETURN success AND PositiveResponse (SB, ConnectionLost);
 

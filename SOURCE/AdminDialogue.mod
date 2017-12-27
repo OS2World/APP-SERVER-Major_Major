@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE AdminDialogue;
         (*                     The Admin dialogue                       *)
         (*                                                              *)
         (*    Started:        22 June 2000                              *)
-        (*    Last edited:    8 February 2009                           *)
+        (*    Last edited:    22 May 2017                               *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -48,7 +48,7 @@ FROM Languages IMPORT
     (* type *)  LangHandle,
     (* proc *)  StrToBuffer;
 
-FROM Inet2Misc IMPORT
+FROM MiscFuncs IMPORT
     (* proc *)  EVAL;
 
 FROM Names IMPORT

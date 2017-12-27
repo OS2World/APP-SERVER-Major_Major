@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  PMOS/2 software library                                               *)
-(*  Copyright (C) 2014   Peter Moylan                                     *)
+(*  Copyright (C) 2017   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,13 +28,12 @@ IMPLEMENTATION MODULE LONGLONG;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            17 October 2001                 *)
-        (*  Last edited:        1 June 2011                     *)
+        (*  Last edited:        5 October 2017                  *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
 
 FROM SYSTEM IMPORT CARD16;
-FROM Types IMPORT CARD64, INT64;
 
 (************************************************************************)
 
@@ -89,6 +88,21 @@ PROCEDURE Sub64 (VAR (*INOUT*) A: CARD64;  B: CARDINAL);
             A.low := A.low - B;
         END (*IF*);
     END Sub64;
+
+(************************************************************************)
+
+PROCEDURE DEC64 (VAR (*INOUT*) A: CARD64);
+
+    (* Decrements A by 1.  *)
+
+    BEGIN
+        IF A.low = 0 THEN
+            A.low := MAX(CARDINAL);
+            DEC (A.high);
+        ELSE
+            DEC (A.low);
+        END (*IF*);
+    END DEC64;
 
 (************************************************************************)
 
