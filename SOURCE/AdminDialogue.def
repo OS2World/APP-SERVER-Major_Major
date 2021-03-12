@@ -6,7 +6,7 @@ DEFINITION MODULE AdminDialogue;
         (*                     The Admin dialogue                       *)
         (*                                                              *)
         (*    Started:        22 June 2000                              *)
-        (*    Last edited:    8 February 2009                           *)
+        (*    Last edited:    19 September 2020                         *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -17,11 +17,11 @@ IMPORT CommonSettings;
 FROM OS2 IMPORT HWND;
 FROM Languages IMPORT LangHandle;
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
-PROCEDURE Create (owner: HWND): HWND;
+PROCEDURE Create (owner: HWND;  VAR (*OUT*) PageID: CARDINAL): HWND;
 
     (* Creates the dialogue box. *)
 

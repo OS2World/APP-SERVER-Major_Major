@@ -6,19 +6,19 @@ DEFINITION MODULE FilesPage;
         (*          Logging and archiving page of the notebook          *)
         (*                                                              *)
         (*    Started:        9 February 2009                           *)
-        (*    Last edited:    10 February 2009                          *)
-        (*    Status:         Just started                              *)
+        (*    Last edited:    19 September 2020                         *)
+        (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
 
 
 IMPORT OS2, CommonSettings, Languages;
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
-PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
+PROCEDURE CreatePage (notebook: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates the files page and adds it to the notebook. *)
 

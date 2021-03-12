@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ELpage2;
         (*           Page 2 of the "edit list" notebook             *)
         (*                                                          *)
         (*    Started:        24 October 2000                       *)
-        (*    Last edited:    11 June 2017                          *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -64,7 +64,6 @@ TYPE
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     pagehandle, notebookhandle: OS2.HWND;
     PageID: CARDINAL;
@@ -142,7 +141,7 @@ PROCEDURE LoadListData (hwnd: OS2.HWND);
         OldEnableLongUnsubscribe := TRUE;
         OldEnableWho := TRUE;
 
-        opened := RINIData.OpenINIFile(INIFileName, UseTNI);
+        opened := RINIData.OpenINIFile(INIFileName);
 
         (* Kill attachments. *)
 
@@ -411,13 +410,12 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

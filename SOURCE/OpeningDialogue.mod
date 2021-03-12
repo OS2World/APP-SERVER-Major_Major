@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE OpeningDialogue;
         (*                    Initial dialogue box                      *)
         (*                                                              *)
         (*    Started:        20 May 2002                               *)
-        (*    Last edited:    22 May 2017                               *)
+        (*    Last edited:    1 October 2019                            *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -43,7 +43,7 @@ FROM RINIData IMPORT
     (* proc *)  SetRemote;
 
 FROM MiscFuncs IMPORT
-    (* proc *)  EVAL;
+    (* proc *)  EVAL, SetINIorTNIname;
 
 (************************************************************************)
 
@@ -193,12 +193,8 @@ PROCEDURE CreateMainDialogue (LocalRemote: CARDINAL;  TNImode: BOOLEAN);
         END (*WITH*);
         OS2.WinCreateSwitchEntry (PMInit.OurHab(), SwitchData);
 
-        IF UseTNI THEN
-            stringval := "MAJOR.TNI";
-        ELSE
-            stringval := "MAJOR.INI";
-        END (*IF*);
-        CommonSettings.SetINIFileName (stringval, UseTNI);
+        SetINIorTNIname ("MAJOR", UseTNI, stringval);
+        CommonSettings.SetINIFileName (stringval);
         Remote.SetInitialWindowPosition (pagehandle, "Opening");
         CommonSettings.CurrentLanguage (lang, stringval);
         RemoteFlag := Remote.InitialSetup(lang,

@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -29,7 +29,7 @@ IMPLEMENTATION MODULE MailOut;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            12 June 2000                    *)
-        (*  Last edited:        30 March 2015                   *)
+        (*  Last edited:        5 June 2019                     *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -261,7 +261,6 @@ PROCEDURE DoDelivery (sender: EmailAddress;
                 count := 0;
             END (*IF*);
             OS2.DosPostEventSem (ForceOnlineCheck);
-            OS2.DosResetEventSem (ForceOnlineCheck, tries);
         END (*IF*);
         RETURN count;
     END DoDelivery;

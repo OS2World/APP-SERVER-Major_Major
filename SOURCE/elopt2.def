@@ -6,7 +6,7 @@ DEFINITION MODULE ELopt2;
         (*     The "options 2" page of the "edit list" notebook     *)
         (*                                                          *)
         (*    Started:        12 October 2003                       *)
-        (*    Last edited:    4 February 2009                       *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -14,9 +14,9 @@ DEFINITION MODULE ELopt2;
 
 IMPORT OS2, CommonSettings, Languages;
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
 PROCEDURE CreatePage (notebook: OS2.HWND;  name: ARRAY OF CHAR): OS2.HWND;
 

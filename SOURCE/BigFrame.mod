@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE BigFrame;
         (*             The settings notebook and its frame          *)
         (*                                                          *)
         (*    Started:        15 June 2000                          *)
-        (*    Last edited:    24 April 2012                         *)
+        (*    Last edited:    1 October 2019                        *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -43,6 +43,9 @@ IMPORT OS2, OS2RTL, DID, PMInit, RINIData, Page1, FilesPage, AdminDialogue, Dial
 
 FROM Remote IMPORT
     (* proc *)  SelectRemoteFile;
+
+FROM MiscFuncs IMPORT
+    (* proc *)  SetINIorTNIname;
 
 FROM Languages IMPORT
     (* type *)  LangHandle,
@@ -60,6 +63,7 @@ CONST
     Nul = CHR(0);
 
 TYPE
+    Page = [1..6];
     LanguageString = ARRAY [0..31] OF CHAR;
 
 <* PUSH *>
@@ -67,35 +71,33 @@ TYPE
 
 VAR
     OurWindow: OS2.HWND;
-    pagehandle: ARRAY [1..5] OF OS2.HWND;
+    StartingPage: Page;
+    pagehandle: ARRAY Page OF OS2.HWND;
+    IDofPage: ARRAY Page OF CARDINAL;
     ChangeInProgress: BOOLEAN;
     UseTNI: BOOLEAN;
     PageFont, TabFontName: CommonSettings.FontName;
     OurLanguage: LanguageString;
-    INIFileName: ARRAY [0..9] OF CHAR;
+    AdminININame: ARRAY [0..9] OF CHAR;
 
 <* POP *>
 
 (**************************************************************************)
 
-PROCEDURE SetINIname;
+PROCEDURE SetINIname (UseTNI: BOOLEAN);
 
     (* Informs each notebook page of the INI file name and mode.  *)
 
     VAR name: ARRAY [0..9] OF CHAR;
 
     BEGIN
-        name := "MAJOR.";
-        IF UseTNI THEN
-            Strings.Append ("TNI", name);
-        ELSE
-            Strings.Append ("INI", name);
-        END (*IF*);
-        Page1.SetINIFileName(name, UseTNI);
-        FilesPage.SetINIFileName(name, UseTNI);
-        AdminDialogue.SetINIFileName(name, UseTNI);
-        Dialp3.SetINIFileName(name, UseTNI);
-        ListsPage.SetINIFileName(name, UseTNI);
+        SetINIorTNIname ("MAJOR", UseTNI, name);
+        SetINIorTNIname ("ADMIN", UseTNI, AdminININame);
+        Page1.SetINIFileName(name);
+        FilesPage.SetINIFileName(name);
+        AdminDialogue.SetINIFileName(name);
+        Dialp3.SetINIFileName(name);
+        ListsPage.SetINIFileName(name);
     END SetINIname;
 
 (**************************************************************************)
@@ -177,7 +179,7 @@ PROCEDURE InitialiseNotebook (hwnd: OS2.HWND);
     VAR swp: OS2.SWP;  scale: CARDINAL;
         owner: OS2.HWND;  hini: INIData.HINI;
         NewStyle: BOOLEAN;
-        app: ARRAY [0..4] OF CHAR;
+        app: ARRAY [0..12] OF CHAR;
 
     BEGIN
         (* Find OS version to decide what notebook style to use. *)
@@ -187,7 +189,11 @@ PROCEDURE InitialiseNotebook (hwnd: OS2.HWND);
         NewStyle := scale >= 40;
         MakeNotebookNewStyle (hwnd, NewStyle);
 
-        hini := INIData.OpenINIFile (INIFileName, UseTNI);
+        hini := INIData.OpenINIFile (AdminININame);
+        app := "StartingPage";
+        IF NOT INIData.INIGet (hini, app, "MainNotebook", StartingPage) THEN
+            StartingPage := MIN(Page);
+        END (*IF*);
         app := "Font";
         IF NOT INIData.INIGetString (hini, app, "MainNotebookTabs", TabFontName) THEN
             TabFontName := "8.Helv";
@@ -207,14 +213,16 @@ PROCEDURE InitialiseNotebook (hwnd: OS2.HWND);
         OS2.WinSendMsg (hwnd, OS2.BKM_SETNOTEBOOKCOLORS,
                         CAST(ADDRESS,0080DBAAH), CAST(ADDRESS,OS2.BKA_BACKGROUNDMAJORCOLOR));
 
-        pagehandle[1] := Page1.CreatePage(hwnd);
-        pagehandle[2] := FilesPage.CreatePage(hwnd);
-        pagehandle[3] := AdminDialogue.Create (hwnd);
-        pagehandle[4] := Dialp3.Create (hwnd);
-        pagehandle[5] := ListsPage.CreatePage(hwnd, NewStyle);
-        About.Create (hwnd);
+        pagehandle[1] := Page1.CreatePage(hwnd, IDofPage[1]);
+        pagehandle[2] := FilesPage.CreatePage(hwnd, IDofPage[2]);
+        pagehandle[3] := AdminDialogue.Create (hwnd, IDofPage[3]);
+        pagehandle[4] := Dialp3.Create (hwnd, IDofPage[4]);
+        pagehandle[5] := ListsPage.CreatePage(hwnd, NewStyle, IDofPage[5]);
+        About.Create (hwnd, IDofPage[6]);
         SetPageFonts;
         SetLanguage;
+        OS2.WinSendMsg (hwnd, OS2.BKM_TURNTOPAGE,
+                           OS2.MPFROMULONG(IDofPage[StartingPage]), NIL);
         OS2.WinShowWindow (hwnd, TRUE);
 
         (* The parent of this window is the frame.  The owner of that   *)
@@ -278,7 +286,7 @@ PROCEDURE ["SysCall"] SubWindowProc (hwnd     : OS2.HWND;
 
                 IF NOT Strings.Equal (NewFontName, TabFontName) THEN
                     TabFontName := NewFontName;
-                    hini := INIData.OpenINIFile (INIFileName, UseTNI);
+                    hini := INIData.OpenINIFile (AdminININame);
                     app := "Font";
                     INIData.INIPutString (hini, app, "MainNotebookTabs", TabFontName);
                     INIData.CloseINIFile (hini);
@@ -303,17 +311,26 @@ PROCEDURE ["SysCall"] MainDialogueProc(hwnd     : OS2.HWND
                      ;mp1, mp2 : OS2.MPARAM): OS2.MRESULT;
 
     VAR bookwin: OS2.HWND;  lang: LangHandle;
-        stringval: ARRAY [0..255] OF CHAR;
+        app: ARRAY [0..12] OF CHAR;
+        stringval, filename: ARRAY [0..255] OF CHAR;
+        pageID: CARDINAL;  pg: Page;
+        hini: INIData.HINI;
 
     BEGIN
+        IF UseTNI THEN
+            filename := "Major.TNI";
+        ELSE
+            filename := "Major.INI";
+        END (*IF*);
+
         CASE msg OF
            |  OS2.WM_INITDLG:
                    OurWindow := hwnd;
-                   INIData.SetInitialWindowPosition (hwnd, INIFileName,
-                                                     "BigFrame", UseTNI);
+                   INIData.SetInitialWindowPosition (hwnd, AdminININame,
+                                                     "BigFrame");
                    CommonSettings.CurrentLanguage (lang, stringval);
                    IF RINIData.RemoteOperation() THEN
-                       IF SelectRemoteFile("Major.INI") THEN
+                       IF SelectRemoteFile(filename) THEN
                            StrToBuffer (lang, "Main.remote", stringval);
                        ELSE
                            StrToBuffer (lang, "Main.cantopen", stringval);
@@ -321,6 +338,8 @@ PROCEDURE ["SysCall"] MainDialogueProc(hwnd     : OS2.HWND
                    ELSE
                        StrToBuffer (lang, "Main.local", stringval);
                    END (*IF*);
+                   Strings.Append ("      ", stringval);
+                   Strings.Append (AdminININame, stringval);
                    OS2.WinSetWindowText (hwnd, stringval);
                    bookwin := OS2.WinWindowFromID (hwnd, DID.notebook);
                    InitialiseNotebook (bookwin);
@@ -351,6 +370,8 @@ PROCEDURE ["SysCall"] MainDialogueProc(hwnd     : OS2.HWND
                        ELSE
                            StrToBuffer (lang, "Main.local", stringval);
                        END (*IF*);
+                       Strings.Append ("      ", stringval);
+                       Strings.Append (AdminININame, stringval);
                        OS2.WinSetWindowText (hwnd, stringval);
                        SetLanguage;
                        ChangeInProgress := FALSE;
@@ -369,8 +390,20 @@ PROCEDURE ["SysCall"] MainDialogueProc(hwnd     : OS2.HWND
            *)
 
            |  OS2.WM_CLOSE:
-                   INIData.StoreWindowPosition (hwnd, INIFileName,
-                                                "BigFrame", UseTNI);
+                   bookwin := OS2.WinWindowFromID(hwnd, DID.notebook);
+                   pageID := OS2.ULONGFROMMR(OS2.WinSendMsg (bookwin, OS2.BKM_QUERYPAGEID,
+                                 OS2.MPFROMULONG(0),
+                                  OS2.MPFROMSHORT(OS2.BKA_TOP)));
+                   pg := MAX(Page);
+                   WHILE (IDofPage[pg] <> pageID) AND (pg > MIN(Page)) DO
+                       DEC (pg);
+                   END (*WHILE*);
+                   hini := INIData.OpenINIFile (AdminININame);
+                   app := "StartingPage";
+                   INIData.INIPut (hini, app, "MainNotebook", pg);
+                   INIData.CloseINIFile (hini);
+                   INIData.StoreWindowPosition (hwnd, AdminININame,
+                                                "BigFrame");
                    Page1.StoreData (pagehandle[1]);
                    FilesPage.StoreData (pagehandle[2]);
                    AdminDialogue.StoreData (pagehandle[3]);
@@ -394,7 +427,7 @@ PROCEDURE OpenBigFrame (owner: OS2.HWND;  TNImode: BOOLEAN);
 
     BEGIN
         UseTNI := TNImode;
-        SetINIname;
+        SetINIname (TNImode);
         ChangeInProgress := FALSE;
         OS2.WinDlgBox(OS2.HWND_DESKTOP, owner,
                        MainDialogueProc,    (* dialogue procedure *)
@@ -416,13 +449,19 @@ PROCEDURE ShowWindow;
 
 (**************************************************************************)
 
+VAR pg: Page;
+
 BEGIN
     ChangeInProgress := FALSE;
-    INIFileName := "Admin.INI";
+    AdminININame := "Admin.INI";
     UseTNI := FALSE;
     OurWindow := 0;
     PageFont := "";
     TabFontName := "";
     OurLanguage := "";
+    StartingPage := MIN(Page);
+    FOR pg := MIN(Page) TO MAX(Page) DO
+        IDofPage[pg] := 0;
+    END (*FOR*);
 END BigFrame.
 

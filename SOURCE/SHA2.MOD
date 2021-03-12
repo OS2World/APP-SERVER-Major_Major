@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  SHA-256 digest                                                        *)
-(*  Copyright (C) 2016   Peter Moylan                                     *)
+(*  Copyright (C) 2018   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE SHA2;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            14 December 2016                *)
-        (*  Last edited:        5 October 2017                  *)
+        (*  Last edited:        28 January 2018                 *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (*  The standard governing this code is Federal         *)
@@ -70,7 +70,7 @@ FROM SYSTEM IMPORT
     (* type *)  LOC, ADDRESS, CARD8, CARD32,
     (* proc *)  MOVE, ADR, FILL;
 
-FROM LONGLONG IMPORT
+FROM Arith64 IMPORT
     (* const*)  Zero64,
     (* type *)  CARD64,
     (* proc *)  Add64;

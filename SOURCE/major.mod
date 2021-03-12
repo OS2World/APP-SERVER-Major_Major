@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2020   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ MODULE Major;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            20 May 2000                     *)
-        (*  Last edited:        25 October 2017                 *)
+        (*  Last edited:        19 September 2020               *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -48,7 +48,7 @@ FROM LogLevel IMPORT
 
 FROM Languages IMPORT
     (* type *)  LangHandle,
-    (* proc *)  SetDefaultLanguage, UseLanguage, StrToBuffer;
+    (* proc *)  SetDefaultLanguage, UseLanguage, StrToBuffer, StrToBufferA;
 
 FROM AddressLists IMPORT
     (* type *)  EmailAddress,
@@ -60,6 +60,10 @@ FROM MailFetcher IMPORT
 FROM FileOps IMPORT
     (* type *)  FilenameString,
     (* proc *)  Exists;
+
+FROM OS2Sem IMPORT
+    (* type *)  SemKind,
+    (* proc *)  WaitOnSemaphore;
 
 FROM ProgName IMPORT
     (* proc *)  GetProgramName;
@@ -94,10 +98,10 @@ FROM TaskControl IMPORT
 
 FROM TransLog IMPORT
     (* type *)  TransactionLogID,
-    (* proc *)  StartTransactionLogging, CreateLogID, LogTransaction;
+    (* proc *)  StartTransactionLogging, CreateLogID, LogTransaction, LogTransactionL;
 
 FROM CtrlC IMPORT
-    (* proc *)  SetBreakHandler;
+    (* proc *)  SetBreakHandler, IsCtrlCException;
 
 (********************************************************************************)
 
@@ -116,7 +120,11 @@ VAR
 
     (* Flag to say that we may write messages to the screen. *)
 
-    ScreenEnabled: BOOLEAN;
+   ScreenEnabled: BOOLEAN;
+
+    (* Flag to say Exceptq has been installed. *)
+
+    ExceptqActive: BOOLEAN;
 
     (* Flag to say that the user has typed Ctrl/C. *)
 
@@ -175,16 +183,22 @@ PROCEDURE ShutterDowner;
 
     (* A task whose job is to shut down the program. *)
 
-    VAR count: CARDINAL;
+    (* Unsolved mystery: I could not make Ctrl/C shut down the program      *)
+    (* reliably until I included the Sleep() call.  Experiments suggests    *)
+    (* that the actual sleep duration is not critical.                      *)
+    (* I should take a closer look at my TimedWait implementation.          *)
+
+    VAR LogID: TransactionLogID;
+        logmessage: ARRAY [0..255] OF CHAR;
 
     BEGIN
+        LogID := CreateLogID (ListChecker.MMctx, "        ");
         Wait (CommenceShutdown);
         ShutdownInProgress := TRUE;
-        Signal (DoAdminCheck);
-        OS2.DosPostEventSem (UpdaterFlag);
-        OS2.DosResetEventSem (UpdaterFlag, count);
-        OS2.DosPostEventSem (ForceFreshCheck);
-        OS2.DosResetEventSem (ForceFreshCheck, count);
+        StrToBuffer (AdminLang, "Major.wantshutdown", logmessage);
+        LogTransaction (LogID, logmessage);
+        Sleep (100);
+        Signal (DoAdminCheck);                      (* to terminate RunManager *)
         Signal (TaskDone);
     END ShutterDowner;
 
@@ -208,8 +222,6 @@ PROCEDURE ExternalShutdownRequestDetector;
 
     CONST semName = "\SEM32\MAJOR\SHUTDOWN";
 
-    VAR count: CARDINAL;
-
     BEGIN
         ShutdownSignal := 0;
         IF OS2.DosOpenEventSem (semName, ShutdownSignal) = OS2.ERROR_SEM_NOT_FOUND THEN
@@ -217,12 +229,13 @@ PROCEDURE ExternalShutdownRequestDetector;
         END (*IF*);
 
         WHILE NOT ShutdownInProgress DO
-            OS2.DosWaitEventSem (ShutdownSignal, OS2.SEM_INDEFINITE_WAIT);
-            OS2.DosResetEventSem (ShutdownSignal, count);
+            WaitOnSemaphore (event, ShutdownSignal);
             Signal (CommenceShutdown);
         END (*WHILE*);
 
         OS2.DosCloseEventSem(ShutdownSignal);
+        Signal (TaskDone);
+        (*WriteString ("ExternalShutdownRequestDetector terminating");  WriteLn;*)
 
     END ExternalShutdownRequestDetector;
 
@@ -270,6 +283,8 @@ PROCEDURE FetchCommandLineParameters(VAR (*OUT*) UseTNI: BOOLEAN): BOOLEAN;
             LOOP
                 CASE CAP(Options[j]) OF
                     CHR(0):   EXIT (*LOOP*);
+                  | 'I':      INC (j);
+                              TNIoption := 0;
                   | 'T':      INC (j);
                               TNIoption := 1;
                   | 'X':      INC (j);  ExtraLogging := TRUE;
@@ -412,7 +427,7 @@ PROCEDURE LoadINIData (LogID: TransactionLogID;  ExtraLogging: BOOLEAN);
         LogLevel: SYSTEM.CARD8;
         Multidomain, ReplyToErrors: BOOLEAN;
         LogFileName, HelpFileName, PlainTextFileName, AdminFilter: FilenameString;
-        UsePOPbeforeSMTP: BOOLEAN;
+        UsePOPbeforeSMTP, UseWTNI: BOOLEAN;
         PSUsername: UserName;
         PSPassword: PassString;
         appSYS: ARRAY [0..4] OF CHAR;
@@ -433,7 +448,7 @@ PROCEDURE LoadINIData (LogID: TransactionLogID;  ExtraLogging: BOOLEAN);
         DefaultLanguage := "en";
         AdminLanguage := DefaultLanguage;
         INIData.OurDirectory (OurDir);
-        hini := INIData.OpenINIFile (INIFileName, UseTNI);
+        hini := INIData.OpenINIFile (INIFileName);
         IF INIData.INIValid (hini) THEN
             IF NOT INIData.INIGet (hini, appSYS, "LocalWeasel", ServerIsWeasel) THEN
                 ServerIsWeasel := FALSE;
@@ -547,12 +562,22 @@ PROCEDURE LoadINIData (LogID: TransactionLogID;  ExtraLogging: BOOLEAN);
                 (* the '\' character.                                   *)
 
                 ININame := WeaselDir;
-                IF UseTNI THEN
+
+                (* The decision to use TNI here should depend on Weasel,    *)
+                (* not on our TNI variable.                                 *)
+
+                OS2.DosSetCurrentDir (WeaselDir);
+                IF NOT INIData.ChooseDefaultINI("Weasel", UseWTNI) THEN
+                    UseWTNI := UseTNI;
+                END (*IF*);
+                OS2.DosSetCurrentDir (OurDir);
+
+                IF UseWTNI THEN
                     Strings.Append ("weasel.tni", ININame);
                 ELSE
                     Strings.Append ("weasel.ini", ININame);
                 END (*IF*);
-                hini := INIData.OpenINIFile (ININame, UseTNI);
+                hini := INIData.OpenINIFile (ININame);
                 IF INIData.INIValid (hini) THEN
                     EVAL (INIData.INIGet (hini, appSYS, "MultiDomainEnabled", Multidomain));
                     IF NOT INIData.INIGetString (hini, appSYS, "MailRoot", MailRoot) THEN
@@ -624,31 +649,43 @@ PROCEDURE RunManager;
         pos1: CARDINAL;
         buffer: ARRAY [0..79] OF CHAR;
         logmessage: ARRAY [0..255] OF CHAR;
-        exRegRec: OS2.EXCEPTIONREGISTRATIONRECORD;
 
     BEGIN
         LogID := CreateLogID (ListChecker.MMctx, "        ");
 
         IF ScreenEnabled THEN
-            GetProgramName (buffer);
+            IF UseTNI THEN
+                buffer := "[T]";
+            ELSE
+                buffer := "[I]";
+            END (*IF*);
             WriteStringAt (0, 0, buffer);
+            GetProgramName (buffer);
+            WriteStringAt (0, 3, buffer);
             StrToBuffer (AdminLang, "Major.CtrlC", logmessage);
             pos1 := 79 - LENGTH(logmessage);
             WriteStringAt (0, (pos1 + LENGTH(buffer)) DIV 2 - 13,
-                                           "(C) 2001-2017 Peter Moylan");
+                                           "(C) 2001-2020 Peter Moylan");
             WriteStringAt (0, pos1, logmessage);
+        ELSE
+            GetProgramName (buffer);
         END (*IF*);
 
-        StrToBuffer (AdminLang, "Major.started", logmessage);
+        StrToBufferA (AdminLang, "Major.started", buffer, logmessage);
         LogTransaction (LogID, logmessage);
 
         logmessage := "exceptq support is ";
-        IF InstallExceptq (exRegRec) THEN
+        IF ExceptqActive THEN
             Strings.Append ("present", logmessage);
         ELSE
             Strings.Append ("absent", logmessage);
         END (*IF*);
         LogTransaction (LogID, logmessage);
+        IF UseTNI THEN
+            LogTransactionL (LogID, "Getting configuration data from Major.tni");
+        ELSE
+            LogTransactionL (LogID, "Getting configuration data from Major.ini");
+        END (*IF*);
 
         WHILE NOT ShutdownInProgress DO
             ProcessAdminRequests (LogID);
@@ -659,8 +696,6 @@ PROCEDURE RunManager;
 
         StrToBuffer (AdminLang, "Major.finishing", logmessage);
         LogTransaction (LogID, logmessage);
-
-        UninstallExceptq (exRegRec);
 
     END RunManager;
 
@@ -676,7 +711,7 @@ PROCEDURE NewMailChecker;
 
     CONST semName = "\SEM32\WEASEL\RECEIVED";
 
-    VAR result, count: CARDINAL;
+    VAR result: CARDINAL;
         LogID: TransactionLogID;
         logmessage: ARRAY [0..255] OF CHAR;
 
@@ -689,9 +724,8 @@ PROCEDURE NewMailChecker;
         END (*IF*);
 
         WHILE NOT ShutdownInProgress DO
-            result := OS2.DosWaitEventSem (ForceFreshCheck, OS2.SEM_INDEFINITE_WAIT);
-            Sleep (1000);
-            OS2.DosResetEventSem (ForceFreshCheck, count);
+            WaitOnSemaphore (event, ForceFreshCheck);
+            Sleep (500);
             IF ServerIsWeasel THEN
                 IF ExtraLogging THEN
                     StrToBuffer (AdminLang, "Major.checkingnew", logmessage);
@@ -720,8 +754,6 @@ PROCEDURE ListUpdater;
 
     CONST semName = "\SEM32\MAJOR\UPDATED";
 
-    VAR count: CARDINAL;
-
     BEGIN
         UpdaterFlag := 0;
         IF OS2.DosOpenEventSem (semName, UpdaterFlag) = OS2.ERROR_SEM_NOT_FOUND THEN
@@ -729,8 +761,7 @@ PROCEDURE ListUpdater;
         END (*IF*);
 
         WHILE NOT ShutdownInProgress DO
-            OS2.DosWaitEventSem (UpdaterFlag, OS2.SEM_INDEFINITE_WAIT);
-            OS2.DosResetEventSem (UpdaterFlag, count);
+            WaitOnSemaphore (event, UpdaterFlag);
             IF NOT ShutdownInProgress THEN
                 LoadINIData (INILoadLogID, ExtraLogging);
                 ListChecker.RegisterAllLists;
@@ -746,6 +777,23 @@ PROCEDURE ListUpdater;
 (*                                 MAIN PROGRAM                                 *)
 (********************************************************************************)
 
+PROCEDURE main;
+
+    (* We make this a separate procedure to keep the Exceptq stuff  *)
+    (* in one place.                                                *)
+
+    VAR exRegRec: OS2.EXCEPTIONREGISTRATIONRECORD;
+
+    BEGIN
+        ExceptqActive := InstallExceptq (exRegRec);
+        RunManager;
+        IF ExceptqActive THEN
+            UninstallExceptq (exRegRec);
+        END (*IF*);
+    END main;
+
+(********************************************************************************)
+
 BEGIN
     ScreenEnabled := NotDetached();
     ShutdownInProgress := FALSE;
@@ -756,7 +804,7 @@ BEGIN
     ELSE
         INIFileName := "MAJOR.INI";
     END (*IF*);
-    ListChecker.SetININame (INIFileName, UseTNI);
+    ListChecker.SetININame (INIFileName);
     INILoadLogID := CreateLogID (ListChecker.MMctx, "INILoad ");
     LoadINIData (INILoadLogID, ExtraLogging);
     ListChecker.RegisterAllLists;
@@ -764,11 +812,15 @@ BEGIN
     CreateSemaphore (TaskDone, 0);
     EVAL (CreateTask (ListUpdater, 2, "update"));
     CreateSemaphore (CommenceShutdown, 0);
+    EVAL (SetBreakHandler (ControlCHandler));
     EVAL (CreateTask (ShutterDowner, 2, "shutterdowner"));
     EVAL (CreateTask (NewMailChecker, 2, "check mail in"));
     EVAL (CreateTask (ExternalShutdownRequestDetector, 2, "shutdown"));
-    EVAL (SetBreakHandler (ControlCHandler));
-    RunManager;
+    main;
+    OS2.DosPostEventSem (UpdaterFlag);          (* to terminate ListUpdater *)
+    OS2.DosPostEventSem (ForceFreshCheck);      (* to terminate NewMailChecker *)
+    OS2.DosPostEventSem (ShutdownSignal);       (* external shutdown detector *)
+    Wait (TaskDone);
     Wait (TaskDone);
     Wait (TaskDone);
     Wait (TaskDone);

@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -29,7 +29,7 @@ IMPLEMENTATION MODULE PSDialogue;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            19 October 2000                 *)
-        (*  Last edited:        5 April 2010                    *)
+        (*  Last edited:        28 September 2019               *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -65,10 +65,9 @@ TYPE
     NameString = ARRAY [0..31] OF CHAR;
 
 VAR
-    (* INI file name and mode. *)
+    (* INI file name. *)
 
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     (* Our window handle. *)
 
@@ -157,7 +156,7 @@ PROCEDURE LoadINIData (hwnd: OS2.HWND);
         PSPassword := "";
         PSHostname := "";
 
-        opened := OpenINIFile (INIFileName, UseTNI);
+        opened := OpenINIFile (INIFileName);
 
         IF NOT (opened AND GetItem ("AuthOption", AuthOption)) THEN
 
@@ -241,7 +240,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
     VAR temp: INT16;
 
     BEGIN
-        IF OpenINIFile (INIFileName, UseTNI) THEN
+        IF OpenINIFile (INIFileName) THEN
 
             INIPut ("$SYS", "AuthOption", AuthOption);
 
@@ -366,24 +365,23 @@ PROCEDURE Edit (owner: OS2.HWND;  lang: LangHandle);
                        NIL);                 (* creation parameters *)
 
         SetInitialWindowPosition (hwnd, "ADMIN.INI",
-                                  "PSDialogue", UseTNI);
+                                  "PSDialogue");
         SetLanguage (lang);
         OS2.WinShowWindow (hwnd, TRUE);
 
         OS2.WinProcessDlg(hwnd);
-        StoreWindowPosition (hwnd, "ADMIN.INI", "PSDialogue", UseTNI);
+        StoreWindowPosition (hwnd, "ADMIN.INI", "PSDialogue");
         OS2.WinDestroyWindow (hwnd);
     END Edit;
 
 (************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

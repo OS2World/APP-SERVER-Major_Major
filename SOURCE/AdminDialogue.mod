@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE AdminDialogue;
         (*                     The Admin dialogue                       *)
         (*                                                              *)
         (*    Started:        22 June 2000                              *)
-        (*    Last edited:    22 May 2017                               *)
+        (*    Last edited:    28 September 2019                         *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -67,9 +67,8 @@ TYPE
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     pagehandle, hwndParent: OS2.HWND;
     ChangeInProgress: BOOLEAN;
 
@@ -94,7 +93,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
     BEGIN
         StrToBuffer (lang, "AdminPage.tab", stringval);
         OS2.WinSendMsg (OS2.WinWindowFromID(hwndParent,DID.notebook), OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "AdminPage.account", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.AdminAccountLabel, stringval);
         StrToBuffer (lang, "AdminPage.username", stringval);
@@ -168,7 +167,7 @@ PROCEDURE LoadValues (hwnd: OS2.HWND);
         stringval: EmailAddress;
 
     BEGIN
-        EVAL (OpenINIFile(INIFileName, UseTNI));
+        EVAL (OpenINIFile(INIFileName));
 
         (* Administrator name. *)
 
@@ -322,7 +321,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
         stringval: ARRAY [0..514] OF CHAR;
 
     BEGIN
-        EVAL (OpenINIFile (INIFileName, UseTNI));
+        EVAL (OpenINIFile (INIFileName));
 
         (* Administrator name.  We strip leading and trailing spaces.  *)
 
@@ -429,6 +428,7 @@ PROCEDURE ["SysCall"] DialogueProc (hwnd: OS2.HWND;  msg: OS2.ULONG;
                      ChangeInProgress := TRUE;
                      CommonSettings.UpdateFontFrom (hwnd, CommonSettings.MainNotebook);
                      ChangeInProgress := FALSE;
+            (*RETURN OS2.WinDefDlgProc (hwnd, msg, mp1, mp2);*)
                      RETURN NIL;
                  END (*IF*);
 
@@ -467,7 +467,7 @@ PROCEDURE ["SysCall"] DialogueProc (hwnd: OS2.HWND;  msg: OS2.ULONG;
 
 (************************************************************************)
 
-PROCEDURE Create (notebook: OS2.HWND): OS2.HWND;
+PROCEDURE Create (notebook: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates the dialogue box. *)
 
@@ -483,6 +483,7 @@ PROCEDURE Create (notebook: OS2.HWND): OS2.HWND;
 
         PageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
                          NIL, OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE, OS2.BKA_LAST)));
+        OurPageID := PageID;
         Label := "Admin";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));
@@ -506,20 +507,18 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)
 
 BEGIN
     INIFileName := "";
-    UseTNI := FALSE;
     OldAdminName := "";
     OldAdminLoginName := "";
     OldDefaultLanguage := "";

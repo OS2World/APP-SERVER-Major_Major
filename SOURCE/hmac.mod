@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
-(*  PMOS/2 software library                                               *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Encryption library                                                    *)
+(*  Copyright (C) 2018   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -36,19 +36,19 @@ IMPLEMENTATION MODULE HMAC;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            18 February 2005                *)
-        (*  Last edited:        6 October 2017                  *)
+        (*  Last edited:        28 January 2018                 *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (*      HMAC-MD5 passes all tests                       *)
         (*      HMAC-SHA1 passes all tests                      *)
         (*      HMAC-SHA256 passes all tests                    *)
         (*      HMAC-SHA384 passes all tests                    *)
-        (*      HMAC-SHA512 passes all test                    *)
+        (*      HMAC-SHA512 passes all tests                    *)
         (*                                                      *)
         (********************************************************)
 
 
-FROM LONGLONG IMPORT
+FROM Arith64 IMPORT
     (* type *)  CARD64;
 
 FROM MD5 IMPORT

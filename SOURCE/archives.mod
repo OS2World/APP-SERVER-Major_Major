@@ -30,7 +30,7 @@ IMPLEMENTATION MODULE Archives;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            12 January 2000                 *)
-        (*  Last edited:        24 October 2017                 *)
+        (*  Last edited:        25 July 2018                    *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -68,7 +68,7 @@ FROM MyClock IMPORT
 FROM Misc IMPORT
     (* proc *)  HeadMatch;
 
-FROM LONGLONG IMPORT
+FROM Arith64 IMPORT
     (* type *)  CARD64;
 
 FROM TransLog IMPORT

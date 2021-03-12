@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE OneLine;
         (*            Dialogue to edit a one-line string            *)
         (*                                                          *)
         (*    Started:        18 June 2000                          *)
-        (*    Last edited:    5 April 2010                          *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         Working                               *)
         (*                                                          *)
         (************************************************************)
@@ -68,16 +68,21 @@ PROCEDURE Edit (owner: OS2.HWND;  title: ARRAY OF CHAR;
     (* Edits the one-line string "item". *)
 
     VAR hwnd: OS2.HWND;
+        AdminINI: ARRAY [0..15] OF CHAR;
 
     BEGIN
+        IF UseTNI THEN
+            AdminINI := "Admin.TNI";
+        ELSE
+            AdminINI := "Admin.INI";
+        END (*IF*);
         hwnd := OS2.WinLoadDlg(OS2.HWND_DESKTOP, (* parent *)
                        owner,                    (* owner *)
                        DialogueProc,       (* dialogue procedure *)
                        0,                  (* use resources in EXE *)
                        DID.GetOneLine,     (* dialogue ID *)
                        NIL);               (* creation parameters *)
-        INIData.SetInitialWindowPosition (hwnd, "ADMIN.INI",
-                                          "OneLine", UseTNI);
+        INIData.SetInitialWindowPosition (hwnd, AdminINI, "OneLine");
         OS2.WinSetWindowText (hwnd, title);
         OS2.WinSetDlgItemText (hwnd, DID.OneLineEntry, item);
 
@@ -86,8 +91,7 @@ PROCEDURE Edit (owner: OS2.HWND;  title: ARRAY OF CHAR;
         IF Confirmed THEN
             OS2.WinQueryDlgItemText (hwnd, DID.OneLineEntry, SIZE(item), item);
         END (*IF*);
-        INIData.StoreWindowPosition (hwnd, "ADMIN.INI",
-                                     "OneLine", UseTNI);
+        INIData.StoreWindowPosition (hwnd, AdminINI, "OneLine");
         OS2.WinDestroyWindow (hwnd);
     END Edit;
 

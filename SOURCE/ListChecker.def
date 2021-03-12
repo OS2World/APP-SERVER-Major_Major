@@ -8,7 +8,7 @@ DEFINITION MODULE ListChecker;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            23 May 2000                     *)
-        (*  Last edited:        22 May 2012                     *)
+        (*  Last edited:        28 September 2019               *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -38,9 +38,10 @@ TYPE MailingList;       (* is private *)
 
 VAR MMctx: LogContext;
 
-PROCEDURE SetININame (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
 
-    (* The caller specifies the INI file name and mode.  *)
+PROCEDURE SetININame (name: ARRAY OF CHAR);
+
+    (* The caller specifies the INI file name.  *)
 
 PROCEDURE SetOurDomainName (domain: EmailAddress;
                              DetailOfLogging: LogLevelType);

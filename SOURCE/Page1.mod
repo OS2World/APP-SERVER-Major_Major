@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE Page1;
         (*                     Page 1 of the notebook                   *)
         (*                                                              *)
         (*    Started:        16 June 2000                              *)
-        (*    Last edited:    22 May 2017                               *)
+        (*    Last edited:    29 September 2019                         *)
         (*    Status:         Working                                   *)
         (*                                                              *)
         (****************************************************************)
@@ -83,10 +83,9 @@ TYPE
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     pagehandle, notebookhandle: OS2.HWND;
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     ourlanguage: LangHandle;
 
     MailrootDirPresent: BOOLEAN;
@@ -186,7 +185,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
         ourlanguage := lang;
         StrToBuffer (lang, "Page1.tab", stringval);
         OS2.WinSendMsg (notebookhandle, OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "Page1.mailserver", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.Page1ServerLabel, stringval);
         StrToBuffer (lang, "Page1.Weaselhere", stringval);
@@ -229,7 +228,7 @@ PROCEDURE LoadValues (hwnd: OS2.HWND);
 
     BEGIN
         HostName[0] := Nul;
-        opened := OpenINIFile (INIFileName, UseTNI);
+        opened := OpenINIFile (INIFileName);
 
         (* Mail domain name. *)
 
@@ -371,7 +370,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
         stringval: DirectoryString;
 
     BEGIN
-        opened := OpenINIFile (INIFileName, UseTNI);
+        opened := OpenINIFile (INIFileName);
 
         (* Mail server. *)
 
@@ -484,7 +483,7 @@ PROCEDURE ClearObsoleteINIentry (owner: OS2.HWND);
                             + " message.",
                             "INI data updated", 0,
                              OS2.MB_OK + OS2.MB_WARNING);
-        IF OpenINIFile (INIFileName, UseTNI) THEN
+        IF OpenINIFile (INIFileName) THEN
             INIDeleteKey ("$SYS", "MailRoot");
             CloseINIFile;
         END (*IF*);
@@ -576,7 +575,7 @@ PROCEDURE ["SysCall"] DialogueProc (hwnd: OS2.HWND;  msg: OS2.ULONG;
                   | DID.EnableSMTPAuthentication:
                        IF QueryButton (hwnd, ButtonID) > 0 THEN
                            PSDialogue.Edit (hwnd, ourlanguage);
-                           opened := OpenINIFile (INIFileName, UseTNI);
+                           opened := OpenINIFile (INIFileName);
                            AuthOption := 0;
                            EVAL (opened AND INIFetch ("$SYS", "AuthOption", AuthOption));
                            IF opened THEN
@@ -604,7 +603,8 @@ PROCEDURE ["SysCall"] DialogueProc (hwnd: OS2.HWND;  msg: OS2.ULONG;
 
 (**************************************************************************)
 
-PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
+PROCEDURE CreatePage (notebook: OS2.HWND;
+                       VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates page 1 and adds it to the notebook. *)
 
@@ -617,10 +617,11 @@ PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
                        0,                   (* use resources in EXE *)
                        DID.page1,                (* dialogue ID *)
                        NIL);                 (* creation parameters *)
-        PageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
+        OurPageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
                          NIL,
                          OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE,
                                            OS2.BKA_FIRST)));
+        PageID := OurPageID;
         Label := "Basic";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));
@@ -630,7 +631,7 @@ PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
 
         (* Server option. *)
 
-        IF NOT (OpenINIFile(INIFileName, UseTNI)
+        IF NOT (OpenINIFile(INIFileName)
                 AND INIFetch ('$SYS', 'LocalWeasel', ServerIsWeasel)) THEN
             ServerIsWeasel := TRUE;
         END (*IF*);
@@ -661,14 +662,13 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
-        PSDialogue.SetINIFileName (name, TNImode);
+        PSDialogue.SetINIFileName (name);
     END SetINIFileName;
 
 (**************************************************************************)

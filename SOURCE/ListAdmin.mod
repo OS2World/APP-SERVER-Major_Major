@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -29,7 +29,7 @@ IMPLEMENTATION MODULE ListAdmin;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            21 May 2000                     *)
-        (*  Last edited:        22 May 2017                     *)
+        (*  Last edited:        28 January 2019                 *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
@@ -285,7 +285,9 @@ PROCEDURE ProcessRequests (LogID: TransactionLogID;  filename: FilenameString);
 
                 (* We check the Reply-To and From headers only if there was     *)
                 (* no Return-Path; and, in that case, we give priority to the   *)
-                (* Reply-To if present.                                         *)
+                (* Reply-To if present.  Note that Return-Path will have        *)
+                (* priority over both of these because it will be encountered   *)
+                (* (unless missing) earlier in the heading.                     *)
 
                 IF HeadMatch (buffer, "Reply-To:") THEN
                     ExtractEmailAddress (buffer, 9, DisplayName, from);

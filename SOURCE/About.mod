@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2018   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE About;
         (*                     The 'about' dialogue                     *)
         (*                                                              *)
         (*    Started:        21 June 2000                              *)
-        (*    Last edited:    24 May 2004                               *)
+        (*    Last edited:    18 December 2018                          *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -47,7 +47,7 @@ FROM Languages IMPORT
 (************************************************************************)
 
 VAR pagehandle, notebookhandle: OS2.HWND;
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     ChangeInProgress: BOOLEAN;
 
 (************************************************************************)
@@ -63,7 +63,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
     BEGIN
         StrToBuffer (lang, "About.tab", stringval);
         OS2.WinSendMsg (notebookhandle, OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "About.1", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.About1, stringval);
         StrToBufferA (lang, "About.2", MMV.version, stringval);
@@ -109,7 +109,7 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
 (*                   EXTERNALLY CALLABLE PROCEDURES                     *)
 (************************************************************************)
 
-PROCEDURE Create (notebook: OS2.HWND);
+PROCEDURE Create (notebook: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL);
 
     (* Creates the dialogue box. *)
 
@@ -123,10 +123,11 @@ PROCEDURE Create (notebook: OS2.HWND);
                        DID.AboutPage,                (* dialogue ID *)
                        NIL);                 (* creation parameters *)
 
-        PageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
+        OurPageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
                          NIL,
                          OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE,
                                            OS2.BKA_LAST)));
+        PageID := OurPageID;
         Label := "About";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));

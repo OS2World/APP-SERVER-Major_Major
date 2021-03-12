@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ELpage5;
         (*      The "owners" page of the "edit list" notebook       *)
         (*                                                          *)
         (*    Started:        11 January 2001                       *)
-        (*    Last edited:    22 May 2017                           *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -133,7 +133,7 @@ PROCEDURE LoadExpansion (hwnd: OS2.HWND);
         state: RINIData.StringReadState;
 
     BEGIN
-        IF RINIData.OpenINIFile(INIFileName, UseTNI) THEN
+        IF RINIData.OpenINIFile(INIFileName) THEN
             UpdateOwnerField;
 
             RINIData.GetStringList (ListName, "Owners", state);
@@ -372,13 +372,12 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

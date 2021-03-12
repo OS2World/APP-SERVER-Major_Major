@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE EditList;
         (*             Dialogue to edit a single list               *)
         (*                                                          *)
         (*    Started:        24 August 2000                        *)
-        (*    Last edited:    24 April 2012                         *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -63,7 +63,6 @@ CONST
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     ListName: ARRAY [0..NameLength-1] OF CHAR;
     SwitchData : OS2.SWCNTRL;     (* switch entry data *)
@@ -121,14 +120,14 @@ PROCEDURE SetINIname;
     (* Sets the INI file name and mode for all the notebook pages. *)
 
     BEGIN
-        ELpage1.SetINIFileName(INIFileName, UseTNI);
-        ELpage2.SetINIFileName(INIFileName, UseTNI);
-        ELopt2.SetINIFileName(INIFileName, UseTNI);
-        ELpage4.SetINIFileName(INIFileName, UseTNI);
-        ELpage5.SetINIFileName(INIFileName, UseTNI);
-        Message1.SetINIFileName(INIFileName, UseTNI);
-        Message2.SetINIFileName(INIFileName, UseTNI);
-        ELpage6.SetINIFileName(INIFileName, UseTNI);
+        ELpage1.SetINIFileName(INIFileName);
+        ELpage2.SetINIFileName(INIFileName);
+        ELopt2.SetINIFileName(INIFileName);
+        ELpage4.SetINIFileName(INIFileName);
+        ELpage5.SetINIFileName(INIFileName);
+        Message1.SetINIFileName(INIFileName);
+        Message2.SetINIFileName(INIFileName);
+        ELpage6.SetINIFileName(INIFileName);
     END SetINIname;
 
 (**************************************************************************)
@@ -168,7 +167,7 @@ PROCEDURE InitialiseNotebook (hwnd: OS2.HWND);
     BEGIN
         SetINIname;
         MakeNotebookNewStyle (hwnd, NewStyle);
-        hini := INIData.OpenINIFile (AdminINI, UseTNI);
+        hini := INIData.OpenINIFile (AdminINI);
         app := "Font";
         IF NOT INIData.INIGetString (hini, app, "ListNotebookTabs", TabFontName) THEN
             TabFontName := "8.Helv";
@@ -252,7 +251,7 @@ PROCEDURE ["SysCall"] SubWindowProc (hwnd     : OS2.HWND;
 
                 IF NOT Strings.Equal (NewFontName, TabFontName) THEN
                     TabFontName := NewFontName;
-                    hini := INIData.OpenINIFile (AdminINI, UseTNI);
+                    hini := INIData.OpenINIFile (AdminINI);
                     app := "Font";
                     INIData.INIPutString (hini, app, "ListNotebookTabs", TabFontName);
                     INIData.CloseINIFile (hini);
@@ -283,7 +282,7 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
         CASE msg OF
            |  OS2.WM_INITDLG:
                    SetInitialWindowPosition (hwnd, AdminINI,
-                                             "ListFrame", UseTNI);
+                                             "ListFrame");
                    bookwin := OS2.WinWindowFromID (hwnd, DID.ListNotebook);
                    InitialiseNotebook (bookwin);
                    OS2.WinSetWindowPtr (bookwin, OS2.QWL_USER,
@@ -303,8 +302,8 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
 
            |  OS2.WM_CLOSE:
                    StoreWindowPosition (hwnd, AdminINI,
-                                        "ListFrame", UseTNI);
-                   IF RINIData.OpenINIFile (INIFileName, UseTNI) THEN
+                                        "ListFrame");
+                   IF RINIData.OpenINIFile (INIFileName) THEN
                        changed := ELpage1.StoreData (pagehandle[1]);
                        c1 := ELpage2.StoreData (pagehandle[2]);
                        changed := changed OR c1;
@@ -381,13 +380,18 @@ PROCEDURE Edit (owner: OS2.HWND;  name: ARRAY OF CHAR;
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
+
+    VAR pos: CARDINAL;  found: BOOLEAN;
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
+        Strings.FindPrev ('.', name, LENGTH(name)-1, found, pos);
+        Strings.Delete (name, 0, pos);
+        Strings.Insert ("Admin", 0, name);
+        Strings.Assign (name, AdminINI);
     END SetINIFileName;
 
 (**************************************************************************)

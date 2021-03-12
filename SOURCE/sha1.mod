@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
-(*  PMOS/2 software library                                               *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Encryption library                                                    *)
+(*  Copyright (C) 2018   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -33,7 +33,7 @@ IMPLEMENTATION MODULE SHA1;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            14 February 2005                *)
-        (*  Last edited:        5 October 2017                  *)
+        (*  Last edited:        28 January 2018                 *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
@@ -55,7 +55,7 @@ FROM SYSTEM IMPORT
     (* type *)  CARD8, CARD32, ADDRESS, LOC,
     (* proc *)  ADR, MOVE, FILL;
 
-FROM LONGLONG IMPORT
+FROM Arith64 IMPORT
     (* const*)  Zero64,
     (* type *)  CARD64,
     (* proc *)  Add64;

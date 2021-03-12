@@ -75,7 +75,7 @@ PROCEDURE SHA224DigestToString (VAR (*IN*) digest: SHA2_DigestType;
                              VAR (*OUT*) result: ARRAY OF CHAR);
 
     (* Converts the digest to a 56-character string.  If there is not enough    *)
-    (* space for 64 characters, produces a leading substring of the full result.*)
+    (* space for 56 characters, produces a leading substring of the full result.*)
 
 PROCEDURE SHA256DigestToString (VAR (*IN*) digest: SHA2_DigestType;
                              VAR (*OUT*) result: ARRAY OF CHAR);

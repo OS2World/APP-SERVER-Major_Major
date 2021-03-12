@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ListsPage;
         (*           The "lists" page of the settings notebook          *)
         (*                                                              *)
         (*    Started:        16 June 2000                              *)
-        (*    Last edited:    22 May 2017                               *)
+        (*    Last edited:    29 September 2019                         *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -67,7 +67,7 @@ VAR
     UseTNI: BOOLEAN;
 
     pagehandle, notebookhandle: OS2.HWND;
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     changehev: OS2.HEV;
     ChangeInProgress: BOOLEAN;
     NewStyle: BOOLEAN;
@@ -85,7 +85,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
     BEGIN
         StrToBuffer (lang, "Lists.tab", stringval);
         OS2.WinSendMsg (notebookhandle, OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "Lists.title", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.ListsTitle, stringval);
         StrToBuffer (lang, "Lists.AddButton", stringval);
@@ -110,7 +110,7 @@ PROCEDURE LoadValues (hwnd: OS2.HWND);
         state: StringReadState;
 
     BEGIN
-        IF OpenINIFile (INIFileName, UseTNI) THEN
+        IF OpenINIFile (INIFileName) THEN
 
             (* Pick up the list of all list names. *)
 
@@ -156,15 +156,8 @@ PROCEDURE NotifyAChange;
     (* Posts a public event semaphore to say that there has been a      *)
     (* change in our INI data.                                          *)
 
-    VAR count: CARDINAL;
-
     BEGIN
-        (* According to the manual event semaphores are edge-triggered, *)
-        (* so we ought to be able to reset the semaphore immediately    *)
-        (* after posting it.  This does seem to work.                   *)
-
         OS2.DosPostEventSem (changehev);
-        OS2.DosResetEventSem (changehev, count);
     END NotifyAChange;
 
 (************************************************************************)
@@ -228,7 +221,7 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
                    StrToBuffer (lang, "Lists.NewName", stringval);
                    OneLine.Edit (hwnd, stringval, name, UseTNI);
                    IF NOT Strings.Equal (name, oldname) THEN
-                       IF OpenINIFile (INIFileName, UseTNI) THEN
+                       IF OpenINIFile (INIFileName) THEN
                            INIRenameApp (oldname, name);
                            CloseINIFile;
                        END (*IF*);
@@ -240,7 +233,7 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
               | DID.DeleteListButton:
                    OS2.WinSendMsg (listwindow, OS2.LM_QUERYITEMTEXT,
                                    OS2.MPFROM2USHORT(index, 32), ADR(name));
-                   IF OpenINIFile (INIFileName, UseTNI) THEN
+                   IF OpenINIFile (INIFileName) THEN
                        INIDeleteApp (name);
                        CloseINIFile;
                    END (*IF*);
@@ -295,7 +288,8 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
 
 (**************************************************************************)
 
-PROCEDURE CreatePage (notebook: OS2.HWND;  W4style: BOOLEAN): OS2.HWND;
+PROCEDURE CreatePage (notebook: OS2.HWND;  W4style: BOOLEAN;
+                                VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates the alias page and adds it to the notebook. *)
 
@@ -309,8 +303,9 @@ PROCEDURE CreatePage (notebook: OS2.HWND;  W4style: BOOLEAN): OS2.HWND;
                        0,                   (* use resources in EXE *)
                        DID.MailingLists,                (* dialogue ID *)
                        NIL);                 (* creation parameters *)
-        PageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
+        OurPageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
                          NIL, OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE, OS2.BKA_LAST)));
+        PageID := OurPageID;
         Label := "Lists";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));
@@ -333,14 +328,13 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
-        EditList.SetINIFileName (name, TNImode);
+        EditList.SetINIFileName (name);
     END SetINIFileName;
 
 (**************************************************************************)

@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE FilesPage;
         (*          Logging and archiving page of the notebook          *)
         (*                                                              *)
         (*    Started:        9 February 2009                           *)
-        (*    Last edited:    22 May 2017                               *)
+        (*    Last edited:    29 September 2019                         *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -80,10 +80,9 @@ TYPE
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     pagehandle, notebookhandle: OS2.HWND;
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     ourlanguage: LangHandle;
 
     ChangeInProgress: BOOLEAN;
@@ -108,7 +107,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
         ourlanguage := lang;
         StrToBuffer (lang, "Files.tab", stringval);
         OS2.WinSendMsg (notebookhandle, OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "Files.enablelogging", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.TranslogBox, stringval);
         StrToBuffer (lang, "Files.translogto", stringval);
@@ -136,7 +135,7 @@ PROCEDURE LoadValues (hwnd: OS2.HWND);
         opened: BOOLEAN;
 
     BEGIN
-        opened := OpenINIFile (INIFileName, UseTNI);
+        opened := OpenINIFile (INIFileName);
 
         (* Transaction logging. *)
 
@@ -152,11 +151,13 @@ PROCEDURE LoadValues (hwnd: OS2.HWND);
 
         (* Log file name. *)
 
-        IF opened AND INIGetString ('$SYS', 'TransLogFile', OldTransLogFile) THEN
-            OS2.WinSetDlgItemText (hwnd, DID.TransLogFile, OldTransLogFile);
-        ELSE
+        IF NOT (opened AND INIGetString ('$SYS', 'TransLogFile', OldTransLogFile)) THEN
             OldTransLogFile := "";
+        END (*IF*);
+        IF OldTransLogFile = "" THEN
             OS2.WinSetDlgItemText (hwnd, DID.TransLogFile, "MAJOR.LOG");
+        ELSE
+            OS2.WinSetDlgItemText (hwnd, DID.TransLogFile, OldTransLogFile);
         END (*IF*);
         IF ODD(val0) THEN
             OS2.WinEnableWindow(
@@ -203,7 +204,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
         stringval: DirectoryString;
 
     BEGIN
-        opened := OpenINIFile (INIFileName, UseTNI);
+        opened := OpenINIFile (INIFileName);
 
         (* Transaction logging. *)
 
@@ -215,11 +216,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
 
         (* Log file name. *)
 
-        IF ODD(val8) THEN
-            OS2.WinQueryDlgItemText (hwnd, DID.TransLogFile, 512, stringval);
-        ELSE
-            stringval[0] := Nul;
-        END (*IF*);
+        OS2.WinQueryDlgItemText (hwnd, DID.TransLogFile, 512, stringval);
         IF NOT Strings.Equal (stringval, OldTransLogFile) THEN
             INIPutString ("$SYS", "TransLogFile", stringval);
         END (*IF*);
@@ -305,7 +302,7 @@ PROCEDURE ["SysCall"] DialogueProc (hwnd: OS2.HWND;  msg: OS2.ULONG;
 
 (**************************************************************************)
 
-PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
+PROCEDURE CreatePage (notebook: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates the files page and adds it to the notebook. *)
 
@@ -322,6 +319,7 @@ PROCEDURE CreatePage (notebook: OS2.HWND): OS2.HWND;
                          NIL,
                          OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE,
                                            OS2.BKA_LAST)));
+        OurPageID := PageID;
         Label := "Files";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));
@@ -345,13 +343,12 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

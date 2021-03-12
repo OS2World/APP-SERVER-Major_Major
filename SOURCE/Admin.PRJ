@@ -1,3 +1,7 @@
+- USEDLL+
+- GENDLL -
+- IMPLIB -
+
 -lineno+
 -gendebug+
 +pm
@@ -5,6 +9,7 @@
 -multithread+
 
 -TRACKTNIUSAGE:-
+-EXCEPTQ:+
 
 -INCL_BASE:+
   -INCL_DOSPROCESS:+

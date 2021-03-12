@@ -7,7 +7,7 @@ DEFINITION MODULE PSDialogue;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            19 October 2000                 *)
-        (*  Last edited:        8 February 2009                 *)
+        (*  Last edited:        29 September 2019               *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -16,7 +16,7 @@ FROM OS2       IMPORT (*type*) HWND;
 FROM Languages IMPORT (*type*) LangHandle;
 
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 

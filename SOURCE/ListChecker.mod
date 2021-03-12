@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  The Major Major mailing list manager                                  *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2020   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -30,7 +30,7 @@ IMPLEMENTATION MODULE ListChecker;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            23 May 2000                     *)
-        (*  Last edited:        24 August 2017                  *)
+        (*  Last edited:        19 September 2020               *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -82,6 +82,9 @@ FROM SplitScreen IMPORT
     (* proc *)  NotDetached, ClearScreen, SetBoundary,
                 ReleaseScreen, RegainScreen;
 
+FROM RandCard IMPORT
+    (* proc *)  RandInt;
+
 FROM MyClock IMPORT
     (* proc *)  CurrentDateAndTime, CurrentTimeToString;
 
@@ -91,7 +94,7 @@ FROM TimeConv IMPORT
 FROM FileOps IMPORT
     (* const*)  FilenameLength, NoSuchChannel,
     (* type *)  ChanId, FilenameString,
-    (* proc *)  Exists, OpenOldFile, CloseFile, DeleteFile, CopyFile,
+    (* proc *)  Exists, OpenOldFile, CloseFile, DeleteFile, CopyFile, MoveFile,
                 ReadRaw, WriteRaw, ReadLine, FWriteChar, FWriteString, FWriteLn,
                 FWriteLJCard;
 
@@ -110,7 +113,10 @@ FROM MD5 IMPORT
     (* proc *)  MD5Init, MD5Update, MD5Final, MD5DigestToString;
 
 FROM MiscFuncs IMPORT
-    (* proc *)  ConvertCard;
+    (* proc *)  ConvertCard, ToLower;
+
+FROM ProgName IMPORT
+    (* proc *)  GetProgramName;
 
 FROM Semaphores IMPORT
     (* type *)  Semaphore,
@@ -211,6 +217,8 @@ TYPE
     (*                  every message (after the header lines).         *)
     (*   Trailer     file name for material to tack onto the tail of    *)
     (*                  every message.                                  *)
+    (*   LeaderHasHeaders  The leader file includes MIME headers.       *)
+    (*   TrailerHasHeaders  Ditto for the trailer file.                 *)
     (*   NonsubOption how to handle mail from nonsubscribers: 0=ignore, *)
     (*                1=send failure message, 2=accept                  *)
     (*   mark        flag used while refreshing the information         *)
@@ -259,6 +267,7 @@ TYPE
                           OurEmailAddress: EmailAddress;
                           Leader, Trailer: FilenameString;
                           MailErrorsTo: EmailAddress;
+                          LeaderHasHeaders, TrailerHasHeaders: BOOLEAN;
                           Add2369Headers: BOOLEAN;
                           DMARCcompatible: BOOLEAN;
                           Moderated: BOOLEAN;
@@ -296,11 +305,9 @@ TYPE
                                 END (*RECORD*);
 
 VAR
-    (* Our INI file name and mode. *)
+    (* Our INI file name. *)
 
     INIFileName: FilenameString;
-
-    UseTNI: BOOLEAN;
 
     (* List of all lists. *)
 
@@ -777,7 +784,7 @@ PROCEDURE ResaveList (ListName: ListNameType;  list: AddressList);
 
     BEGIN
         EncodeList (list, bufptr, BufferSize);
-        hini := OpenINIFile (INIFileName, UseTNI);
+        hini := OpenINIFile (INIFileName);
         INIPutBinary (hini, ListName, 'Members', bufptr^, BufferSize);
         CloseINIFile (hini);
         DEALLOCATE (bufptr, BufferSize);
@@ -1362,30 +1369,126 @@ PROCEDURE UpdateSubjectLine (VAR (*INOUT*) buffer: LineBuffer;
     END UpdateSubjectLine;
 
 (************************************************************************)
+(*                      MANIPULATING A MESSAGE                          *)
+(*     Modifications to an incoming message before sending it out.      *)
+(************************************************************************)
 
-PROCEDURE CheckForBoundaryCode (srccid, dstcid: ChanId;
-                                VAR (*INOUT*) NextLine: LineBuffer;
-                                VAR (*OUT*) boundary: LineBuffer;
-                                killit: BOOLEAN);
+TYPE lineptr = POINTER TO OneLine;
+     OneLine = RECORD
+                   next: lineptr;
+                   this: LineBuffer;
+               END (*RECORD*);
 
-    (* Checks this header line for a "boundary=..." field.  If found    *)
-    (* and killit = TRUE, we discard this line and its continuation     *)
-    (* lines.  Otherwise we copy the input to the output.  On return,   *)
-    (* NextLine is the first input line that doesn't belong to us.      *)
+(************************************************************************)
 
-    TYPE lineptr = POINTER TO OneLine;
-         OneLine = RECORD
-                       next: lineptr;
-                       this: LineBuffer;
-                   END (*RECORD*);
+PROCEDURE ParseContentType (srccid: ChanId;  VAR (*INOUT*) NextLine: LineBuffer;
+                            VAR (*OUT*) type, subtype, boundary: ARRAY OF CHAR)
+                                                                : lineptr;
 
-    VAR head, tail, p: lineptr;
-        StillSearching, found: BOOLEAN;  pos: CARDINAL;
+    (* On entry the caller has already checked that NextLine holds the  *)
+    (* first line of a Content-Type header.  We return the type,        *)
+    (* subtype, and boundary code (if relevant).  We also return a      *)
+    (* linked list of the lines we have parsed, so that the caller can  *)
+    (* decide whether to discard those lines or to copy them.           *)
+
+    VAR pos: CARDINAL;
+        tail: lineptr;
+        finished: BOOLEAN;
+
+    (********************************************************************)
+
+    PROCEDURE GetNextLine;
+
+        (* Updates NextLine.  Sets finished = TRUE if we have overshot  *)
+        (* beyond the current header line.  Otherwise adds the line to  *)
+        (* our list of lines that might have to be reinserted if the    *)
+        (* caller decides not to suppress this header line.             *)
+
+        BEGIN
+            ReadLine (srccid, NextLine);
+            pos := 0;
+            IF (NextLine[pos] = Space) OR (NextLine[pos] = Tab) THEN
+                NEW (tail^.next);
+                tail := tail^.next;
+                tail^.next := NIL;
+                tail^.this := NextLine;
+            ELSE
+                finished := TRUE;
+            END (*IF*);
+
+        END GetNextLine;
+
+    (********************************************************************)
+
+    PROCEDURE SkipSpaces();
+
+        (* Advances pos to the first non-whitespace character.  Sets    *)
+        (* finished = TRUE iff we have overshot to a new header line.   *)
+
+        BEGIN
+            LOOP
+                WHILE (NextLine[pos] = Space) OR (NextLine[pos] = Tab) DO
+                    INC (pos);
+                END (*WHILE*);
+                IF NextLine[pos] = Nul THEN
+                    GetNextLine;
+                ELSE
+                    RETURN;
+                END (*IF*);
+            END (*LOOP*);
+        END SkipSpaces;
+
+    (********************************************************************)
+
+    PROCEDURE GetToken (VAR (*OUT*) result: ARRAY OF CHAR);
+
+        (* Picks up an alphanumeric string from NextLine, advances pos. *)
+        (* The result is always in lower case.                          *)
+
+        TYPE CharSet = SET OF CHAR;
+
+        CONST AlphaNum = CharSet{'a'..'z', 'A'..'Z', '0'..'9'};
+
+        VAR k: CARDINAL;
+
+        BEGIN
+            k := 0;
+            WHILE NextLine[pos] IN AlphaNum DO
+                result[k] := NextLine[pos];
+                INC (k);  INC(pos);
+            END (*WHILE*);
+            IF k <= HIGH(result) THEN
+                result[k] := Nul;
+            END (*IF*);
+            ToLower (result);
+        END GetToken;
+
+    (********************************************************************)
+
+    PROCEDURE SkipToEnd;
+
+        (* Skips the remaining lines of this header.  *)
+
+        BEGIN
+            WHILE NOT finished DO
+                GetNextLine;
+            END (*WHILE*);
+        END SkipToEnd;
+
+    (********************************************************************)
+
+    VAR head: lineptr;
+        pos2: CARDINAL;
+        StillSearching, found: BOOLEAN;
         quotechar: ARRAY [0..1] OF CHAR;
 
     BEGIN
-        StillSearching := TRUE;
+        (* Set some default values for the return parameters. *)
+
+        Strings.Assign ("text", type);
+        Strings.Assign ("plain", subtype);
         boundary[0] := Nul;
+        finished := FALSE;
 
         (* Because we don't know in advance whether we will want to     *)
         (* write this line and its continuation lines to the output     *)
@@ -1395,105 +1498,86 @@ PROCEDURE CheckForBoundaryCode (srccid, dstcid: ChanId;
         head^.next := NIL;
         head^.this := NextLine;
         tail := head;
+
         Strings.FindNext (':', NextLine, 0, found, pos);
-        Strings.Delete (NextLine, 0, pos+1);
+        INC (pos);
+        SkipSpaces;
+        IF finished THEN
+
+            (* We've run out of input, so just return the default       *)
+            (* values for type and subtype.                             *)
+
+            RETURN head;
+
+        END (*IF*);
+
+        (* Now look for the type/subtype codes. *)
+
+        GetToken (type);
+
+        (* A '/' between type and subtype is mandatory, and as I read   *)
+        (* the MIME standard white space is not permitted here.         *)
+
+        IF NextLine[pos] = '/' THEN
+            INC (pos);
+        ELSE
+            SkipToEnd;
+        END (*IF*);
+
+        GetToken (subtype);
+
+        (* There could be further parameters, but the only parameter    *)
+        (* that interests us is the boundary code in the case of a      *)
+        (* multipart message.                                           *)
 
         (* Now scan this line, plus any continuation lines, for a       *)
         (* boundary code.  If we find one we can stop checking, but we  *)
         (* still have to keep reading the input lines until we get to   *)
         (* the next non-continuation line.                              *)
 
-        LOOP   (* once per line *)
+        IF Strings.Equal (type, "multipart") THEN
 
-            IF StillSearching THEN
-
-                LOOP      (* once per item in the line *)
-
-                    (* Strip leading spaces and tabs. *)
-
-                    pos := 0;
-                    WHILE (NextLine[pos] = Space) OR (NextLine[pos] = Tab) DO
-                        INC (pos);
-                    END (*WHILE*);
-                    IF pos > 0 THEN
-                        Strings.Delete (NextLine, 0, pos);
-                    END (*IF*);
-
-                    (* Nothing left on this line? *)
-
-                    IF NextLine[0] = Nul THEN
-                        EXIT (*LOOP*);
-                    END (*IF*);
-
-                    IF HeadMatch (NextLine, "boundary=") THEN
-
-                        (* Success! *)
-
-                        Strings.Delete (NextLine, 0, 9);
-                        IF NextLine[0] = '"' THEN
-                            quotechar[0] := NextLine[0];
-                            quotechar[1] := Nul;
-                            Strings.Delete (NextLine, 0, 1);
-                            Strings.FindNext (quotechar, NextLine, 0, found, pos);
-                            IF found THEN
-                                NextLine[pos] := Nul;
-                            END (*IF*);
-                        END (*IF*);
-                        boundary := NextLine;
-                        Strings.Insert ('--', 0, boundary);
-                        StillSearching := FALSE;
-                        EXIT (*LOOP*);
-
-                    ELSE
-
-                        (* No luck so far, move to next field. *)
-
-                        Strings.FindNext (';', NextLine, 0, found, pos);
-                        IF found THEN
-                            Strings.Delete (NextLine, 0, pos+1);
-                        ELSE
-                            EXIT (*LOOP*);
-                        END (*IF*);
-
-                    END (*IF*);
-
-                END (*LOOP*);
-
-            END (*IF StillSearching*);
-
-            (* Get the next line from the input, and continue   *)
-            (* processing iff it's a continuation line.         *)
-
-            ReadLine (srccid, NextLine);
-            IF (NextLine[0] <> Space) AND (NextLine[0] <> Tab) THEN EXIT(*LOOP*) END(*IF*);
-            NEW (p);
-            p^.next := NIL;
-            p^.this := NextLine;
-            tail^.next := p;
-            tail := p;
-
-        END (*LOOP*);
-
-        (* If there wasn't any boundary code or if killit = FALSE,  *)
-        (* write our saved lines to the output file.                *)
-
-        IF (NOT killit) OR (boundary[0] = Nul) THEN
-            p := head;
+            StillSearching := TRUE;
             REPEAT
-                FWriteString (dstcid, p^.this);
-                FWriteLn (dstcid);
-                p := p^.next;
-            UNTIL p = NIL;
+                IF NextLine[pos] = ';' THEN
+                    INC (pos);
+                END (*IF*);
+                SkipSpaces;
+                IF finished THEN
+                    StillSearching := FALSE;
+                ELSE
+                    GetToken (boundary);
+                    IF Strings.Equal (boundary, "boundary") THEN
+                        IF NextLine[pos] = '=' THEN
+                            INC(pos);
+                        END (*IF*);
+
+                        (* A quotation mark '"' is optional at this     *)
+                        (* point.  If it is missing, I am going to      *)
+                        (* ignore the rules about what can be in a      *)
+                        (* boundary code, and simply let the boundary   *)
+                        (* code be everything to the end of the line.   *)
+
+                        IF NextLine[pos] = '"' THEN
+                            INC(pos);
+                            quotechar[0] := '"';
+                            quotechar[1] := Nul;
+                            Strings.FindNext (quotechar, NextLine, pos, found, pos2);
+                        ELSE
+                            pos2 := LENGTH(NextLine);
+                        END (*IF*);
+                        Strings.Extract (NextLine, pos, pos2-pos, boundary);
+                        StillSearching := FALSE;
+                    END (*IF*);
+                END (*IF*);
+            UNTIL NOT StillSearching;
+
         END (*IF*);
 
-        (* Dispose of the lines we saved. *)
+        SkipToEnd;
+        RETURN head;
 
-        WHILE head <> NIL DO
-            p := head;  head := head^.next;
-            DISPOSE (p);
-        END (*WHILE*);
-
-    END CheckForBoundaryCode;
+    END ParseContentType;
 
 (************************************************************************)
 
@@ -1598,19 +1682,66 @@ PROCEDURE WriteEmailAddress (cid: ChanId;
 
 (************************************************************************)
 
-PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
-                          VAR (*IN*) terminator: LineBuffer;
-                          VAR (*OUT*) Sender: EmailAddress;
-                          VAR (*OUT*) reject: BOOLEAN): BOOLEAN;
+PROCEDURE CreateNewBoundaryCode (VAR (*OUT*) boundary: ARRAY OF CHAR);
 
-    (* Copies srccid to dstcid, modifying the header lines as needed    *)
-    (* and removing attachments if that is desired.  Also inserts       *)
-    (* leader and trailer text if those are defined for this list.      *)
+    (* Creates a boundary code containing a pseudo-random substring. *)
+
+    CONST
+        PRsize = 25;
+        max = 61;
+
+    VAR j, k, N: CARDINAL;  ch: CHAR;
+
+    BEGIN
+        Strings.Assign ('boundary----', boundary);
+        N := Strings.Length(boundary);
+        FOR j := N TO N + PRsize - 1 DO
+            k := RandInt (0, max);
+            IF k < 10 THEN
+                ch := CHR (ORD('0') + k);
+            ELSIF k < 36 THEN
+                ch := CHR (ORD('A') + k-10);
+            ELSE
+                ch := CHR (ORD('a') + k-36);
+            END (*IF*);
+            boundary[j] := ch;
+        END (*FOR*);
+        boundary[N + PRsize] := Nul;
+    END CreateNewBoundaryCode;
+
+(************************************************************************)
+(*                            MIME STRUCTURE                            *)
+(*                                                                      *)
+(* The MIME structure of the processed message depends on two variables.*)
+(*                                                                      *)
+(*      multimix    the original message was type multipart/mixed       *)
+(*      embedthis   the original message was not multipart/mixed,       *)
+(*                   but we intend to make the result multipart/mixed   *)
+(*                                                                      *)
+(* These two variables cannot simultaneously be TRUE.  They can be both *)
+(* FALSE, in which case the final result will not be multipart/mixed.   *)
+(*                                                                      *)
+(************************************************************************)
+
+PROCEDURE ProcessHeader (L: MailingList;  srccid, dstcid: ChanId;
+                          VAR (*OUT*) Sender: EmailAddress;
+                          VAR (*OUT*) boundary: LineBuffer;
+                          VAR (*OUT*) phead: lineptr;
+                          VAR (*OUT*) reject, ignore,
+                                        multimix, embedthis: BOOLEAN);
+
+    (* Copies srccid to dstcid, modifying the header lines as needed.   *)
     (* This procedure is called after the filter has been run, but      *)
     (* before this item has been sent to mailing list members.  We      *)
-    (* return IllegalSender=TRUE to tell the caller to abort the        *)
-    (* operation.  The function resultis TRUE iff we have stripped      *)
-    (* attachments.                                                     *)
+    (* return 'reject' or 'ignore' results if necessary to tell the     *)
+    (* caller to abort the operation.                                   *)
+
+    (* The phead^ result is a list of MIME headers that will have to be *)
+    (* inserted into the first MIME part of the body, but phead is      *)
+    (* returned as NIL if no such insertion is needed.                  *)
+
+    (* The main function of this procedure is to delete, modify, or     *)
+    (* insert some of the top-level (outermost) header lines.           *)
 
     (* The "From" header line needs special treatment because of list   *)
     (* moderation:                                                      *)
@@ -1627,40 +1758,39 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
     (*      that "From" data in the same way as for an unmoderated      *)
     (*      list.                                                       *)
 
-    (* This procedure calls itself recursively for a message with       *)
-    (* internal MIME structure, but there is only one recursive call.   *)
-    (* We have to add the leader and trailer to the first MIME          *)
-    (* component, then we either ignore all following components or     *)
-    (* copy them verbatim, depending on whether "remove attachments"    *)
-    (* is active.                                                       *)
-
-    VAR buffer, boundary: LineBuffer;
-        OriginalSender, OriginalReplyTo, AddrTemp: EmailAddress;
-        DispTemp, DisplayName: LineBuffer;
-        FromModerator, ToModerator, DropLine, FirstCall,
-                                    AlreadyHaveLine, dummy: BOOLEAN;
-
-    CONST BigBufferSize = 32768;
-
-    VAR NumberRead: CARDINAL;
-        pbigbuffer: POINTER TO ARRAY [0..BigBufferSize-1] OF CHAR;
+    VAR buffer: LineBuffer;
+        DispTemp, DisplayName, OriginalSender,
+                                OriginalReplyTo, AddrTemp: EmailAddress;
+        type, subtype: ARRAY [0..31] OF CHAR;
+        next, ptail: lineptr;
+        FromModerator, ToModerator, DropLine, AlreadyHaveLine,
+                                      HaveMIMEversion, SaveLines: BOOLEAN;
 
     BEGIN
+        SaveLines := FALSE;
         AlreadyHaveLine := FALSE;
         DropLine := FALSE;
-        FirstCall := (terminator[0] = CtrlZ);
-        reject := FirstCall;
+        reject := TRUE;   (* will remain TRUE until we find a From: header *)
+        ignore := FALSE;
+        HaveMIMEversion := FALSE;
+        embedthis := FALSE;
+        multimix := FALSE;
+        phead := NIL;
+        ptail := NIL;
         boundary := "";
         OriginalSender := "";
         OriginalReplyTo := "";
         Sender := "";
         DisplayName := "";
 
-        (* Copy the header, modifying the "Subject" and "Reply-To"      *)
-        (* lines, and possibly the "From" line, and checking the        *)
-        (* "Content-Type" line if we want to strip attachments.         *)
+        (* Copy the header, modifying the "Subject" line and a variety  *)
+        (* of other address-related lines.  In addition the             *)
+        (* "Content-Type" header requires special attention because it  *)
+        (* will affect decisions on changing the MIME structure of      *)
+        (* the message.                                                 *)
 
-        LOOP
+        LOOP                (* for as long as we are in the header *)
+
             IF AlreadyHaveLine THEN
                 AlreadyHaveLine := FALSE;
             ELSE
@@ -1671,12 +1801,30 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
             IF (buffer[0] = Nul) OR (buffer[0] = CtrlZ) THEN EXIT(*LOOP*) END(*IF*);
 
-            (* Continuation lines are either dropped or copied,         *)
-            (* depending on the value of DropLine the last time around  *)
-            (* this loop, but otherwise need no further processing.     *)
+            (* Check for continuation line. *)
 
-            IF (buffer[0] <> Space) AND (buffer[0] <> Tab) THEN
+            IF (buffer[0] = Space) OR (buffer[0] = Tab) THEN
 
+                (* Most continuation lines are dropped or copied,       *)
+                (* depending on the value of DropLine the last time     *)
+                (* around this loop, but otherwise need no further      *)
+                (* processing.  The one exception is where MIME headers *)
+                (* have to be saved to the phead^ list.                 *)
+
+                IF SaveLines THEN
+                    IF phead = NIL THEN
+                        NEW (phead);
+                        ptail := phead;
+                    ELSE
+                        NEW (ptail^.next);
+                        ptail := ptail^.next;
+                    END (*IF*);
+                    ptail^.this := buffer;
+                    ptail^.next := NIL;
+                END (*IF*);
+
+            ELSE
+                SaveLines := FALSE;
                 DropLine := FALSE;
 
                 IF HeadMatch(buffer, "Read-Receipt-To")
@@ -1700,6 +1848,10 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
 
                     ExtractEmailAddress (buffer, 12, DispTemp, Sender);
                     RemoveBATVoverhead (Sender);
+                    IF Sender[0] = Nul THEN
+                        ignore := TRUE;
+                        RETURN;
+                    END (*IF*);
 
                     (* Don't copy the Return-Path line into the output file,    *)
                     (* because it's now obsolete.                               *)
@@ -1744,16 +1896,94 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     reject := FALSE;
                     DropLine := TRUE;
 
-                ELSIF FirstCall AND HeadMatch(buffer, "Content-Type:") THEN
+                ELSIF HeadMatch(buffer, "MIME-Version:") THEN
 
-                    (* Scan the line for a BOUNDARY= field.  Note that the      *)
-                    (* procedure CheckForBoundaryCode will copy this header     *)
-                    (* line (preserving the charset specification) if there is  *)
-                    (* no boundary code, but will kill it if this turns out to  *)
-                    (* be a multipart message.                                  *)
+                    DropLine := HaveMIMEversion;   (* eliminate duplicates *)
+                    HaveMIMEversion := TRUE;
 
-                    CheckForBoundaryCode (srccid, dstcid, buffer,
-                                                 boundary, L^.KillAttachments);
+                ELSIF HeadMatch(buffer, "Content-Type:") THEN
+
+                    (* Find the type, subtype, and boundary code.               *)
+
+                    phead := ParseContentType (srccid, buffer,
+                                type, subtype, boundary);
+                    ptail := phead;
+                    IF ptail <> NIL THEN
+                        WHILE ptail^.next <> NIL DO
+                            ptail := ptail^.next;
+                        END (*WHILE*);
+                    END (*IF*);
+
+                    (* What we do here depends on whether this is a multipart   *)
+                    (* message.  We want to handle the types as follows:        *)
+                    (*      multipart/mixed     no change, simply note it.      *)
+                    (*      all others          embed this.                     *)
+                    (* What we mean by "embed this" is to change the message    *)
+                    (* type to multipart/mixed, and put the original message    *)
+                    (* as a part of the result.  As a result of this decision,  *)
+                    (* we have embedthis = NOT multimix in the current version  *)
+                    (* of this module, and the resulting message will always    *)
+                    (* have type multipart/mixed.                               *)
+
+                    (* More complicated possibilities - for example, changing   *)
+                    (* a multipart/mixed message into a non-multipart message   *)
+                    (* when attachments have been removed, or keeping a plain   *)
+                    (* text message as plain text if the leader and trailer     *)
+                    (* have compatible character sets and transfer encoding -   *)
+                    (* have been abandoned on the grounds that we don't want    *)
+                    (* to make the logic too baroque. The price we pay for this *)
+                    (* decision is sometimes producing a multipart message      *)
+                    (* with only one part, but that is no real problem.         *)
+
+                    IF Strings.Equal (type, "multipart") THEN
+                        multimix := Strings.Equal (subtype, "mixed");
+                        Strings.Insert ('--', 0, boundary);
+                    ELSE
+                        multimix := FALSE;
+                    END (*IF*);
+                    embedthis := NOT multimix;
+
+                    (* In the embedthis case we need to save the original       *)
+                    (* Content-Type lines for insertion at a later point.       *)
+                    (* (ParseContentType saved them in the phead list.)         *)
+                    (* Otherwise we copy them now to the destination file.      *)
+
+                    IF embedthis THEN
+
+                        IF NOT HaveMIMEversion THEN
+                            FWriteString (dstcid, "MIME-Version: 1.0");
+                            FWriteLn (dstcid);
+                            HaveMIMEversion := TRUE;
+                        END (*IF*);
+
+                        (* Create new Content-Type lines.  Note that the        *)
+                        (* original boundary code is still contained in the     *)
+                        (* saved lines, so creating a new boundary code does    *)
+                        (* not lose any information.                            *)
+
+                        FWriteString (dstcid, "Content-Type: multipart/mixed;");
+                        FWriteLn (dstcid);
+                        FWriteString (dstcid, '     boundary=');
+                        CreateNewBoundaryCode (boundary);
+                        FWriteString (dstcid, boundary);
+                        Strings.Insert ('--', 0, boundary);
+                        FWriteLn (dstcid);
+
+                    ELSE
+
+                        (* Copy over the original Content- lines. *)
+
+                        WHILE phead <> NIL DO
+                            FWriteString (dstcid, phead^.this);
+                            FWriteLn (dstcid);
+                            next := phead^.next;
+                            DISPOSE (phead);
+                            phead := next;
+                        END (*WHILE*);
+                        ptail := NIL;
+
+                    END (*IF*);
+
                     AlreadyHaveLine := TRUE;
                     DropLine := TRUE;
 
@@ -1762,6 +1992,27 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                     (* DropLine := TRUE means that we don't copy it this time,  *)
                     (* but the line remains to be processed the next time       *)
                     (* around the loop.                                         *)
+
+                ELSIF HeadMatch(buffer, "Content-") THEN
+
+                    IF embedthis THEN
+
+                        (* Add this line to the saved Content- lines. *)
+
+                        IF phead = NIL THEN
+                            NEW (phead);
+                            ptail := phead;
+                        ELSE
+                            NEW (ptail^.next);
+                            ptail := ptail^.next;
+                        END (*IF*);
+                        ptail^.this := buffer;
+                        ptail^.next := NIL;
+
+                        DropLine := TRUE;
+                        SaveLines := TRUE;
+
+                    END (*IF*);
 
                 ELSIF HeadMatch (buffer, "Subject:") THEN
 
@@ -1789,140 +2040,156 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
         (* Finished processing header.  Reject the item if From: was missing.   *)
 
         IF reject THEN
-            RETURN FALSE;
+            RETURN;
         END (*IF*);
 
-        (* Check the sender, but only if this is a top-level call. *)
+        (* Check for valid sender. *)
 
-        IF FirstCall THEN
-            IF Sender[0] = Nul THEN
-                Strings.Assign ("?", Sender);
-            END (*IF*);
-            IF OriginalSender[0] = Nul THEN
-                OriginalSender := Sender;
-            END (*IF*);
-
-            (* Abort the operation if we discover that we don't approve     *)
-            (* of the sender.                                               *)
-
-            IF (L^.NonsubOption < 2) AND NOT MaySend (Sender, L) THEN
-                reject := TRUE;
-                RETURN FALSE;
-            END (*IF*);
+        IF Sender[0] = Nul THEN
+            Strings.Assign ("?", Sender);
+        END (*IF*);
+        IF OriginalSender[0] = Nul THEN
+            OriginalSender := Sender;
         END (*IF*);
 
-        (* End of header.  Add extra header lines as needed, but only   *)
-        (* if this is not a nested recursive call.                      *)
+        (* Abort the operation if we discover that we don't approve     *)
+        (* of the sender.                                               *)
+
+        IF (L^.NonsubOption < 2) AND NOT MaySend (Sender, L) THEN
+            reject := TRUE;
+            RETURN;
+        END (*IF*);
+
+        (* End of header.  Add extra header lines as needed.   *)
 
         FromModerator := L^.Moderated AND IsOnList (Sender, L^.Owners);
         ToModerator := L^.Moderated AND NOT FromModerator;
 
-        IF FirstCall THEN
-
-            IF L^.SuppressFrom THEN
-                OriginalSender[0] := Nul;
-                DisplayName[0] := Nul;
-                OriginalReplyTo[0] := Nul;
-            END (*IF*);
-
-            (* Add a new "From:" header. *)
-
-            FWriteString (dstcid, "From: ");
-            IF L^.SuppressFrom THEN
-                WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
-            ELSIF ToModerator THEN
-                WriteEmailAddress (dstcid, DisplayName, OriginalSender);
-            ELSIF L^.DMARCcompatible THEN
-                IF DisplayName[0] <> Nul THEN
-                    FWriteString (dstcid, DisplayName);
-                    FWriteString (dstcid, " via ");
-                END (*IF*);
-                WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
-            ELSE
-                WriteEmailAddress (dstcid, DisplayName, OriginalSender);
-            END (*IF*);
-            FWriteLn (dstcid);
-
-            (* In some cases, add a "Sender:" header. *)
-            (* Remark: this code violates the spirit of the mail RFCs, where Sender: *)
-            (* has a totally different meaning; but there is no good way to be       *)
-            (* both RFC-compatible and DMARC-compatible.                             *)
-
-            IF L^.DMARCcompatible AND (OriginalSender[0] <> Nul) THEN
-                FWriteString (dstcid, "Sender: ");
-                WriteEmailAddress (dstcid, DisplayName, OriginalSender);
-                FWriteLn (dstcid);
-            END (*IF*);
-
-            (* Put in the new "Reply-To:" header. *)
-
-            FWriteString (dstcid, "Reply-To: ");
-            IF ToModerator THEN
-                WriteEmailAddress (dstcid, DisplayName, OriginalReplyTo);
-            ELSE
-                WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
-            END (*IF*);
-            FWriteLn (dstcid);
-
-            (* A couple of extra headers if passing this to moderator. *)
-
-            IF ToModerator THEN
-                FWriteString (dstcid, "X-For-Moderation: ");
-                FWriteString (dstcid, L^.OurName);
-                FWriteLn (dstcid);
-                FWriteString (dstcid, "X-Original-Sender: ");
-                FWriteString (dstcid, OriginalSender);
-                FWriteLn (dstcid);
-            ELSE
-                AddListHeaders (dstcid, L);
-            END (*IF*);
-
+        IF L^.SuppressFrom THEN
+            OriginalSender[0] := Nul;
+            DisplayName[0] := Nul;
+            OriginalReplyTo[0] := Nul;
         END (*IF*);
 
-        (* End of header processing.  Add the blank line that   *)
-        (* terminates the header.                               *)
+        (* Add a new "From:" header. *)
+
+        FWriteString (dstcid, "From: ");
+        IF L^.SuppressFrom THEN
+            WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
+        ELSIF ToModerator THEN
+            WriteEmailAddress (dstcid, DisplayName, OriginalSender);
+        ELSIF L^.DMARCcompatible THEN
+            IF DisplayName[0] <> Nul THEN
+                FWriteString (dstcid, DisplayName);
+                FWriteString (dstcid, " via ");
+            END (*IF*);
+            WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
+        ELSE
+            WriteEmailAddress (dstcid, DisplayName, OriginalSender);
+        END (*IF*);
+        FWriteLn (dstcid);
+
+        (* In some cases, add a "Sender:" header. *)
+        (* Remark: this code violates the spirit of the mail RFCs, where Sender: *)
+        (* has a totally different meaning; but there is no good way to be       *)
+        (* both RFC-compatible and DMARC-compatible.                             *)
+
+        IF L^.DMARCcompatible AND (OriginalSender[0] <> Nul) THEN
+            FWriteString (dstcid, "Sender: ");
+            WriteEmailAddress (dstcid, DisplayName, OriginalSender);
+            FWriteLn (dstcid);
+        END (*IF*);
+
+        (* Put in the new "Reply-To:" header. *)
+
+        FWriteString (dstcid, "Reply-To: ");
+        IF ToModerator THEN
+            WriteEmailAddress (dstcid, DisplayName, OriginalReplyTo);
+        ELSE
+            WriteEmailAddress (dstcid, L^.OurName, L^.OurEmailAddress);
+        END (*IF*);
+        FWriteLn (dstcid);
+
+        (* A couple of extra headers if passing this to moderator. *)
+
+        IF ToModerator THEN
+            FWriteString (dstcid, "X-For-Moderation: ");
+            FWriteString (dstcid, L^.OurName);
+            FWriteLn (dstcid);
+            FWriteString (dstcid, "X-Original-Sender: ");
+            FWriteString (dstcid, OriginalSender);
+            FWriteLn (dstcid);
+        ELSE
+            FWriteString (dstcid, "X-Mailer: ");
+            GetProgramName (buffer);
+            FWriteString (dstcid, buffer);
+            FWriteLn (dstcid);
+            AddListHeaders (dstcid, L);
+        END (*IF*);
+
+        (* Add the blank line that terminates the header.  *)
 
         FWriteLn (dstcid);
 
-        (* A non-empty boundary code at this stage means that we have   *)
-        (* internal MIME structure; and, because of the conditions      *)
-        (* under which we calculate the boundary code, we are not       *)
-        (* executing a nested recursive call.                           *)
+    END ProcessHeader;
 
-        IF boundary[0] <> Nul THEN
+(************************************************************************)
 
-            (* Move to the first boundary, copying the intervening      *)
-            (* lines unless we are killing attachments.                 *)
+PROCEDURE ProcessBody (L: MailingList;  srccid, dstcid: ChanId;
+                          boundary: LineBuffer;
+                          multimix, embedthis,
+                                    killattachments, ToModerator: BOOLEAN;
+                          VAR (*INOUT*) p: lineptr);
 
-            REPEAT
-                ReadLine (srccid, buffer);
-                IF NOT L^.KillAttachments THEN
-                    FWriteString (dstcid, buffer);  FWriteLn (dstcid);
-                END (*IF*);
-            UNTIL (buffer[0] = CtrlZ) OR Strings.Equal(buffer, terminator)
-                                       OR Strings.Equal(buffer, boundary);
+    (* Copies srccid to dstcid, inserting leader and trailer text as    *)
+    (* needed and removing attachments if that is desired.              *)
 
-            (* Copy everything up to, but not including, the next       *)
-            (* boundary.  A recursive method is necessary because       *)
-            (* MIME allows nested attachments, and also because there   *)
-            (* will be extra header lines to copy over.  We don't let   *)
-            (* the recursive call overwrite sender information.         *)
+    (* On entry the p^ list contains some header lines in the case      *)
+    (* where they will have to be inserted in the first MIME part.  If  *)
+    (* no such insertion is needed then p = NIL.                        *)
 
-            EVAL (ProcessItem (L, srccid, dstcid, boundary, AddrTemp, dummy));
+    (* When it is time to insert leader and/or trailer material, we     *)
+    (* copy it directly in the non-multipart case, and insert it as     *)
+    (* a new MIME part in the multipart case.  The message will be      *)
+    (* multipart/mixed if either multimix or embedthis is TRUE.         *)
 
-            (* If we are killing attachments, stop processing at this   *)
-            (* point, thereby removing everything except the first      *)
-            (* MIME component that we have already copied.              *)
+    (* Special case: if multimix and killattachments are both TRUE,     *)
+    (* and the first MIME part of the multipart message has type        *)
+    (* text/plain, we could in principle flatten the structure by       *)
+    (* changing the entire message to text/plain.  But we can't find    *)
+    (* out the type of the first MIME part until we have read past the  *)
+    (* first boundary code.  Without resorting to a multipass approach, *)
+    (* which I would rather avoid if possible, I can think of only two  *)
+    (* ways to handle this:                                             *)
+    (*  1.  Save the lines before the first boundary code in one list,  *)
+    (*      save the header lines just after that boundary code in a    *)
+    (*      second list, and check that second list for the text/plain  *)
+    (*      type.  From that decision, decide what to do about the      *)
+    (*      saved lines.                                                *)
+    (*  2.  Do not flatten the structure in any case, even if this      *)
+    (*      would give a multipart/mixed message with only one part.    *)
+    (* Solution 1 gives a cleaner MIME structure, but at the cost of    *)
+    (* more complex processing.  (And, anyway, how many people ever     *)
+    (* look at the raw message file?)  I am therefore more attracted    *)
+    (* to solution 2.                                                   *)
+    (*                                                                  *)
+    (* In the current version, embedthis = NOT multimix; but for now I  *)
+    (* am not taking advantage of this in case it changes in a later    *)
+    (* version.                                                         *)
 
-            IF L^.KillAttachments THEN
-                RETURN TRUE;
-            END (*IF*);
+    (********************************************************************)
 
-            (* If we are not killing attachments, copy everything to    *)
-            (* end of file.  At this stage we can afford to ignore the  *)
-            (* line structure and to read/write in large chunks.        *)
+    PROCEDURE CopyRemainder;
 
-            FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+        (* Copies all that remains of srccid to dstcid, without any *)
+        (* further processing.                                      *)
+
+        CONST BigBufferSize = 32768;
+
+        VAR NumberRead: CARDINAL;
+            pbigbuffer: POINTER TO ARRAY [0..BigBufferSize-1] OF CHAR;
+
+        BEGIN
             NEW (pbigbuffer);
             LOOP
                 ReadRaw (srccid, pbigbuffer^, BigBufferSize, NumberRead);
@@ -1930,40 +2197,182 @@ PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
                 WriteRaw (dstcid, pbigbuffer^, NumberRead);
             END (*LOOP*);
             DISPOSE (pbigbuffer);
+        END CopyRemainder;
 
-        ELSE
+    (********************************************************************)
 
-            (* If we reach this point, then we are either at the end of *)
-            (* the headers of a plain message with no internal MIME     *)
-            (* structure, or we are at the end of the MIME headers of   *)
-            (* the first MIME component.  In either case, this counts   *)
-            (* as the main body of the message.                         *)
+    VAR buffer: LineBuffer;
+        next: lineptr;
 
-            (* Add in the leader material if any. *)
+    BEGIN
+        IF multimix THEN
 
-            IF L^.Leader[0] <> Nul THEN
-                AppendFromFile (dstcid, L, L^.lang, L^.Leader, Sender, '');
-            END (*IF*);
+            (* Process up to and including the first boundary code.  In *)
+            (* accordance with my "special case" comments above, do     *)
+            (* this even if we are killing attachments.                 *)
 
-            LOOP
+            REPEAT
                 ReadLine (srccid, buffer);
-                IF (buffer[0] = CtrlZ) OR Strings.Equal (buffer, terminator) THEN
-                    EXIT (*LOOP*);
-                END (*IF*);
-                FWriteString (dstcid, buffer);
-                FWriteLn (dstcid);
-            END (*LOOP*);
-
-            (* Add in the trailer material if any. *)
-
-            IF (L^.Trailer[0] <> Nul) AND NOT ToModerator THEN
-                AppendFromFile (dstcid, L, L^.lang, L^.Trailer, Sender, '');
-            END (*IF*);
+                FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+            UNTIL HeadMatch (buffer, boundary);
 
         END (*IF*);
 
-        RETURN FALSE;
+        (* Add in the leader material if any.  Note that the boundary   *)
+        (* code has already been emitted in the multimix case.         *)
 
+        IF (L^.Leader[0] <> Nul) AND NOT ToModerator THEN
+            IF embedthis THEN
+                FWriteString (dstcid, boundary);  FWriteLn (dstcid);
+            END (*IF*);
+            IF multimix OR embedthis THEN
+                IF NOT L^.LeaderHasHeaders THEN
+                    FWriteString (dstcid, "Content-Type: text/plain");
+                    FWriteLn (dstcid);
+                    FWriteLn (dstcid);
+                END (*IF*);
+            END (*IF*);
+            AppendFromFile (dstcid, L, L^.lang, L^.Leader, '', '');
+        END (*IF*);
+
+        (* Copy the first part of the message.  In the non-multimix    *)
+        (* cases this is the entire body.                               *)
+
+        (* REMARK: our "multimix" flag refers only to the outermost    *)
+        (* layer of the MIME structure.  The first part might have      *)
+        (* further substructure, but for our purposes we don't care     *)
+        (* about that.                                                  *)
+
+        IF multimix THEN
+
+            (* Insert boundary code before the MIME headers. *)
+
+            FWriteString (dstcid, boundary);  FWriteLn (dstcid);
+
+            (* Copy up to, but not including, the second boundary code. *)
+
+            ReadLine (srccid, buffer);
+            WHILE NOT HeadMatch (buffer, boundary) DO
+                FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+                ReadLine (srccid, buffer);
+            END (*WHILE*);
+
+        ELSE     (* multimix = FALSE *)
+
+            (* In all other cases, we just have to copy until end of    *)
+            (* file.  Any contained MIME parts, regardless of nesting,  *)
+            (* will already have the correct MIME headers and boundary  *)
+            (* codes.  At this stage we can afford to ignore the        *)
+            (* line structure and to read/write in large chunks.        *)
+
+            IF embedthis THEN
+
+                (* Reinsert the original Content-Type lines. *)
+
+                FWriteString (dstcid, boundary);  FWriteLn (dstcid);
+                WHILE p <> NIL DO
+                    FWriteString (dstcid, p^.this);
+                    FWriteLn (dstcid);
+                    next := p^.next;
+                    DISPOSE (p);
+                    p := next;
+                END (*WHILE*);
+                FWriteLn (dstcid);
+            END (*IF*);
+
+            (* If multimix is FALSE, there are no attachments to kill. *)
+
+            CopyRemainder;
+
+        END (*IF*);
+
+        IF killattachments AND (buffer[0] <> CtrlZ) THEN
+
+            (* Insert the "Attachments have been removed" message. *)
+
+            IF multimix OR embedthis THEN
+                FWriteString (dstcid, boundary);  FWriteLn (dstcid);
+                FWriteString (dstcid, "Content-Type: text/plain");
+                FWriteLn (dstcid);
+                FWriteLn (dstcid);
+            END (*IF*);
+            LWriteString (L^.lang, dstcid, "ListChecker.RemAttach");
+            FWriteLn (dstcid);
+
+        END (*IF*);
+
+        (* Add in the trailer material if any. *)
+
+        IF (L^.Trailer[0] <> Nul) AND NOT ToModerator THEN
+            IF multimix OR embedthis THEN
+                FWriteString (dstcid, boundary);  FWriteLn (dstcid);
+                IF NOT L^.TrailerHasHeaders THEN
+                    FWriteString (dstcid, "Content-Type: text/plain");
+                    FWriteLn (dstcid);
+                    FWriteLn (dstcid);
+                END (*IF*);
+            END (*IF*);
+            AppendFromFile (dstcid, L, L^.lang, L^.Trailer, '', '');
+        END (*IF*);
+
+        (* Copy the rest of the file, if there is any, except when we   *)
+        (* are dropping attachments.                                    *)
+
+        IF multimix AND NOT killattachments THEN
+            FWriteString (dstcid, buffer);  FWriteLn (dstcid);
+            CopyRemainder;
+        END (*IF*);
+
+        (* In the embedthis case we also need to add a final boundary. *)
+
+        IF embedthis OR (multimix AND killattachments) THEN
+            FWriteString (dstcid, boundary);
+            FWriteString (dstcid, '--');  FWriteLn (dstcid);
+        END (*IF*);
+
+    END ProcessBody;
+
+(************************************************************************)
+
+PROCEDURE ProcessItem (L: MailingList;  srccid, dstcid: ChanId;
+                          VAR (*OUT*) Sender: EmailAddress;
+                          VAR (*OUT*) reject, ignore: BOOLEAN);
+
+    (* Copies srccid to dstcid, modifying the header lines as needed    *)
+    (* and removing attachments if that is desired.  Also inserts       *)
+    (* leader and trailer text if those are defined for this list.      *)
+    (* This procedure is called after the filter has been run, but      *)
+    (* before this item has been sent to mailing list members.  We      *)
+    (* return 'reject' or 'ignore' results if necessary to tell the     *)
+    (* caller to abort the operation.                                   *)
+
+    (* See procedure ProcessHeader for how we deal with the address     *)
+    (* headers such as "From:".                                         *)
+
+    (* See procedure ProcessBody for how we manipulate the message      *)
+    (* type in order to insert leader and trailer text, and delete      *)
+    (* MIME parts for the "drop attachments" option.                    *)
+
+    VAR multimix, embedthis, killattachments,
+                                FromModerator, ToModerator: BOOLEAN;
+        boundary: LineBuffer;
+        p, next: lineptr;
+
+    BEGIN
+        ProcessHeader (L, srccid, dstcid, Sender, boundary, p,
+                                    reject, ignore, multimix, embedthis);
+        IF NOT (reject OR ignore) THEN
+            FromModerator := L^.Moderated AND IsOnList (Sender, L^.Owners);
+            ToModerator := L^.Moderated AND NOT FromModerator;
+            killattachments := L^.KillAttachments AND multimix AND NOT embedthis;
+            ProcessBody (L, srccid, dstcid, boundary, multimix,
+                            embedthis, killattachments, ToModerator, p);
+        END (*IF*);
+        WHILE p <> NIL DO
+            next := p^.next;
+            DISPOSE (p);
+            p := next;
+        END (*WHILE*);
     END ProcessItem;
 
 (************************************************************************)
@@ -1977,30 +2386,35 @@ PROCEDURE DistributeItem (L: MailingList;
     VAR NewFilename, messagefile: FilenameString;
         message, message2: ARRAY [0..255] OF CHAR;
         srccid, dstcid: ChanId;
-        terminator: LineBuffer;
         From: EmailAddress;
-        reject, SendToModerator: BOOLEAN;
+        reject, ignore, SendToModerator: BOOLEAN;
         count, failures: CARDINAL;
 
     BEGIN
-        (* Because we want to modify some of the header lines, we       *)
+        (* Because we want to modify some of the message details, we    *)
         (* make a copy of the original file and send the copy.          *)
 
         dstcid := OpenNewOutputFile (".\", ".tmp", NewFilename);
         srccid := OpenOldFile (filename, FALSE, FALSE);
-        terminator[0] := CtrlZ;
-        terminator[1] := Nul;
-        IF ProcessItem (L, srccid, dstcid, terminator, From, reject) THEN
-            LWriteString (L^.lang, dstcid, "ListChecker.RemAttach");
-            FWriteLn (dstcid);
-        END (*IF*);
+        ProcessItem (L, srccid, dstcid, From, reject, ignore);
         CloseFile (srccid);
+        CloseFile (dstcid);
 
         (* Abort the operation? *)
 
-        IF reject THEN
-            CloseFile (dstcid);
+        IF reject OR ignore THEN
+
+            (* "ignore" is for cases like postmaster bounce messages,   *)
+            (* where we want to discard the message without any action. *)
+            (* "reject" is for cases where we might want to save the    *)
+            (* message and/or send an error reply, but we don't want    *)
+            (* to process the message any further.                      *)
+
             DeleteFile (NewFilename);
+
+        END (*IF*);
+
+        IF reject THEN
             IF L^.SaveRejects THEN
                 CopyMessage (filename, L^.RejectDir);
             END (*IF*);
@@ -2024,7 +2438,6 @@ PROCEDURE DistributeItem (L: MailingList;
         END (*IF*);
 
         SendToModerator := L^.Moderated AND NOT IsOnList (From, L^.Owners);
-        CloseFile (dstcid);
         failures := 0;
         IF SendToModerator THEN
             count := DeliverItem (From, NewFilename, failures, 0, L^.Owners,
@@ -2749,6 +3162,35 @@ PROCEDURE SetLogID (L: MailingList);
 
 (************************************************************************)
 
+PROCEDURE CheckForMIMEHeaders (L: MailingList;  fname: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE if fname exists and its first line starts with      *)
+    (* Content- followed in the same line by a colon.                   *)
+
+    VAR line: LineBuffer;
+        cid: ChanId;
+        pos: CARDINAL;
+        result: BOOLEAN;
+
+    BEGIN
+        IF (fname[0] <> Nul) AND FindFile (L^.lang, L^.LogID, fname) THEN
+            cid := OpenOldFile (fname, FALSE, FALSE);
+        ELSE
+            RETURN FALSE;
+        END (*IF*);
+
+        ReadLine (cid, line);
+        result := HeadMatch (line, "Content-");
+        IF result THEN
+            Strings.FindNext (':', line, 8, result, pos);
+        END (*IF*);
+        CloseFile (cid);
+        RETURN result;
+
+    END CheckForMIMEHeaders;
+
+(************************************************************************)
+
 PROCEDURE LoadList (hini: HINI;  ListName: ListNameType);
 
     (* Loads or reloads the list information from the INI file.  In the *)
@@ -2861,6 +3303,11 @@ PROCEDURE LoadList (hini: HINI;  ListName: ListNameType);
                 EVAL (INIGetString (hini, ListName, 'language', L^.language));
                 L^.lang := UseLanguage ("MM", L^.language);
 
+                (* Check the leader and trailer files for MIME headers. *)
+
+                L^.LeaderHasHeaders := CheckForMIMEHeaders (L, L^.Leader);
+                L^.TrailerHasHeaders := CheckForMIMEHeaders (L, L^.Trailer);
+
             END (*IF changed*);
 
         END (*IF*);
@@ -2914,7 +3361,7 @@ PROCEDURE RegisterAllLists;
 
     BEGIN
         app := "$SYS";
-        hini := OpenINIFile (INIFileName, UseTNI);
+        hini := OpenINIFile (INIFileName);
         IF NOT INIValid (hini) THEN
             CloseINIFile (hini);
             RETURN;
@@ -2959,13 +3406,12 @@ PROCEDURE RegisterAllLists;
 (*                           INITIALISATION                             *)
 (************************************************************************)
 
-PROCEDURE SetININame (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetININame (name: ARRAY OF CHAR);
 
-    (* The caller specifies the INI file name and mode.  *)
+    (* The caller specifies the INI file name.  *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetININame;
 
 (************************************************************************)

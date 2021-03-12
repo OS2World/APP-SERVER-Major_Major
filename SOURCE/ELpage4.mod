@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE ELpage4;
         (*      The "members" page of the "edit list" notebook      *)
         (*                                                          *)
         (*    Started:        25 August 2000                        *)
-        (*    Last edited:    5 April 2010                          *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -149,7 +149,7 @@ PROCEDURE LoadExpansion (hwnd: OS2.HWND);
 
     BEGIN
         MemberCount := 0;
-        IF RINIData.OpenINIFile(INIFileName, UseTNI) THEN
+        IF RINIData.OpenINIFile(INIFileName) THEN
             LoadNamesFromKey (hwnd, "names");
             LoadNamesFromKey (hwnd, "Members");
             RINIData.CloseINIFile;
@@ -380,13 +380,12 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

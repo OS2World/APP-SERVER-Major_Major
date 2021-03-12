@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE CommonSettings;
         (*             Data common to the main Admin notebook           *)
         (*                                                              *)
         (*    Started:        22 October 2003                           *)
-        (*    Last edited:    24 April 2012                             *)
+        (*    Last edited:    29 September 2019                         *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -52,7 +52,6 @@ TYPE
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     OurFontName: FontNameArray;
     OurLanguage: Languages.LangHandle;
@@ -99,7 +98,7 @@ PROCEDURE UpdateFontFrom (hwnd: OS2.HWND;  group: FontGroup);
         IF NOT Strings.Equal (NewFontName, OurFontName[group]) THEN
 
             OurFontName[group] := NewFontName;
-            hini := INIData.OpenINIFile (AdminINI, UseTNI);
+            hini := INIData.OpenINIFile (AdminINI);
             app := "Font";
             INIData.INIPutString (hini, app, FontGroupLabel[group],
                                                         OurFontName[group]);
@@ -167,7 +166,7 @@ PROCEDURE SetInitialLanguage;
     (* Sets the language from the Major Major INI file. *)
 
     BEGIN
-        IF RINIData.OpenINIFile(INIFileName, UseTNI) THEN
+        IF RINIData.OpenINIFile(INIFileName) THEN
             IF NOT RINIData.INIGetString ('$SYS', 'AdminLanguage', LanguageCode)
                                          OR (LanguageCode[0] = Nul) THEN
                 LanguageCode := "en";
@@ -189,9 +188,9 @@ PROCEDURE SetInitialFontsAndLanguage;
         app: ARRAY [0..4] OF CHAR;
 
     BEGIN
-        hini := INIData.OpenINIFile(AdminINI, UseTNI);
+        hini := INIData.OpenINIFile(AdminINI);
         IF NOT INIData.INIValid(hini) THEN
-            hini := INIData.CreateINIFile(AdminINI, UseTNI);
+            hini := INIData.CreateINIFile(AdminINI);
         END (*IF*);
         app := "Font";
         FOR group := MIN(FontGroup) TO MAX(FontGroup) DO
@@ -209,13 +208,18 @@ PROCEDURE SetInitialFontsAndLanguage;
 
 (************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
     (* Sets the INI file name and mode. *)
 
+    VAR pos: CARDINAL;  found: BOOLEAN;
+
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
+        Strings.FindPrev ('.', name, LENGTH(name)-1, found, pos);
+        Strings.Delete (name, 0, pos);
+        Strings.Insert ("Admin", 0, name);
+        Strings.Assign (name, AdminINI);
         SetInitialFontsAndLanguage;
     END SetINIFileName;
 

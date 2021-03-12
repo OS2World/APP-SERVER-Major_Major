@@ -6,7 +6,7 @@ DEFINITION MODULE ELpage6;
         (*           Page 6 of the "edit list" notebook             *)
         (*                                                          *)
         (*    Started:        20 January 2001                       *)
-        (*    Last edited:    10 February 2009                      *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -14,7 +14,7 @@ DEFINITION MODULE ELpage6;
 
 IMPORT OS2, CommonSettings, Languages;
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
 PROCEDURE SetArchiveRoot (dir: ARRAY OF CHAR);
 

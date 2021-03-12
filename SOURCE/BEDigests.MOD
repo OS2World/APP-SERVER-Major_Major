@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Part of encryption software                                           *)
-(*  Copyright (C) 2017   Peter Moylan                                     *)
+(*  Copyright (C) 2018   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -34,7 +34,7 @@ IMPLEMENTATION MODULE BEDigests;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            29 September 2017               *)
-        (*  Last edited:        5 October 2017                  *)
+        (*  Last edited:        28 January 2018                 *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -44,7 +44,7 @@ IMPLEMENTATION MODULE BEDigests;
 FROM SYSTEM IMPORT
     (* type *)  CARD8, CARD32;
 
-FROM LONGLONG IMPORT
+FROM Arith64 IMPORT
     (* type *)  CARD64;
 
 (********************************************************************************)

@@ -10,7 +10,7 @@ DEFINITION MODULE FileOps;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            17 October 2001                 *)
-        (*  Last edited:        6 October 2017                  *)
+        (*  Last edited:        20 April 2020                   *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (*    The original version of this module used          *)
@@ -28,8 +28,8 @@ IMPORT OS2;
 FROM SYSTEM IMPORT
     (* type *)  LOC, CARD16, CARD32;
 
-FROM LONGLONG IMPORT
-    (* type *)  CARD64;
+FROM Arith64 IMPORT
+    (* type *)  CARD64, CARD64API;
 
 (************************************************************************)
 
@@ -64,7 +64,10 @@ TYPE
            END (*RECORD*);
 
     ChanId = OS2.HFILE;
-    FilePos = CARD64;
+    FilePos = CARD64API;
+
+    (* NOTE: Throughout this module, file positions are kept in         *)
+    (* CARD64API format.  File sizes are, however, in CARD64 format.    *)
 
 (************************************************************************)
 (*                         VOLUME INFORMATION                           *)
@@ -143,15 +146,19 @@ PROCEDURE DeleteFile (name: ARRAY OF CHAR);
 
     (* Deletes a named file. *)
 
+PROCEDURE DeleteDir (name: ARRAY OF CHAR);
+
+    (* Deletes a named directory. *)
+
 PROCEDURE CreateFile (name: ARRAY OF CHAR);
 
     (* Creates an empty file.  Deletes any existing file with the same name. *)
 
 PROCEDURE MoveFile (oldname, newname: ARRAY OF CHAR): BOOLEAN;
 
-    (* Renames a file, returns TRUE iff successful.  The source and     *)
-    (* destination files must be on the same drive.  This procedure is  *)
-    (* also a mechanism for renaming a file.                            *)
+    (* Moves a file to a new location, returns TRUE iff successful.     *)
+    (* The source and destination files do not need to be on the same   *)
+    (* drive.  This procedure is also a mechanism for renaming a file.  *)
 
 PROCEDURE CopyFile (src, dst: ARRAY OF CHAR): BOOLEAN;
 
@@ -160,6 +167,11 @@ PROCEDURE CopyFile (src, dst: ARRAY OF CHAR): BOOLEAN;
 PROCEDURE AppendFile (src, dst: ARRAY OF CHAR): BOOLEAN;
 
     (* Appends src to dst, returns TRUE iff successful. *)
+
+PROCEDURE MoveDirectory (srcdir, dstdir: ARRAY OF CHAR): BOOLEAN;
+
+    (* Moves a directory tree.  The two arguments should have no        *)
+    (* trailing '\'.  We assume that dstdir <> srcdir.                  *)
 
 (************************************************************************)
 (*                         FILE POSITION/SIZE                           *)
@@ -265,8 +277,8 @@ PROCEDURE FirstDirEntry (mask: ARRAY OF CHAR;
                                   VAR (*OUT*) D: DirectoryEntry): BOOLEAN;
 
     (* Gets the first directory entry satisfying the conditions:        *)
-    (*  (a) if Subdirectory is FALSE, we want the first entry that      *)
-    (*      matches "mask".                                             *)
+    (*  (a) if Subdirectory is FALSE, we want the first non-directory   *)
+    (*      entry that matches "mask".                                  *)
     (*  (b) if Subdirectory is TRUE, we want the first directory that   *)
     (*      matches "mask".                                             *)
     (* In either case "mask" is a filename specification that may       *)

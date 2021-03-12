@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
 (*  Admin program for the Major Major mailing list manager                *)
-(*  Copyright (C) 2015   Peter Moylan                                     *)
+(*  Copyright (C) 2019   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -28,7 +28,7 @@ IMPLEMENTATION MODULE Dialp3;
         (*              Page 3 of the admin notebook                *)
         (*                                                          *)
         (*    Started:        5 September 2000                      *)
-        (*    Last edited:    8 February 2009                       *)
+        (*    Last edited:    29 September 2019                     *)
         (*    Status:         OK                                    *)
         (*                                                          *)
         (************************************************************)
@@ -54,10 +54,9 @@ FROM Storage IMPORT
 
 VAR
     INIFileName: FilenameString;
-    UseTNI: BOOLEAN;
 
     pagehandle, notebookhandle: OS2.HWND;
-    PageID: CARDINAL;
+    OurPageID: CARDINAL;
     OldNotSubscribedMessage: FilenameString;
     OldHelpFile: FilenameString;
     OldPlainTextFile: FilenameString;
@@ -76,7 +75,7 @@ PROCEDURE SetLanguage (lang: LangHandle);
     BEGIN
         StrToBuffer (lang, "Messages.tab", stringval);
         OS2.WinSendMsg (notebookhandle, OS2.BKM_SETTABTEXT,
-                        CAST(ADDRESS,PageID), ADR(stringval));
+                        CAST(ADDRESS,OurPageID), ADR(stringval));
         StrToBuffer (lang, "Messages.title", stringval);
         OS2.WinSetDlgItemText (pagehandle, DID.MessagesTitle, stringval);
         StrToBuffer (lang, "Messages.nonsub", stringval);
@@ -100,7 +99,7 @@ PROCEDURE LoadData (hwnd: OS2.HWND);
         opened: BOOLEAN;
 
     BEGIN
-        opened := RINIData.OpenINIFile (INIFileName, UseTNI);
+        opened := RINIData.OpenINIFile (INIFileName);
 
         (* "You are not subscribed" message. *)
 
@@ -145,7 +144,7 @@ PROCEDURE StoreData (hwnd: OS2.HWND);
     VAR stringval: ARRAY [0..511] OF CHAR;
 
     BEGIN
-        IF RINIData.OpenINIFile (INIFileName, UseTNI) THEN
+        IF RINIData.OpenINIFile (INIFileName) THEN
 
             (* "Not subscribed" message. *)
 
@@ -207,7 +206,7 @@ PROCEDURE ["SysCall"] DialogueProc(hwnd     : OS2.HWND
 
 (************************************************************************)
 
-PROCEDURE Create (notebook: OS2.HWND): OS2.HWND;
+PROCEDURE Create (notebook: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL): OS2.HWND;
 
     (* Creates page 3 and adds it to the notebook. *)
 
@@ -220,8 +219,9 @@ PROCEDURE Create (notebook: OS2.HWND): OS2.HWND;
                        0,                   (* use resources in EXE *)
                        DID.MessagePage,              (* dialogue ID *)
                        NIL);                 (* creation parameters *)
-        PageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
+        OurPageID := OS2.ULONGFROMMR (OS2.WinSendMsg (notebook, OS2.BKM_INSERTPAGE,
                          NIL, OS2.MPFROM2SHORT (OS2.BKA_MAJOR+OS2.BKA_AUTOPAGESIZE, OS2.BKA_LAST)));
+        PageID := OurPageID;
         Label := "Messages";
         OS2.WinSendMsg (notebook, OS2.BKM_SETTABTEXT,
                         CAST(ADDRESS,PageID), ADR(Label));
@@ -244,13 +244,12 @@ PROCEDURE SetFont (VAR (*IN*) name: CommonSettings.FontName);
 
 (**************************************************************************)
 
-PROCEDURE SetINIFileName (name: ARRAY OF CHAR;  TNImode: BOOLEAN);
+PROCEDURE SetINIFileName (name: ARRAY OF CHAR);
 
-    (* Sets the INI file name and mode. *)
+    (* Sets the INI file name. *)
 
     BEGIN
         Strings.Assign (name, INIFileName);
-        UseTNI := TNImode;
     END SetINIFileName;
 
 (**************************************************************************)

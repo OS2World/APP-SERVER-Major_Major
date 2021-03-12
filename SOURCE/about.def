@@ -6,7 +6,7 @@ DEFINITION MODULE About;
         (*                     The 'about' dialogue                     *)
         (*                                                              *)
         (*    Started:        21 June 2000                              *)
-        (*    Last edited:    1 January 2004                            *)
+        (*    Last edited:    18 December 2018                          *)
         (*    Status:         OK                                        *)
         (*                                                              *)
         (****************************************************************)
@@ -14,7 +14,7 @@ DEFINITION MODULE About;
 
 IMPORT OS2, CommonSettings, Languages;
 
-PROCEDURE Create (owner: OS2.HWND);
+PROCEDURE Create (owner: OS2.HWND;  VAR (*OUT*) PageID: CARDINAL);
 
     (* Creates the dialogue box. *)
 

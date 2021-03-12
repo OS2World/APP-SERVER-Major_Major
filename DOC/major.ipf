@@ -1,6 +1,6 @@
 :userdoc.
 :title.Major Major documentation
-:docprof toc=123.
+:docprof toc=1234.
 
 .***********************************
 .*   INTRODUCTION
@@ -18,7 +18,7 @@ It is distributed as open-source freeware subject to the GNU GPL
 licence. You may obtain source code from the place where you
 downloaded this package.
 
-:p.This documentation is for version 2.5.
+:p.This documentation is for version 3.1.
 
 :p.
 :hp2.Disclaimer of Warranty:ehp2.
@@ -76,14 +76,18 @@ an OS/2 command window and type the command
 :p.The "bldlevel" command is an OS/2 feature, not a Major Major feature.
 
 .***********************************
-.*   REGISTRATION
+.*   PREREQUISITES
 .***********************************
 
-:h1 id=register.Registration
+:h1 id=prerequisites.Prerequisites
 
-:hp2.Registration:ehp2.
+:hp2.Prerequisites:ehp2.
 
-:p.This software is freeware, and no longer requires registration.
+:p.This software assumes that both INIDATA.DLL and XDS230M.DLL are in your
+LIBPATH. If, when trying to run Major.exe, you get a message like
+"The system cannot find the file XDS230M", you must install INIData,
+version 1.1 or later. INIData can be found at the same web or FTP site as where
+you found the Major Major zip file.
 
 .***********************************
 .*   HOW IT WORKS
@@ -305,7 +309,7 @@ is up and working, and thereafter at monthly intervals, to ensure that
 you have a backup of the configuration including addresses of all
 the list subscribers.
 
-:p.Major.exe has two optional parameters. If you start it with the command
+:p.Major.exe has three optional parameters. If you start it with the command
 :xmp.
 
            MAJOR X
@@ -318,16 +322,28 @@ This parameter will eventually become obsolete, because there is now
 an option in the Admin notebook to enable extra logging.
 
 :p.Major.exe takes its configuration data from either Major.INI or Major.TNI,
-depending on which of these two files is present. If neither one is present, it
-chooses Major.INI. If you start it with the command
+depending on which of these two files is present.
+
+(These configuration files are created by the
+:link reftype=hd refid=Configuration.Admin:elink. program.)
+
+If neither one is present, or if both are, it chooses the option specified the last time
+ADMIN -I or ADMIN -T was run. If none of these rules apply, then it uses Major.INI.
+
+You can overrule this decision with an explicit parameter. If you start it with the command
+:xmp.
+
+           MAJOR I
+
+:exmp.
+then it will take its configurable parameters from the file MAJOR.INI.
+If you start it with the command
 :xmp.
 
            MAJOR T
 
 :exmp.
-then it will take its configurable parameters from the file MAJOR.TNI
-instead of MAJOR.INI. These configuration files are created by the
-:link reftype=hd refid=Configuration.Admin:elink. program.
+then it will take its configurable parameters from the file MAJOR.TNI.
 
 :p.If you need to stop Major.exe, type CTRL/C. Alternatively,
 perform a signal on the global event semaphore \SEM32\MAJOR\SHUTDOWN.
@@ -424,12 +440,17 @@ with RFC2142 by choosing an administrator name of the form MYLIST-REQUEST.
 
 :h1 id=configuration.Configuration
 
+:p.:hp2.The Admin program:ehp2.
+
 :p.The program called Admin.exe is what you use to configure Major Major.
 The configuration parameters are stored in a file called either Major.INI
 or Major.TNI, depending on which of these is physically present in the
-working directory. (If neither file exists, Admin chooses Major.INI, unless you
-override that decision with the 'T' parameter - see below.)
-In effect, Admin.exe is an editor for that configuration file.
+working directory. (If neither file exists, or if both exist, Admin chooses
+the one that was last selected with Admin -I or Admin -T. If that rule
+fails, it chooses Major.INI.) You may explicitly override that decision
+with the 'I' or 'T' parameters - see below.
+
+:p.In effect, Admin.exe is an editor for that configuration file.
 
 :p.Major.INI, if it exists, is a binary file whose format is natively
 supported by OS/2. Major.TNI, if it exists, is a human-readable file
@@ -445,17 +466,23 @@ INI format is a good choice.
 radio buttons and three pushbuttons. The Remote option is for remote
 configuration, which is described in a
 :link reftype=hd refid=remoteconfig.separate section:elink.. Normally you
-should choose the Local option, which will edit the Major.INI file that
+should choose the Local option, which will edit the Major.INI or Major.TNI file that
 resides in the same directory as ADMIN.EXE. Click on the "GO" button to
 start the editing.
 
 :p.If you start Admin with the command
+:xmp.            admin -I
+
+:exmp.
+then Admin will edit the file MAJOR.INI.
+If you start Admin with the command
 :xmp.            admin -T
 
 :exmp.
-then Admin will edit the file MAJOR.TNI rather than MAJOR.INI, overriding
-the rule that it should choose whichever of these exists. This 'T'
-option can, if desired, be combined with the 'L', 'R', and 'G' options
+then Admin will edit the file MAJOR.TNI.
+This overrides the rules mentioned above about which one to choose.
+The 'I' and 'T'
+options can, if desired, be combined with the 'L', 'R', and 'G' options
 documented below.
 
 :p.If you start Admin with the command
@@ -479,6 +506,7 @@ has whatever value it had the last time you ran Admin.
 
 :p.More than one option can be specified, but of course if you try to
 specify more than one of 'L', 'R', and 'G' the result is undefined.
+Similarly, specifying both 'I' and 'T' gives undefined behaviour.
 These option characters are case-independent, e.g. 'r' means the same as
 'R'. In the present version of Admin the '-' character is ignored, so it
 does not matter if you omit it. This could change if a future version of Admin
@@ -531,7 +559,7 @@ manipulation of the Weasel mail directories. If you choose "Other mail server",
 Major Major will use the SMTP and POP3 protocols to send and receive mail.
 
 :p.The mail domain name is what comes after the '@' sign in the e-mail address
-used by Major Major. Commonly this is just the hostname of the machine on which
+used by Major Major. Sometimes this is just the hostname of the machine on which
 the mail server is running, but it is also possible for a single mail domain to
 have multiple mail servers; in this case the mail domain name is, in effect, an
 identifier for the group.
@@ -611,7 +639,7 @@ from its own customers. That means that it must apply some sort of
 "legitimacy" check on the sender of mail to be forwarded. Obviously
 this will include a check on mail sent to it from Major Major.
 
-:p.The most common form of legitimacy check is a check on the IP address
+:p.One common form of legitimacy check is a check on the IP address
 of the sender. If this is what is being done in your case, and Major
 Major is running on a machine that the server considers to be legitimate,
 you can ignore this section. The mail from Major Major should be
@@ -878,6 +906,10 @@ this with a different file if you prefer. There are no header lines.
 :p.See also the section on
 :link reftype=hd refid=ListMessages.macros:elink..
 
+:note.The restriction to plain text applies only to messages sent
+to Major Major itself, such as the "subscribe" command. HTML messages
+to the mailing lists are perfectly legal.
+
 .***********************************
 .*   LISTS
 .***********************************
@@ -945,7 +977,7 @@ what version of the program you have.
 is, you can run Admin on one computer and use it to configure a copy
 of Major Major that is installed on a different computer. To do this, you have
 to have the freeware utility INIServe running on the same computer as
-Major Major. You can find INIServe at http&colon.&slash.&slash.www.pmoylan.org&slash.os2.
+Major Major. You can find INIServe at http&colon.&slash.&slash.www.pmoylan.org&slash..
 
 :p.If you select the "Remote" radio button after starting Admin, a "Setup"
 pushbutton is enabled. Clicking on this gives you four fields to fill in&colon.
@@ -1697,6 +1729,62 @@ line, or a message saying how to unsubscribe from the list, or
 something similar.
 :edl.
 
+:p.It is legal but not compulsory to begin the leader and/or footer file
+with MIME headers. This is explained in the
+:link reftype=hd refid=MIMEheaders.following section:elink..
+
+.***************************************
+.*   LIST NOTEBOOK: MIME HEADERS IN A LEADER OR FOOTER FILE
+.***************************************
+
+:h4 id=MIMEheaders.MIME headers in a leader or footer file
+:hp2.MIME headers in a leader or footer file:ehp2.
+
+:p.By default, the leader and footer text (if present) is assumed to
+be of type text/plain, with no additional parameters, and strictly speaking
+this means that only 7-bit US-ASCII characters are allowed in a leader
+or footer file. Some mail programs will accept 8-bit characters anyway,
+but what the recipient will see is not necessarily what you intended.
+
+:p.To allow for this, leader and footer files are allowed to have
+optional MIME headers to specify the character set and possibly other
+encoding details. These header lines are not compulsory, but if present
+they must conform to the rules in the MIME standard RFC 2045. A typical set
+of MIME headers would be
+:xmp.
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+:exmp.
+In most cases you should specify the 8bit transfer encoding, but if you
+want to use something like base64 then that is certainly legal. If you
+want to include HTML markup in your leader or footer text, a Content-Type
+of text/html is also legal.
+
+:p.The MIME headers, if present, must be followed by a blank line before
+the text you want to insert. For an example, see the file
+Canned\dk\SampleLeaderFile.txt. Not all the "Canned" files have yet been
+converted to use MIME headers, but this will happen gradually with
+future Major Major releases.
+
+:p.Notice that all legal MIME headers start with the string "Content-".
+(Some software tries also to include a MIME-Version header here, but that
+is in violation of the standard.) Major Major uses that fact, plus the fact
+that the character '&colon.' must appear in any MIME header line, to decide whether
+the file contains MIME headers.
+
+:p.Unless you have an editor that is more intelligent than most editors,
+there is no easy way to ensure that the character you are typing is the
+correct character for the specified character set. The sample files that are
+included with Major Major were prepared using the OS/2 code page 850. If
+you are using some other code page, you might have to modify the
+non-ASCII characters in those files. As always, if you do modify those files
+then you should give your copies new names, or put them in new directories,
+so that they will not be overwritten by future Major Major releases.
+
+:note.If you add or remove MIME headers from a leader or footer file,
+Major Major might not notice the change until it is restarted, or until the
+list properties are modified in Admin.exe.
+
 .***************************************
 .*   LIST NOTEBOOK: ARCHIVE PAGE
 .***************************************
@@ -1900,19 +1988,20 @@ the 'lang' command.
 .*   DUMPINI AND LOADINI
 .***************************************
 
-:h1 id=DumpINILoadINI.The DumpINI and LoadINI utilities
+:h1 id=DumpINILoadINI.Dealing with TNI files
 
 :p.All of the configuration data for Major Major, including details such
 as the list of all e-mail addresses for a mailing list, are kept in a
-binary file called MAJOR.INI. The two programs described on this page
-allow you to save this data in "plain text" form for backup purposes.
+binary file called MAJOR.INI, or in a plain text file called MAJOR.TNI.
+The first two programs described on this page
+allow you to convert between the two formats. Even if you have decided
+to stay with the INI file, it is still worth creating a TNI file for backup purposes.
 This also gives you the possibility of manually editing the data, for
 example when trying to create a mailing list from an address book in
 your e-mail software.
 
-:p.These two utilities are no longer distributed with Major Major.
-They can instead be obtained by downloading the GenINI
-package from
+:p.These utilities are not distributed with Major Major.
+They can be obtained by downloading the GenINI package from
 http&colon.&slash.&slash.www.pmoylan.org/pages/os2/software.html.
 
 :p.:hp2.DumpINI:ehp2.
@@ -1924,10 +2013,76 @@ form.
 :p.:hp2.LoadINI:ehp2.
 
 :p.The LoadINI program reads MAJOR.TNI and loads the information back
-into the main INI file called MAJOR.INI. It is possible to use this
-when MAJOR.TNI contains only a subset of the data, because existing
-entries in MAJOR.INI are not deleted except when they are superseded
-by new information in MAJOR.TNI.
+into the main INI file called MAJOR.INI. The previous contents of
+MAJOR.INI, if any, are lost, but may be found in a backup file.
+
+:p.:hp2.TNItools:ehp2.
+
+:p.The Tools subdirectory of Major Major contains some Rexx scripts
+that some users might find useful. Some of those scripts need to
+look up information in an INI or TNI file. To support that, the
+TNItools package contains some extra Rexx scripts that deal with
+reading from or writing to INI and TNI files. These are
+prerequisites for some of the Major Major Rexx tools.
+
+:p.TNItools is part of the GenINI package mentioned above.
+It is not included with Major Major.
+
+:p.It is recommended that you put the TNItools scripts in a directory
+that is on your PATH (as defined in CONFIG.SYS). That makes them
+available to utilities for other programs such as Weasel.
+
+:p.These tools are described below.
+
+:dl break=all.
+
+:dt.SelectTNI.cmd
+:dd.This decides whether to use an INI or a TNI file, using the same
+rules that Major Major uses.
+
+:dt.INIget.cmd
+:dd.This fetches a value from an INI or TNI file. It also has options
+to fetch a list of all applications, or all keys for a given application.
+
+:dt.INIput.cmd
+:dd.This stores a value into an INI or TNI file.
+
+:dt.INIdel.cmd
+:dd.This deletes an item from an INI or TNI file. It also has options
+to delete all keys or all applications.
+
+:edl.
+
+:p.:hp2.INIData:ehp2.
+
+:p.INIData was alreay mentioned in the :link reftype=hd refid=prerequisites.prerequisites:elink.
+section of this manual. Presumably you already have it, or Major Major
+would not be working for you. It is mentioned here only for the sake of
+completeness.
+
+:p.The Dynamic Link Library (DLL) called INIDATA.DLL is a set of functions
+that let the programmer add, modify, or delete entries in an INI or TNI
+file. The advantage to the programmer is that the same function calls
+work equally well for the INI or TNI format. These functions work out which is
+which by looking at the file name: whether it ends in ".INI" or ".TNI".
+
+:p.The advantage to the end user is that, if you have several programs that
+all need the same DLL, only one copy of the DLL is loaded into memory.
+This might seem unimportant now that large memories are so common, but in
+practice we find that a lot of software uses more memory as the memory
+sizes grow.
+
+:p.INIDATA.DLL itself requires the presence of another DLL called XDS230M.DLL.
+This is part of the runtime support for the compiler used to implement
+Major Major, and it is redistributable under mild conditions. That second
+DLL is included in the INIData package.
+
+:p.These two DLLs should be placed in a directory that is on your
+LIBPATH.  On a system using RPM\YUM, for example ArcaOS, the appropriate directory is
+\usr\local\lib. See the README file that comes with the INIData package
+for the details. Otherwise, check the LIBPATH definition in your
+CONFIG.SYS, and choose one of the directories mentioned there.
+
 
 :h1.Who was Major Major?
 
